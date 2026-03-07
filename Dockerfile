@@ -1,25 +1,28 @@
-# Use official Python base image
-FROM python:3.11-slim
+# ── Build stage ───────────────────────────────────────────────────────────────
+FROM python:3.12-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Prevents .pyc files and enables stdout/stderr logging immediately
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Set work directory
-WORKDIR /code
+WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt /code/
+# Install system dependencies (needed for psycopg2 if using Postgres)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy project files
-COPY . /code/
+# Copy project source
+COPY . .
 
-# Create static directory
-RUN mkdir -p /code/static
+# Collect static files at build time
+RUN python manage.py collectstatic --noinput
 
-# Expose port 8000
-EXPOSE 8000
+EXPOSE 8002
 
-# Run the Django server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8002"]
+# Gunicorn is the production WSGI server — don't use runserver in Docker
+CMD ["gunicorn", "hospital.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]

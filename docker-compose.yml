@@ -1,0 +1,40 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: hospital
+      POSTGRES_USER: hospital_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}   # set in .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hospital_user -d hospital"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    volumes:
+      - media_files:/app/media          # persist uploaded files (profile pictures etc.)
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DJANGO_DEBUG: "False"
+      ALLOWED_HOSTS: "localhost 127.0.0.1"
+      CSRF_TRUSTED_ORIGINS: "http://localhost:8002"
+      DATABASE_URL: postgres://hospital_user:${DB_PASSWORD}@db:5432/hospital
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn hospital.wsgi:application --bind 0.0.0.0:8002 --workers 3"
+
+volumes:
+  postgres_data:
+  media_files:
