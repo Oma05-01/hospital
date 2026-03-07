@@ -1,0 +1,66 @@
+.page-header {
+    background: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    border-left: 5px solid var(--primary-blue);
+}
+
+.header-content h2 { color: var(--secondary-blue); margin: 0 0 0.5rem 0; }
+.header-content p { margin: 0; color: #666; }
+
+.treatment-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.treatment-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.treatment-card .card-header {
+    background: var(--bg-light);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.status-badge {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-active { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; }
+.status-completed { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+.status-cancelled { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+
+.date-range { color: #666; font-size: 0.95rem; font-weight: 500; }
+
+.treatment-card .card-body { padding: 1.5rem; }
+.treatment-card h3 { color: var(--secondary-blue); margin: 0 0 0.8rem 0; font-size: 1.2rem; }
+.description { line-height: 1.6; color: var(--text-dark); margin-bottom: 1.5rem; }
+
+.progress-notes {
+    background: #fafafa;
+    padding: 1rem;
+    border-radius: 6px;
+    border-left: 3px solid var(--accent-color);
+}
+
+.progress-notes h4 { color: #555; margin: 0 0 0.5rem 0; font-size: 1rem; }
+.progress-notes p { margin: 0; font-size: 0.95rem; color: #666; line-height: 1.5; }
+
+.empty-state { text-align: center; padding: 3rem; background: #fff; border-radius: 8px; }
+.empty-state i { margin-bottom: 1rem; color: #ccc; }

@@ -1,19 +1,59 @@
-<!-- notifications.html -->
-{% extends "base_generic.html" %}
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Notification Center | Staff Portal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-notifications.css' %}">
+{% endblock %}
 
 {% block content %}
-  <h2>Notifications</h2>
-  <ul>
-    {% for notification in notifications %}
-      <li>
-        <strong>{{ notification.notification_type }}:</strong> {{ notification.message }}
-        <p>Received on: {{ notification.created_at }}</p>
-        {% if notification.is_urgent %}
-          <span class="urgent">Urgent</span>
-        {% endif %}
-      </li>
-    {% empty %}
-      <p>No notifications.</p>
-    {% endfor %}
-  </ul>
+<div class="notifications-wrapper">
+    <header class="notifications-header">
+        <div class="header-main">
+            <h2><i class="fas fa-bell"></i> Notifications & Alerts</h2>
+            <p>Recent updates, messages, and system alerts.</p>
+        </div>
+        <div class="header-actions">
+            {% if unread_count > 0 %}
+                <span class="unread-badge">{{ unread_count }} New</span>
+            {% endif %}
+            <button class="btn btn-outline-secondary btn-sm"><i class="fas fa-check-double"></i> Mark All Read</button>
+        </div>
+    </header>
+
+    <div class="notification-feed">
+        {% for notification in notifications %}
+            <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+                <div class="icon-wrapper">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                
+                <div class="notification-content">
+                    <div class="content-header">
+                        <h4>{{ notification.title|default:"System Update" }}</h4>
+                        <span class="time-ago">{{ notification.created_at|timesince }} ago</span>
+                    </div>
+                    <p class="message">{{ notification.message }}</p>
+                    
+                    {% if notification.link %}
+                        <a href="{{ notification.link }}" class="action-link">View Details <i class="fas fa-chevron-right"></i></a>
+                    {% endif %}
+                </div>
+                
+                {% if not notification.is_read %}
+                    <div class="unread-indicator"></div>
+                {% endif %}
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon-wrapper">
+                    <i class="far fa-bell-slash"></i>
+                </div>
+                <h3>You're all caught up!</h3>
+                <p>No new notifications at this time.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

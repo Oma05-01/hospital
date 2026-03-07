@@ -1,0 +1,177 @@
+.booking-wrapper {
+    max-width: 1000px;
+    margin: 2rem auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.breadcrumb {
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb a {
+    color: #3182ce;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+.breadcrumb a:hover { text-decoration: underline; }
+
+/* Header */
+.booking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.virtual-theme {
+    border-top: 5px solid #805ad5; /* Purple theme for virtual */
+}
+
+.virtual-theme h2 i { color: #805ad5; }
+
+.header-main h2 { color: #2d3748; margin: 0 0 5px 0; font-size: 1.8rem; }
+.header-main p { color: #718096; margin: 0; font-size: 1.05rem; }
+
+.telemed-badge {
+    background: #faf5ff;
+    color: #6b46c1;
+    border: 1px solid #d6bcfa;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+/* Split Layout */
+.booking-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Left Panel: Instructions */
+.instruction-panel {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    border: 1px solid #edf2f7;
+}
+
+.instruction-panel h3 { margin: 0 0 1rem 0; color: #2d3748; display: flex; align-items: center; gap: 10px; }
+.instruction-panel h3 i { color: #3182ce; }
+
+.intro-text { color: #4a5568; margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.5; }
+
+.prep-list { list-style: none; padding: 0; margin: 0 0 2rem 0; }
+.prep-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 1.2rem;
+}
+
+.prep-icon {
+    width: 40px;
+    height: 40px;
+    background: #ebf8ff;
+    color: #3182ce;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.prep-text strong { display: block; color: #2d3748; font-size: 0.95rem; margin-bottom: 2px; }
+.prep-text span { color: #718096; font-size: 0.85rem; line-height: 1.4; display: block; }
+
+.support-box {
+    background: #f7fafc;
+    border-left: 4px solid #cbd5e0;
+    padding: 1rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.support-box i { font-size: 1.5rem; color: #a0aec0; }
+.support-box p { margin: 0; font-size: 0.85rem; color: #4a5568; }
+
+/* Right Panel: Form */
+.form-panel {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #edf2f7;
+}
+
+.form-panel h3 { margin: 0 0 1.5rem 0; color: #2d3748; padding-bottom: 10px; border-bottom: 2px solid #edf2f7; }
+
+/* Styling standard Django forms */
+.form-fields p {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-fields label {
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-fields input[type="text"],
+.form-fields input[type="date"],
+.form-fields input[type="time"],
+.form-fields select,
+.form-fields textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    background: #f8fafc;
+    transition: all 0.2s;
+}
+
+.form-fields input:focus,
+.form-fields select:focus,
+.form-fields textarea:focus {
+    outline: none;
+    border-color: #3182ce;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+.helptext { font-size: 0.8rem; color: #a0aec0; margin-top: 5px; }
+.errorlist { color: #e53e3e; list-style: none; padding: 0; font-size: 0.85rem; margin-top: 5px; font-weight: 500; }
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #edf2f7;
+}
+
+.btn-large { padding: 12px 24px; font-size: 1.05rem; }
+
+/* Mobile */
+@media (max-width: 768px) {
+    .booking-layout { grid-template-columns: 1fr; }
+    .header-main h2 { font-size: 1.4rem; }
+}

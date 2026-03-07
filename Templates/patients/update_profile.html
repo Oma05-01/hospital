@@ -1,58 +1,117 @@
 {% extends "patients/base.html" %}
+{% load static %}
+
+{% block title %}Update Profile | CareFirst Medical{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile-update.css' %}?v=1">
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Update Profile</h2>
-    <form method="post" class="form-group">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        <div class="row">
-            <div class="col-md-6">
-                <label for="id_phone_number">Phone Number</label>
-                {{ form.phone_number }}
-            </div>
-            <div class="col-md-6">
-                <label for="id_emergency_contact">Emergency Contact</label>
-                {{ form.emergency_contact }}
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="id_medical_history">Medical History</label>
-            {{ form.medical_history }}
-        </div>
-        <div class="form-group">
-            <label for="id_allergies">Allergies</label>
-            {{ form.allergies }}
-        </div>
-        <div class="form-group">
-            <label for="id_insurance_details">Insurance Details</label>
-            {{ form.insurance_details }}
-        </div>
-        <h3>Next of Kin Information</h3>
-        <div class="row">
-            <div class="col-md-6">
-                <label for="id_next_of_kin_name">Name</label>
-                {{ form.next_of_kin_name }}
-            </div>
-            <div class="col-md-6">
-                <label for="id_next_of_kin_phone_number">Phone Number</label>
-                {{ form.next_of_kin_phone_number }}
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="id_next_of_kin_email">Email</label>
-            {{ form.next_of_kin_email }}
-        </div>
-        <div class="form-group">
-            <label for="id_next_of_kin_address">Address</label>
-            {{ form.next_of_kin_address }}
-        </div>
-        <div class="form-group">
-            <label for="id_next_of_kin_relationship">Relationship</label>
-            {{ form.next_of_kin_relationship }}
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-    </form>
-    <br> <br> <br> <br>
+<div class="profile-header">
+    <div class="profile-title-group">
+        <h2><i class="fas fa-user-edit"></i> Update Medical Profile</h2>
+        <p>Ensure your contact and medical information is up to date.</p>
+    </div>
+    <div class="profile-actions">
+        <a href="{% url 'patients:profile' %}" class="btn btn-outline-primary">Cancel</a>
+    </div>
 </div>
+
+<form method="post" class="update-form" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="form-errors global-error">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <div class="profile-grid">
+
+        <div class="profile-card">
+            <div class="card-header">
+                <h3><i class="fas fa-phone-alt"></i> Contact Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group form-row">
+                    <div class="field-wrapper">
+                        <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+                        {{ form.phone_number }}
+                        {{ form.phone_number.errors }}
+                    </div>
+                    <div class="field-wrapper">
+                        <label for="{{ form.emergency_contact.id_for_label }}">Emergency Contact</label>
+                        {{ form.emergency_contact }}
+                        {{ form.emergency_contact.errors }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <div class="card-header">
+                <h3><i class="fas fa-notes-medical"></i> Medical Details</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group field-wrapper">
+                    <label for="{{ form.medical_history.id_for_label }}">Medical History</label>
+                    {{ form.medical_history }}
+                    {{ form.medical_history.errors }}
+                </div>
+                <div class="form-group field-wrapper">
+                    <label for="{{ form.allergies.id_for_label }}">Allergies</label>
+                    {{ form.allergies }}
+                    {{ form.allergies.errors }}
+                </div>
+                <div class="form-group field-wrapper">
+                    <label for="{{ form.insurance_details.id_for_label }}">Insurance Details</label>
+                    {{ form.insurance_details }}
+                    {{ form.insurance_details.errors }}
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-card full-width-card">
+            <div class="card-header">
+                <h3><i class="fas fa-users"></i> Next of Kin Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-row three-col">
+                    <div class="field-wrapper">
+                        <label for="{{ form.next_of_kin_name.id_for_label }}">Full Name</label>
+                        {{ form.next_of_kin_name }}
+                        {{ form.next_of_kin_name.errors }}
+                    </div>
+                    <div class="field-wrapper">
+                        <label for="{{ form.next_of_kin_relationship.id_for_label }}">Relationship</label>
+                        {{ form.next_of_kin_relationship }}
+                        {{ form.next_of_kin_relationship.errors }}
+                    </div>
+                    <div class="field-wrapper">
+                        <label for="{{ form.next_of_kin_phone_number.id_for_label }}">Phone Number</label>
+                        {{ form.next_of_kin_phone_number }}
+                        {{ form.next_of_kin_phone_number.errors }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="field-wrapper">
+                        <label for="{{ form.next_of_kin_email.id_for_label }}">Email Address</label>
+                        {{ form.next_of_kin_email }}
+                        {{ form.next_of_kin_email.errors }}
+                    </div>
+                    <div class="field-wrapper">
+                        <label for="{{ form.next_of_kin_address.id_for_label }}">Home Address</label>
+                        {{ form.next_of_kin_address }}
+                        {{ form.next_of_kin_address.errors }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-large"><i class="fas fa-save"></i> Save Changes</button>
+    </div>
+</form>
 {% endblock %}

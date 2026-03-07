@@ -1,80 +1,69 @@
-{% extends 'patients/base.html' %}
+{% extends "appointments/base.html" %}
+{% load static %}
+
+{% block title %}My Appointments | CareFirst Portal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/patient-portal.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <h2 class="text-center text-primary mb-4">Appointments</h2>
-    {% if appointments.exists %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Date</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">Doctor</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for appointment in appointments %}
-                <tr>
-                    <td>{{ appointment.date }}</td>
-                    <td>{{ appointment.time }}</td>
-                    <td>{{ appointment.doctor.user.username }}</td>
-                    <td>{{ appointment.consultation_type }}</td>
-                    <td>{{ appointment.get_status_display }}</td>
-                    <td>
-                        {% if appointment.status == 'Scheduled' %}
-                            <form method="POST" action="{% url 'appointments:appointment_list' %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
-                                <button type="submit" name="action" value="cancel" class="btn btn-danger btn-sm">Cancel</button>
-                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#rescheduleModal-{{ appointment.id }}">Reschedule</button>
-                            </form>
-
-                            <!-- Reschedule Modal -->
-                            <div class="modal fade" id="rescheduleModal-{{ appointment.id }}" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <form method="POST" action="{% url 'appointments:appointment_list' %}">
-                                            {% csrf_token %}
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="rescheduleModalLabel">Reschedule Appointment</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
-                                                <div class="mb-3">
-                                                    <label for="new_date" class="form-label">New Date</label>
-                                                    <input type="date" name="new_date" class="form-control" required>
-                                                </div>
-                                                <br>
-                                                <div class="mb-3">
-                                                    <label for="new_time" class="form-label">New Time</label>
-                                                    <input type="time" name="new_time" class="form-control" required>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="submit" name="action" value="reschedule" class="btn btn-primary">Submit Request</button>
-                                            <br> <br> <br>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <div class="alert alert-warning text-center" role="alert">
-            No appointments available.
+<div class="portal-wrapper">
+    <header class="portal-header">
+        <div class="header-text">
+            <h2><i class="far fa-calendar-alt"></i> My Upcoming Appointments</h2>
+            <p>Manage your clinic visits and virtual consultations.</p>
         </div>
-    {% endif %}
-</div>
+        <div class="header-actions">
+            <a href="{% url 'appointments:book_appointment' %}" class="btn btn-primary">Book Physical</a>
+            <a href="{% url 'appointments:book_virtual_consultation' %}" class="btn btn-outline-primary">Book Virtual</a>
+        </div>
+    </header>
 
-<br> <br> <br>
+    <div class="appointment-cards">
+        {% for appt in appointments %}
+            <div class="appt-card {% if appt.status == 'Cancelled' %}cancelled{% endif %}">
+                <div class="appt-date-block">
+                    <span class="month">{{ appt.date|date:"M" }}</span>
+                    <span class="day">{{ appt.date|date:"d" }}</span>
+                    <span class="year">{{ appt.date|date:"Y" }}</span>
+                </div>
+
+                <div class="appt-details">
+                    <h3>Dr. {{ appt.doctor.user.last_name }}</h3>
+                    <p class="specialty">{{ appt.doctor.specialty|default:"General Medicine" }}</p>
+                    <div class="appt-meta">
+                        <span class="time"><i class="far fa-clock"></i> {{ appt.time|time:"h:i A" }}</span>
+                        <span class="type"><i class="fas {% if appt.consultation_type == 'Virtual' %}fa-laptop-medical{% else %}fa-hospital-user{% endif %}"></i> {{ appt.consultation_type|default:"Physical" }} Visit</span>
+                        <span class="status-pill status-{{ appt.status|slugify }}">{{ appt.status }}</span>
+                    </div>
+                </div>
+
+                <div class="appt-actions">
+                    {% if appt.status != 'Cancelled' %}
+                        <form method="POST" action="{% url 'appointments:appointment_list' %}" onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="appointment_id" value="{{ appt.id }}">
+                            <input type="hidden" name="action" value="cancel">
+                            <button type="submit" class="btn btn-danger-text"><i class="fas fa-times"></i> Cancel</button>
+                        </form>
+
+                        <button class="btn btn-secondary-text" onclick="openRescheduleModal({{ appt.id }})">
+                            <i class="fas fa-calendar-day"></i> Reschedule
+                        </button>
+                    {% else %}
+                        <p class="text-muted">No actions available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <div class="icon-circle"><i class="far fa-calendar-check"></i></div>
+                <h3>No Upcoming Appointments</h3>
+                <p>You have no scheduled visits at this time.</p>
+                <a href="{% url 'appointments:book_appointment' %}" class="btn btn-primary mt-3">Book an Appointment Now</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

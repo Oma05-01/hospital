@@ -1,10 +1,102 @@
-<!-- view_vitals.html -->
-<h1>Vitals for {{ vitals.0.patient.username }}</h1>
-{% for vital in vitals %}
-    <p><strong>Blood Pressure:</strong> {{ vital.blood_pressure }}</p>
-    <p><strong>Temperature:</strong> {{ vital.temperature }} °C</p>
-    <p><strong>Pulse:</strong> {{ vital.pulse }} bpm</p>
-    <p><strong>Weight:</strong> {{ vital.weight }} kg</p>
-    <p><strong>Oxygen Saturation:</strong> {{ vital.oxygen_saturation }}%</p>
-    <hr>
-{% endfor %}
+{% extends 'staff/base.html' %}
+{% load static %}
+{% block title %}Vitals — {{ patient.user.get_full_name|default:patient.user.username }}{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'staff/view_vitals.css' %}">
+
+<div class="vv-wrap">
+    <nav class="vv-topbar">
+        <a href="{% url 'staff:dashboard' %}" class="vv-brand">
+            <div class="vv-brand-dot"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg></div>
+            MediCore
+        </a>
+        <div class="vv-topbar-right">
+            <a href="{% url 'staff:display_patient' patient_id=patient.id %}" class="vv-back">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Patient Profile
+            </a>
+            <a href="{% url 'staff:add_vitals' patient_id=patient.id %}" class="vv-add">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Record Vitals
+            </a>
+        </div>
+    </nav>
+
+    <div class="vv-hero">
+        <div class="vv-hero-eyebrow">Clinical Record</div>
+        <h1>Vital Signs</h1>
+        <p>{{ patient.user.get_full_name|default:patient.user.username }} &mdash; {{ vitals|length }} reading{{ vitals|length|pluralize }} on record</p>
+    </div>
+
+    <div class="vv-body">
+        {% if vitals %}
+
+        <!-- Latest reading -->
+        {% with v=vitals.0 %}
+        <div class="latest-banner">
+            <div class="latest-label">Most Recent — {{ v.recorded_at|date:"d M Y, H:i" }}</div>
+            <div class="vitals-strip">
+                <div class="vital-box">
+                    <div class="vital-lbl">BP</div>
+                    <div class="vital-val">{{ v.blood_pressure|default:"—" }}</div>
+                    <div class="vital-unit">mmHg</div>
+                </div>
+                <div class="vital-box">
+                    <div class="vital-lbl">Temp</div>
+                    <div class="vital-val">{{ v.temperature|default:"—" }}</div>
+                    <div class="vital-unit">°C</div>
+                </div>
+                <div class="vital-box">
+                    <div class="vital-lbl">Pulse</div>
+                    <div class="vital-val">{{ v.pulse|default:"—" }}</div>
+                    <div class="vital-unit">bpm</div>
+                </div>
+                <div class="vital-box">
+                    <div class="vital-lbl">SpO₂</div>
+                    <div class="vital-val">{{ v.oxygen_saturation|default:"—" }}</div>
+                    <div class="vital-unit">%</div>
+                </div>
+                <div class="vital-box">
+                    <div class="vital-lbl">Weight</div>
+                    <div class="vital-val">{{ v.weight|default:"—" }}</div>
+                    <div class="vital-unit">kg</div>
+                </div>
+            </div>
+        </div>
+        {% endwith %}
+
+        {% if vitals|length > 1 %}
+        <div class="history-header">Full History</div>
+        <div class="history-list">
+            {% for vital in vitals %}
+            {% if not forloop.first %}
+            <div class="history-card">
+                <div class="history-card-top">
+                    <span class="history-date">{{ vital.recorded_at|date:"d M Y, H:i" }}</span>
+                    {% if vital.recorded_by %}<span class="history-by">Recorded by {{ vital.recorded_by.user.get_full_name|default:vital.recorded_by.user.username }}</span>{% endif %}
+                </div>
+                <div class="history-vitals">
+                    <div class="hv-item"><span class="hv-lbl">BP</span><span class="hv-val">{{ vital.blood_pressure|default:"—" }} mmHg</span></div>
+                    <div class="hv-item"><span class="hv-lbl">Temp</span><span class="hv-val">{{ vital.temperature|default:"—" }} °C</span></div>
+                    <div class="hv-item"><span class="hv-lbl">Pulse</span><span class="hv-val">{{ vital.pulse|default:"—" }} bpm</span></div>
+                    <div class="hv-item"><span class="hv-lbl">SpO₂</span><span class="hv-val">{{ vital.oxygen_saturation|default:"—" }}%</span></div>
+                    <div class="hv-item"><span class="hv-lbl">Weight</span><span class="hv-val">{{ vital.weight|default:"—" }} kg</span></div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <p>No vitals have been recorded for this patient yet.</p>
+            <a href="{% url 'staff:add_vitals' patient_id=patient.id %}">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
+                Record First Vitals
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

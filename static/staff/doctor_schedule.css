@@ -1,0 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+:root {
+    --navy:      #0B1F3A;
+    --teal:      #0D7377;
+    --teal-lt:   #14A9A0;
+    --teal-pale: #EAF4F4;
+    --white:     #FFFFFF;
+    --surface:   #F5F8FB;
+    --border:    #DDE5EF;
+    --muted:     #6B7A8D;
+    --text:      #1A2B40;
+    --shadow-sm: 0 2px 8px rgba(11,31,58,.07);
+    --shadow-md: 0 6px 24px rgba(11,31,58,.10);
+
+    /* Weekend accent */
+    --weekend:      #7B5EA7;
+    --weekend-pale: #F3EEFF;
+}
+
+.sched-wrap {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    min-height: 100vh;
+    color: var(--text);
+}
+
+/* ── Topbar ── */
+.sched-topbar {
+    background: var(--navy);
+    padding: 0 32px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+}
+.sched-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; color: white; text-decoration: none;
+}
+.sched-brand-dot {
+    width: 32px; height: 32px; background: var(--teal);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+}
+.sched-brand-dot svg { width: 18px; height: 18px; fill: white; }
+.sched-back {
+    font-size: .8rem; color: rgba(255,255,255,.55);
+    text-decoration: none; padding: 6px 14px;
+    border: 1px solid rgba(255,255,255,.12); border-radius: 8px; transition: all .2s;
+    display: flex; align-items: center; gap: 6px;
+}
+.sched-back:hover { color: white; border-color: rgba(255,255,255,.3); }
+.sched-back svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+/* ── Hero ── */
+.sched-hero {
+    background: linear-gradient(130deg, var(--navy) 0%, #0f3460 60%, #0D7377 100%);
+    padding: 36px 32px 72px;
+    position: relative; overflow: hidden;
+}
+.sched-hero::after {
+    content: ''; position: absolute; right: -60px; top: -60px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: rgba(13,115,119,.2); pointer-events: none;
+}
+.sched-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem; color: white; margin-bottom: 6px;
+    position: relative; z-index: 1;
+}
+.sched-hero p { color: rgba(255,255,255,.5); font-size: .875rem; z-index: 1; position: relative; }
+
+/* ── Body ── */
+.sched-body {
+    max-width: 860px;
+    margin: -40px auto 0;
+    padding: 0 24px 48px;
+    position: relative; z-index: 2;
+}
+
+/* ── Info strip ── */
+.sched-info {
+    background: white; border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 20px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+    font-size: .83rem; color: var(--muted);
+}
+.sched-info svg { width: 16px; height: 16px; stroke: var(--teal); fill: none; stroke-width: 2; flex-shrink: 0; }
+
+/* ── Day cards ── */
+.day-grid { display: flex; flex-direction: column; gap: 10px; }
+
+.day-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 22px;
+    display: grid;
+    grid-template-columns: 120px 1fr 1fr auto;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .2s, border-color .2s;
+}
+.day-card:hover { box-shadow: var(--shadow-md); }
+.day-card.is-weekend { border-left: 3px solid var(--weekend); }
+.day-card.is-off { background: #FAFBFC; }
+
+.day-name {
+    display: flex; align-items: center; gap: 8px;
+}
+.day-label {
+    font-weight: 600; font-size: .9rem; color: var(--navy);
+}
+.day-badge {
+    font-size: .65rem; font-weight: 700;
+    padding: 2px 7px; border-radius: 20px;
+    letter-spacing: .06em; text-transform: uppercase;
+}
+.day-badge.weekend { background: var(--weekend-pale); color: var(--weekend); }
+.day-badge.today   { background: var(--teal-pale);    color: var(--teal); }
+
+.time-field { display: flex; flex-direction: column; gap: 4px; }
+.time-field label {
+    font-size: .72rem; font-weight: 600;
+    color: var(--muted); letter-spacing: .06em; text-transform: uppercase;
+}
+.time-field input[type="time"] {
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem; color: var(--navy);
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    background: #FAFCFE;
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+    width: 100%;
+}
+.time-field input[type="time"]:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(13,115,119,.1);
+    background: white;
+}
+.day-card.is-weekend .time-field input[type="time"]:focus {
+    border-color: var(--weekend);
+    box-shadow: 0 0 0 3px rgba(123,94,167,.1);
+}
+
+/* Off toggle */
+.off-toggle { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.off-toggle label {
+    font-size: .7rem; font-weight: 600;
+    color: var(--muted); letter-spacing: .05em; text-transform: uppercase;
+    cursor: pointer;
+}
+.toggle-switch { position: relative; width: 36px; height: 20px; cursor: pointer; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+    position: absolute; inset: 0;
+    background: var(--border); border-radius: 20px;
+    transition: background .2s;
+}
+.toggle-thumb {
+    position: absolute; top: 3px; left: 3px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: white; transition: transform .2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.15);
+}
+.toggle-switch input:checked ~ .toggle-track { background: var(--muted); }
+.toggle-switch input:checked ~ .toggle-thumb { transform: translateX(16px); }
+
+/* Submit bar */
+.submit-bar {
+    margin-top: 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+    background: white; border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 24px;
+    box-shadow: var(--shadow-sm);
+}
+.submit-bar p { font-size: .83rem; color: var(--muted); }
+.btn-save {
+    padding: 11px 28px;
+    background: var(--navy); color: white;
+    border: none; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem; font-weight: 600;
+    cursor: pointer; transition: background .2s, transform .1s;
+    white-space: nowrap;
+}
+.btn-save:hover { background: var(--teal); }
+.btn-save:active { transform: scale(.98); }
+
+@media (max-width: 640px) {
+    .day-card { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
+    .day-name { grid-column: 1 / -1; }
+    .off-toggle { flex-direction: row; align-self: end; }
+    .sched-body { padding: 0 16px 40px; }
+    .submit-bar { flex-direction: column; align-items: stretch; text-align: center; }
+    .btn-save { width: 100%; }
+}

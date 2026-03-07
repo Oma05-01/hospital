@@ -4,189 +4,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        header {
-            background: #0078d4;
-            color: #fff;
-            padding: 1rem 0;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        header p {
-            font-size: 1.2rem;
-        }
-
-        nav {
-            margin: 1rem 0;
-        }
-
-        nav a {
-            margin: 0 10px;
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .hero {
-            background: url('https://via.placeholder.com/1920x1080') no-repeat center center/cover;
-            height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            text-align: center;
-        }
-
-        .hero h2 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .hero a {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: #0078d4;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        .hero a:hover {
-            background: #005a9e;
-        }
-
-        section {
-            padding: 2rem;
-            text-align: center;
-        }
-
-        section h3 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        section p {
-            font-size: 1rem;
-            max-width: 600px;
-            margin: 0 auto 1.5rem;
-        }
-
-        .features {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-
-        .feature {
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 1rem;
-            margin: 1rem;
-            flex: 1;
-            min-width: 280px;
-            max-width: 400px;
-        }
-
-        footer {
-            background: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1rem 0;
-            margin-top: 2rem;
-        }
-
-        footer p {
-            margin-bottom: 0.5rem;
-        }
-
-        footer a {
-            color: #0078d4;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <title>Welcome to {{ hospital_name|default:"Our Hospital" }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
 </head>
 <body>
     <header>
-        <h1>Welcome to Our Website</h1>
-        <p>Your gateway to excellence</p>
-        <nav>
-            <a href="#features">Features</a>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
-        </nav>
+        <div class="header-container">
+            <h1>{{ hospital_name|default:"CareFirst Medical" }}</h1>
+            <p>Compassionate care, close to home.</p>
+            <nav>
+                <a href="#services">Our Services</a>
+                <a href="#specialists">Specialists</a>
+                <a href="#contact">Contact & Location</a>
+            </nav>
+        </div>
     </header>
 
     <div class="hero">
-        <div>
-            <h2>Discover Endless Possibilities</h2>
-            <p>Join us today and start your journey towards success!</p>
-            <a href="{% url 'patients:register' %}">Get Started</a>
+        <div class="hero-content">
+            <h2>Your Health is Our Priority</h2>
+            <p>Manage your appointments, view test results, and connect with your care team securely.</p>
+            <div class="hero-actions">
+                <a href="{% url 'patients:register' %}" class="btn-primary">Access Patient Portal</a>
+                <a href="#contact" class="btn-secondary">Emergency Info</a>
+            </div>
         </div>
     </div>
 
-    <section id="features">
-        <h3>Our Features</h3>
+    <section id="services">
+        <h3>Why Choose Us?</h3>
+        <p class="section-subtitle">We provide comprehensive healthcare solutions tailored to your needs.</p>
+
         <div class="features">
             <div class="feature">
-                <h4>Innovative Solutions</h4>
-                <p>We bring you cutting-edge solutions to make your life easier.</p>
+                <div class="feature-icon">🚑</div>
+                <h4>24/7 Emergency</h4>
+                <p>Round-the-clock emergency care with state-of-the-art life-saving equipment and expert trauma teams.</p>
             </div>
             <div class="feature">
-                <h4>User-Friendly Interface</h4>
-                <p>Our platform is designed with simplicity and ease of use in mind.</p>
+                <div class="feature-icon">🩺</div>
+                <h4>Expert Specialists</h4>
+                <p>Access to board-certified doctors across cardiology, pediatrics, neurology, and more.</p>
             </div>
             <div class="feature">
-                <h4>24/7 Support</h4>
-                <p>Our dedicated team is here to help you anytime you need.</p>
+                <div class="feature-icon">📱</div>
+                <h4>Digital Health Portal</h4>
+                <p>Seamlessly book appointments, access medical records, and request prescription refills online.</p>
             </div>
         </div>
     </section>
 
-    <section id="about">
-        <h3>About Us</h3>
-        <p>We are a company dedicated to providing world-class services and products. Our mission is to deliver the best value to our customers through innovation, integrity, and excellence.</p>
+    <section id="about" class="bg-light">
+        <h3>About Our Facility</h3>
+        <p>With over 20 years of excellence in healthcare, our facility is equipped with the latest medical technology. Our mission is to deliver the highest standard of patient-centered care with integrity and compassion.</p>
     </section>
 
     <section id="contact">
-        <h3>Contact Us</h3>
-        <p>If you have any questions or need assistance, feel free to reach out to us at:</p>
-        <p>Email: <a href="mailto:support@example.com">support@example.com</a></p>
-        <p>Phone: +123 456 7890</p>
+        <h3>Contact & Location</h3>
+        <p>If you have any questions or need immediate assistance, please reach out.</p>
+        <div class="contact-info">
+            <p><strong>Email:</strong> <a href="mailto:support@hospitalapp.com">support@hospitalapp.com</a></p>
+            <p><strong>Phone:</strong> +234 800 123 4567</p>
+            <p><strong>Address:</strong> 123 Healthway Drive, Medical District</p>
+        </div>
     </section>
 
     <footer>
-        <p>&copy; 2024 Our Website. All Rights Reserved.</p>
-        <p>Follow us on <a href="#">Twitter</a>, <a href="#">Facebook</a>, and <a href="#">Instagram</a>.</p>
+        <p>&copy; 2026 {{ hospital_name|default:"CareFirst Medical" }}. All Rights Reserved.</p>
+        <p class="footer-links">
+            <a href="#">Privacy Policy</a> |
+            <a href="#">Terms of Service</a> |
+            <a href="#">Patient Rights</a>
+        </p>
     </footer>
 </body>
 </html>

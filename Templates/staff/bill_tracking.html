@@ -1,14 +1,81 @@
-<h1>Bill Tracking for {{ patient.user.username }}</h1>
+{% extends "staff/base.html" %}
+{% load static %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Bill</button>
-</form>
+{% block title %}Billing: {{ patient.user.last_name }}{% endblock %}
 
-<h2>Existing Bills</h2>
-<ul>
-    {% for bill in bills %}
-        <li>Bill ID: {{ bill.id }} - Amount: {{ bill.total_amount }} - Status: {{ bill.status }}</li>
-    {% endfor %}
-</ul>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-billing.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="billing-container">
+    <header class="billing-header">
+        <div class="patient-summary">
+            <h2>Patient Billing Ledger</h2>
+            <p><strong>Patient:</strong> {{ patient.user.get_full_name }} | <strong>ID:</strong> #{{ patient.id }}</p>
+        </div>
+        <div class="financial-actions">
+            <button class="btn btn-primary" onclick="toggleBillForm()">+ Generate New Bill</button>
+        </div>
+    </header>
+
+    <div id="billFormContainer" class="form-overlay" style="display:none;">
+        <div class="form-card">
+            <h3>Generate Invoice</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="form-btns">
+                    <button type="button" class="btn btn-outline" onclick="toggleBillForm()">Cancel</button>
+                    <button type="submit" class="btn btn-success">Create Bill</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <section class="bill-history">
+        <h3>Invoice History</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bill ID</th>
+                        <th>Date</th>
+                        <th>Service Description</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in bills %}
+                    <tr>
+                        <td>#INV-{{ bill.id }}</td>
+                        <td>{{ bill.created_at|date:"M d, Y" }}</td>
+                        <td>{{ bill.service_name|default:"General Consultation" }}</td>
+                        <td class="amount">₦{{ bill.amount }}</td>
+                        <td>
+                            <span class="status-pill status-{{ bill.status|lower }}">{{ bill.status }}</span>
+                        </td>
+                        <td>
+                            <a href="{% url 'staff:insurance_claim_submission' bill.id %}" class="btn-link">File Claim</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-msg">No invoices found for this patient.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script>
+    function toggleBillForm() {
+        const form = document.getElementById('billFormContainer');
+        form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+    }
+</script>
+{% endblock %}

@@ -1,153 +1,102 @@
 {% extends 'staff/base.html' %}
-
-{% block title %} Send Staff Message {% endblock %}
+{% load static %}
+{% block title %}Compose Message{% endblock %}
 
 {% block content %}
-<style>
-    body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f7fc;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
+    <link rel="stylesheet" href="{% static 'staff/send_staff_message.css' %}">
 
-/* Container to wrap the content */
-.container {
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
 
-h1 {
-    color: #2c3e50;
-    font-size: 2em;
-    text-align: center;
-    margin-bottom: 30px;
-}
+<div class="wrap">
+    <nav class="topbar">
+        <a href="{% url 'staff:dashboard' %}" class="brand">
+            <div class="brand-dot"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg></div>
+            MediCore
+        </a>
+        <a href="{% url 'staff:staff_messages' %}" class="back">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Messages
+        </a>
+    </nav>
 
-/* Styling for the form elements */
-.form-group {
-    margin-bottom: 20px;
-}
+    <div class="hero">
+        <div class="hero-eyebrow">Staff</div>
+        <h1>Compose Message</h1>
+        <p>Signed in as {{ request.user.get_full_name|default:request.user.username }}</p>
+    </div>
 
-label {
-    font-size: 1.1em;
-    color: #555;
-}
+    <div class="body">
+        <div class="card">
+            <form method="POST">
+                {% csrf_token %}
 
-select, textarea, button {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 1em;
-}
+                <div class="field">
+                    <label for="recipient_id">To</label>
+                    <select id="recipient_id" name="recipient_id" required>
+                        <option value="" disabled selected>Select a recipient…</option>
+                        {% for member in staff_members %}
+                        <option value="{{ member.id }}"
+                            data-name="{{ member.user.get_full_name|default:member.user.username }}"
+                            data-role="{{ member.role|default:'' }}"
+                            {% if posted.recipient_id == member.id|stringformat:"s" %}selected{% endif %}>
+                            {{ member.user.get_full_name|default:member.user.username }}{% if member.role %} — {{ member.role|capfirst }}{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div class="recipient-preview" id="recipient-preview">
+                        <div class="rp-avatar" id="rp-avatar"></div>
+                        <div>
+                            <div class="rp-name" id="rp-name"></div>
+                            <div class="rp-role" id="rp-role"></div>
+                        </div>
+                    </div>
+                </div>
 
-select, textarea {
-    background-color: #fafafa;
-}
+                <div class="field">
+                    <label for="message_content">Message</label>
+                    <textarea id="message_content" name="message_content"
+                              placeholder="Write your message here…"
+                              maxlength="2000"
+                              required>{{ posted.message_content|default:'' }}</textarea>
+                    <div class="char-count"><span id="char-count">0</span> / 2000</div>
+                </div>
 
-select:focus, textarea:focus, button:focus {
-    outline: none;
-    border-color: #3498db;
-}
-
-textarea {
-    resize: vertical;
-}
-
-/* Button styling */
-button {
-    background-color: #3498db;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #2980b9;
-}
-
-/* Success and error messages */
-.messages {
-    margin-bottom: 20px;
-    padding: 15px;
-    border-radius: 8px;
-}
-
-.message {
-    margin-bottom: 10px;
-    font-size: 1em;
-}
-
-.message.success {
-    background-color: #28a745;
-    color: white;
-}
-
-.message.error {
-    background-color: #e74c3c;
-    color: white;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 1.5em;
-    }
-
-    select, textarea, button {
-        font-size: 0.9em;
-    }
-}
-</style>
-
-<div class="container">
-    <h1>Send Message</h1>
-    <h3>Welcome {{ request.user.username }} </h3>
-    
-    <!-- Display any success or error messages -->
-    {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <p class="message {{ message.tags }}">{{ message }}</p>
-            {% endfor %}
+                <div class="form-actions">
+                    <a href="{% url 'staff:staff_messages' %}" class="btn-cancel">Cancel</a>
+                    <button type="submit" class="btn-send">
+                        <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                        Send Message
+                    </button>
+                </div>
+            </form>
         </div>
-    {% endif %}
-
-    <!-- Message sending form -->
-    <form method="POST">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="recipient">Recipient</label>
-            <select id="recipient" name="recipient_id" class="form-control" required>
-                <option value="" disabled selected>Select a recipient</option>
-                {% for staff_member in staff_members %}
-                    <option value="{{ staff_member.id }}">{{ staff_member.user.username }} </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="message_content">Message Content</label>
-            <textarea id="message_content" name="message_content" class="form-control" rows="6" required placeholder="Enter your message here"></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Send Message</button>
-    </form>
+    </div>
 </div>
 
+<script>
+    // Character counter
+    const ta = document.getElementById('message_content');
+    const counter = document.getElementById('char-count');
+    function updateCount() { counter.textContent = ta.value.length; }
+    ta.addEventListener('input', updateCount);
+    updateCount();
+
+    // Recipient preview card
+    const sel     = document.getElementById('recipient_id');
+    const preview = document.getElementById('recipient-preview');
+    const avatar  = document.getElementById('rp-avatar');
+    const nameEl  = document.getElementById('rp-name');
+    const roleEl  = document.getElementById('rp-role');
+
+    function updatePreview() {
+        const opt = sel.options[sel.selectedIndex];
+        if (!opt || !opt.value) { preview.classList.remove('visible'); return; }
+        const name = opt.dataset.name || '';
+        const role = opt.dataset.role || '';
+        avatar.textContent = name.trim().charAt(0).toUpperCase();
+        nameEl.textContent = name;
+        roleEl.textContent = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Staff';
+        preview.classList.add('visible');
+    }
+    sel.addEventListener('change', updatePreview);
+    updatePreview();
+</script>
 {% endblock %}
-
-
-/* General styling for the page */
-

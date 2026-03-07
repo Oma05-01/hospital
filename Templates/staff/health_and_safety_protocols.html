@@ -1,13 +1,46 @@
-{% extends 'base_generic.html' %}
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Health & Safety SOPs | Compliance{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-compliance.css' %}">
+{% endblock %}
 
 {% block content %}
-  <h1>Health & Safety Protocols</h1>
-  <ul>
-    {% for protocol in protocols %}
-      <li>
-        <h3>{{ protocol.name }}</h3>
-        <p>{{ protocol.description }}</p>
-      </li>
-    {% endfor %}
-  </ul>
+<div class="compliance-wrapper">
+    <header class="compliance-header safety-theme">
+        <div class="header-main">
+            <h2><i class="fas fa-hard-hat"></i> Health & Safety Protocols</h2>
+            <p>Official facility guidelines for maintaining a secure clinical environment.</p>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search protocols..." class="sop-search">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+    </header>
+
+    <div class="sop-grid">
+        {% for protocol in protocols %}
+            <div class="sop-card">
+                <div class="sop-card-header">
+                    <span class="category-tag type-safety">Facility Safety</span>
+                    <h3>{{ protocol.title }}</h3>
+                </div>
+                <div class="sop-card-body">
+                    <p>{{ protocol.description|truncatewords:25|default:"No description provided for this protocol." }}</p>
+                </div>
+                <div class="sop-card-footer">
+                    <span class="last-reviewed">Last Reviewed: {{ protocol.updated_at|date:"M Y"|default:"Recently" }}</span>
+                    <button class="btn-read-more">Read Full Policy <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-compliance">
+                <i class="fas fa-clipboard-list fa-3x"></i>
+                <p>No Health & Safety protocols have been published yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

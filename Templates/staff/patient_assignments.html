@@ -1,10 +1,58 @@
-<!-- patient_assignments.html -->
-<h1>Assigned Patients</h1>
-<ul>
-    {% for assignment in assignments %}
-        <li>
-            <strong>{{ assignment.patient.username }}</strong> -
-            <a href="{% url 'manage_patient_assignment' assignment.id %}">Manage Assignment</a>
-        </li>
-    {% endfor %}
-</ul>
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}My Patients | Ward Roster{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-assignments.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="roster-wrapper">
+    <header class="roster-header">
+        <div class="header-main">
+            <h2><i class="fas fa-clipboard-list"></i> My Assigned Patients</h2>
+            <p>Active roster of patients currently under your clinical care.</p>
+        </div>
+        <div class="roster-stats">
+            <span class="stat-badge">{{ assignments.count }} Active Cases</span>
+        </div>
+    </header>
+
+    <div class="patient-grid">
+        {% for assignment in assignments %}
+            <div class="patient-card">
+                <div class="card-top">
+                    <div class="patient-avatar">
+                        {{ assignment.patient.user.first_name|slice:":1" }}{{ assignment.patient.user.last_name|slice:":1" }}
+                    </div>
+                    <div class="patient-identity">
+                        <h3>{{ assignment.patient.user.get_full_name }}</h3>
+                        <span class="patient-id">#PAT-{{ assignment.patient.id|stringformat:"04d" }}</span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <p class="assignment-date"><i class="far fa-clock"></i> Assigned: {{ assignment.assigned_at|date:"M d, Y"|default:"Recently" }}</p>
+                    <div class="notes-preview">
+                        <strong>Current Notes:</strong>
+                        <p>{{ assignment.notes|truncatewords:15|default:"No active notes for this assignment." }}</p>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <a href="{% url 'staff:manage_patient_assignment' assignment.id %}" class="btn btn-outline-primary btn-full">
+                        <i class="fas fa-edit"></i> Manage Assignment
+                    </a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-roster">
+                <i class="fas fa-user-md fa-3x"></i>
+                <h3>No Assigned Patients</h3>
+                <p>You currently do not have any active patients on your roster.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

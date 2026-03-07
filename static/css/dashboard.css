@@ -1,0 +1,210 @@
+/* Dashboard Header */
+.dashboard-header {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    border-left: 5px solid var(--primary-blue);
+}
+
+.dashboard-header h2 {
+    color: var(--secondary-blue);
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+    color: #666;
+    margin: 0;
+}
+
+/* Upcoming Appointments Widget */
+.upcoming-appointments-section {
+    margin-bottom: 3rem;
+}
+
+.section-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #e1e8ed;
+    padding-bottom: 0.5rem;
+}
+
+.section-title-row h3 {
+    color: var(--text-dark);
+    font-size: 1.4rem;
+}
+
+.btn-text {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-text:hover {
+    text-decoration: underline;
+}
+
+.appointment-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.appointment-card {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.date-badge {
+    background: var(--bg-light);
+    border: 1px solid #d1d8dd;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    margin-right: 1.5rem;
+    min-width: 80px;
+}
+
+.date-badge .month {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    text-transform: uppercase;
+}
+
+.date-badge .day {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.appointment-details {
+    flex-grow: 1;
+}
+
+.appointment-details h4 {
+    margin: 0 0 0.25rem 0;
+    color: var(--secondary-blue);
+}
+
+.appointment-details p {
+    margin: 0;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.appointment-details .time {
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+}
+
+.btn-outline-primary {
+    border: 1px solid var(--primary-blue);
+    color: var(--primary-blue);
+    background: transparent;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-blue);
+    color: #ffffff;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 8px;
+    color: #666;
+}
+
+.empty-state a {
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+
+.empty-state a:hover {
+    color: var(--primary-blue);
+}
+
+/* Dashboard Tools Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.dashboard-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid transparent;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    border-color: #b3d4e6;
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+}
+
+.dashboard-card h4 {
+    color: var(--secondary-blue);
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.dashboard-card p {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .appointment-card {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: center;
+    }
+
+    .date-badge {
+        margin: 0 auto 1rem auto;
+    }
+
+    .appointment-actions {
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    .appointment-actions .btn {
+        display: block;
+        text-align: center;
+    }
+}

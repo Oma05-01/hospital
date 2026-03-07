@@ -1,11 +1,66 @@
 {% extends 'patients/base.html' %}
+{% load static %}
+
+{% block title %}Report: {{ report.title }} | CareFirst Medical{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/report-detail.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Report Details</h2>
-    <p><strong>Title:</strong> {{ report.title }}</p>
-    <p><strong>Type:</strong> {{ report.get_report_type_display }}</p>
-    <p><strong>Generated At:</strong> {{ report.generated_at }}</p>
-    <a href="{% url 'patients:download_report' report.id %}" class="btn btn-secondary">Download Report</a>
+<div class="report-detail-container">
+    <nav class="breadcrumb">
+        <a href="{% url 'patients:report_list' %}"><i class="fas fa-chevron-left"></i> Back to All Reports</a>
+    </nav>
+
+    <div class="report-main-card">
+        <div class="report-visual-header">
+            <div class="file-icon-large">
+                <i class="fas fa-file-pdf"></i>
+            </div>
+            <div class="header-text">
+                <span class="category-tag tag-{{ report.report_type }}">{{ report.get_report_type_display }}</span>
+                <h2>{{ report.title }}</h2>
+                <p class="subtitle">Document ID: #REP-{{ report.id|stringformat:"05d" }}</p>
+            </div>
+        </div>
+
+        <div class="report-info-grid">
+            <div class="info-item">
+                <label><i class="far fa-calendar-alt"></i> Date Generated</label>
+                <span>{{ report.generated_at|date:"F d, Y" }}</span>
+                <small>{{ report.generated_at|time:"g:i A" }}</small>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-user-md"></i> Authorized By</label>
+                <span>Dr. {{ report.generated_by.user.get_full_name|default:report.generated_by.user.username }}</span>
+                <small>{{ report.generated_by.specialty|default:"Medical Staff" }}</small>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-shield-alt"></i> Security Level</label>
+                <span>Confidential</span>
+                <small>Patient Access Only</small>
+            </div>
+        </div>
+
+        <div class="report-description">
+            <h3>Document Summary</h3>
+            <p>
+                This document is an official <strong>{{ report.get_report_type_display }}</strong> report generated for
+                <strong>{{ report.generated_for.user.get_full_name }}</strong>.
+                It contains sensitive medical or financial information. Please ensure you are in a private environment
+                before downloading or printing this record.
+            </p>
+        </div>
+
+        <div class="report-actions">
+            <a href="{% url 'patients:download_report' report.id %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-download"></i> Download PDF Document
+            </a>
+            <button onclick="window.print();" class="btn btn-outline-secondary">
+                <i class="fas fa-print"></i> Print Summary
+            </button>
+        </div>
+    </div>
 </div>
 {% endblock %}

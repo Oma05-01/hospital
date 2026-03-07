@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 import os
 from .models import *
-from patients.models import Patient
+from patients.models import PatientProfile
 
 def generate_report_pdf(report):
     context = {
@@ -18,7 +18,7 @@ def generate_report_pdf(report):
 def fetch_data_for_report(report_type):
     if report_type == 'patient_care':
         # Example: Fetch patient care data
-        return Patient.objects.all()
+        return PatientProfile.objects.all()
     elif report_type == 'financial':
         # Example: Fetch financial data
         return Bill.objects.all()

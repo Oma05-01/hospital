@@ -1,28 +1,129 @@
 {% extends 'staff/base.html' %}
+{% load static %}
 
-{% block title %} Admin Dashboard {% endblock %}
+{% block title %}Admin Dashboard — MediCore{% endblock %}
 
 {% block content %}
-    <h1>Welcome, Admin {{ user.first_name }}</h1>
-    <p>Here are your tasks for today:</p>
+    <link rel="stylesheet" href="{% static 'staff/admin_dash.css' %}">
 
+<div class="db-wrap">
 
-    <a href="{% url 'staff:search_patient' %}"> <button type="submit">Search for patients</button> </a>
+    <nav class="db-topbar">
+        <div class="db-brand">
+            <div class="db-brand-dot">
+                <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg>
+            </div>
+            MediCore
+        </div>
+        <div class="db-topbar-right">
+            <div class="db-avatar">{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}</div>
+            <a href="{% url 'staff:logout' %}" class="db-logout">Sign out</a>
+        </div>
+    </nav>
 
-    <!-- Display admin-specific tasks, like order management, audit logs, etc. -->
-    <!-- Figure our what will be on this dashboard since i have updated it -->
+    <div class="db-hero">
+        <div class="db-role-badge">
+            <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:currentColor"><circle cx="12" cy="12" r="4"/></svg>
+            Administrator
+        </div>
+        <h1>Welcome, {{ user.get_full_name|default:user.username }}</h1>
+        <p>Hospital-wide operations and management overview.</p>
+    </div>
 
-    <ul>
-        <li><a href="{% url 'staff:order_management' %}">Order Management</a></li>
-        <li><a href="{% url 'staff:stock_alerts' %}">Stock Alerts</a></li>
-        <li><a href="{% url 'staff:medical_supply_inventory' %}">Medical Supply Inventory</a></li>
-        <li><a href="{% url 'staff:dashboard' %}">Hospital Dashboard</a></li>
-        <li><a href="{% url 'staff:resource_allocation' %}">Resource Allocation</a></li>
-        <li><a href="{% url 'staff:report_list' %}">Report List</a></li>
-        <li><a href="{% url 'staff:audit_log_list' %}">Audit Logs</a></li>
-        <li><a href="{% url 'staff:staff_list' %}">Staff List</a></li>
-        <li><a href="{% url 'staff:staff_certifications' staff_id=1 %}">Staff Certifications</a></li>
-<!--        <li><a href="#">Notifications</a></li>-->
-        <li><a href="{% url 'staff:send_staff_message' %}"> Send Staff Message </a></li>
-    </ul>
+    <div class="db-body">
+
+        <div class="db-search-card">
+            <svg viewBox="0 0 24 24" style="width:20px;height:20px;flex-shrink:0" stroke="#6B7A8D" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.35-4.35"/></svg>
+            <span>Search patients across all departments</span>
+            <a href="{% url 'staff:search_patient' %}">Search Patients</a>
+        </div>
+
+        <div class="db-section-title">Operations</div>
+        <div class="db-grid">
+            <a href="{% url 'staff:dashboard' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                </div>
+                <div class="db-card-label">Hospital Dashboard</div>
+                <div class="db-card-desc">High-level overview of hospital operations</div>
+            </a>
+            <a href="{% url 'staff:resource_allocation' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                <div class="db-card-label">Resource Allocation</div>
+                <div class="db-card-desc">Manage beds, equipment, and staff resources</div>
+            </a>
+            <a href="{% url 'staff:order_management' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 004 0M9 5a2 2 0 014 0"/></svg>
+                </div>
+                <div class="db-card-label">Order Management</div>
+                <div class="db-card-desc">Track and manage procurement orders</div>
+            </a>
+        </div>
+
+        <div class="db-section-title">Inventory & Supplies</div>
+        <div class="db-grid">
+            <a href="{% url 'staff:stock_alerts' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+                </div>
+                <div class="db-card-label">Stock Alerts</div>
+                <div class="db-card-desc">Critical low-stock notifications</div>
+            </a>
+            <a href="{% url 'staff:medical_supply_inventory' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM16 3H8v4h8V3z"/></svg>
+                </div>
+                <div class="db-card-label">Supply Inventory</div>
+                <div class="db-card-desc">Full catalogue of medical supplies and stock levels</div>
+            </a>
+        </div>
+
+        <div class="db-section-title">Staff & Compliance</div>
+        <div class="db-grid">
+            <a href="{% url 'staff:staff_list' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                </div>
+                <div class="db-card-label">Staff List</div>
+                <div class="db-card-desc">Browse all registered staff members</div>
+            </a>
+            <a href="{% url 'staff:staff_certifications' staff_id=1 %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                </div>
+                <div class="db-card-label">Certifications</div>
+                <div class="db-card-desc">Track staff licences and certifications</div>
+            </a>
+            <a href="{% url 'staff:audit_log_list' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </div>
+                <div class="db-card-label">Audit Logs</div>
+                <div class="db-card-desc">Review system activity and access records</div>
+            </a>
+            <a href="{% url 'staff:report_list' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+                </div>
+                <div class="db-card-label">Reports</div>
+                <div class="db-card-desc">Generate and review operational reports</div>
+            </a>
+        </div>
+
+        <div class="db-section-title">Communication</div>
+        <div class="db-grid">
+            <a href="{% url 'staff:send_staff_message' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                </div>
+                <div class="db-card-label">Send Staff Message</div>
+                <div class="db-card-desc">Broadcast or direct message to team members</div>
+            </a>
+        </div>
+
+    </div>
+</div>
 {% endblock %}

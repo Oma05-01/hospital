@@ -1,31 +1,155 @@
 {% extends 'staff/base.html' %}
 {% load static %}
 
-{% block title %} Doctor Dashboard {% endblock %}
+{% block title %}Doctor Dashboard — MediCore{% endblock %}
 
 {% block content %}
-    <h1>Welcome, Dr. {{ user.username }}</h1>
-    <p>Here are your tasks for today:</p>
-
-    <a href="{% url 'staff:search_patient' %}"> <button type="submit">Search for patients</button> </a>
+    <link rel="stylesheet" href="{% static 'staff/doc_dash.css' %}">
 
 
-    <!-- Display doctor-specific tasks, like patient lists, prescriptions, etc. -->
-     <!-- Figure our what will be on this dashboard since i have updated it -->
-    <ul>
-        <li><a href="{% url 'appointments:book_appointment' %}" class="btn btn-primary">View Appointments</a></li>
-        <li><a href="{% url 'staff:order_lab_test' patient_id=1 %}">Order Lab Test</a></li>
-        <li><a href="{% url 'staff:add_lab_result' lab_test_id=1 %}">Add Lab Result</a></li>
-        <li><a href="{% url 'staff:prescribe_medication' patient_id=1 %}">Prescribe Medication</a></li>
-        <li><a href="{% url 'staff:view_prescriptions' patient_id=1 %}">View Prescriptions</a></li>
-        <li><a href="{% url 'staff:doctor_patient_messages' patient_id=1 %}">Patient Messages</a></li>
-        <li><a href="{% url 'staff:health_and_safety_protocols' %}">Health & Safety Protocols</a></li>
-        <li><a href="{% url 'staff:infection_control_practices' %}">Infection Control Practices</a></li>
-        <li><a href="{% url 'staff:staff_certifications' staff_id=1 %}">Staff Certifications</a></li>
-        <!-- <li><a href="#">Notifications</a></li> sort this guy out -->
-        <li><a href="{% url 'staff:send_staff_message' %}">Send Staff message </a></li>
-        <li><a href="{% url 'staff:doctor_schedule' %}">Create Schedule </a></li>
-        <li><a href="{% url 'staff:doctor_patient_messages' patient_id=1 %}">Send Patient Message </a></li>
-        <li><a href="{% url 'staff:team_collaboration' patient_id=1 %}">Team Messages</a></li>
-    </ul>
+<div class="db-wrap">
+
+    <!-- Top bar -->
+    <nav class="db-topbar">
+        <div class="db-brand">
+            <div class="db-brand-dot">
+                <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg>
+            </div>
+            MediCore
+        </div>
+        <div class="db-topbar-right">
+            <div class="db-avatar">{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}</div>
+            <a href="{% url 'staff:logout' %}" class="db-logout">Sign out</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="db-hero">
+        <div class="db-role-badge">
+            <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:currentColor"><circle cx="12" cy="12" r="4"/></svg>
+            Physician
+        </div>
+        <h1>Good day, Dr. {{ user.get_full_name|default:user.username }}</h1>
+        <p>Here's your clinical workspace for today.</p>
+    </div>
+
+    <!-- Body -->
+    <div class="db-body">
+
+        <!-- Search -->
+        <div class="db-search-card">
+            <svg viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" stroke="#6B7A8D" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+            <span>Find a patient by name, ID, or condition --> Tap the Button</span>
+            <a href="{% url 'staff:search_patient' %}">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:white"><path d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+                Search Patients
+            </a>
+        </div>
+
+        <!-- Appointments & Clinical -->
+        <div class="db-section-title">Appointments & Clinical</div>
+        <div class="db-grid">
+            <a href="{% url 'staff:search_patient' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3 9h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">Appointments</div>
+                <div class="db-card-desc">View and manage your scheduled appointments</div>
+            </a>
+            <a href="{% url 'staff:doctor_schedule' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 8v4l3 3M12 22a10 10 0 100-20 10 10 0 000 20z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">My Schedule</div>
+                <div class="db-card-desc">Create and review your work schedule</div>
+            </a>
+            <a href="{% url 'staff:prescribe_medication' patient_id=1 %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 004 0M9 5a2 2 0 014 0M12 12h3M12 16h3M9 12h.01M9 16h.01" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">Prescribe Medication</div>
+                <div class="db-card-desc">Write new prescriptions for patients</div>
+            </a>
+            <a href="{% url 'staff:view_prescriptions' patient_id=1 %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M9 12h6M9 16h6M7 4h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">View Prescriptions</div>
+                <div class="db-card-desc">Review existing patient prescriptions</div>
+            </a>
+        </div>
+
+        <!-- Lab -->
+        <div class="db-section-title">Laboratory</div>
+        <div class="db-grid">
+            <a href="{% url 'staff:order_lab_test' patient_id=1 %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M9 3h6l1 9H8L9 3zM6 21h12a1 1 0 001-1l-2-8H7l-2 8a1 1 0 001 1z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">Order Lab Test</div>
+                <div class="db-card-desc">Request diagnostic tests for a patient</div>
+            </a>
+            <a href="{% url 'staff:add_lab_result' lab_test_id=1 %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">Add Lab Result</div>
+                <div class="db-card-desc">Enter results for a completed lab test</div>
+            </a>
+        </div>
+
+        <!-- Communication -->
+        <div class="db-section-title">Communication</div>
+        <div class="db-grid">
+            <a href="{% url 'staff:doctor_patient_messages' patient_id=1 %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">Patient Messages</div>
+                <div class="db-card-desc">Send and receive patient communications</div>
+            </a>
+            <a href="{% url 'staff:team_collaboration' patient_id=1 %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">Team Collaboration</div>
+                <div class="db-card-desc">Coordinate with your clinical team</div>
+            </a>
+            <a href="{% url 'staff:send_staff_message' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">Staff Message</div>
+                <div class="db-card-desc">Send a message to a colleague</div>
+            </a>
+        </div>
+
+        <!-- Compliance -->
+        <div class="db-section-title">Compliance & Credentials</div>
+        <div class="db-grid">
+            <a href="{% url 'staff:health_and_safety_protocols' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">Health & Safety</div>
+                <div class="db-card-desc">Review active safety protocols</div>
+            </a>
+            <a href="{% url 'staff:infection_control_practices' %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm0 6v4m0 4h.01" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">Infection Control</div>
+                <div class="db-card-desc">Infection prevention best practices</div>
+            </a>
+            <a href="{% url 'staff:staff_certifications' staff_id=1 %}" class="db-card">
+                <div class="db-card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="db-card-label">My Certifications</div>
+                <div class="db-card-desc">View and manage your credentials</div>
+            </a>
+        </div>
+
+    </div><!-- /db-body -->
+</div><!-- /db-wrap -->
 {% endblock %}

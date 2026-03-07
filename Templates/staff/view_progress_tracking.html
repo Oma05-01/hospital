@@ -1,7 +1,66 @@
-<!-- view_progress_tracking.html -->
-<h1>Progress Tracking for {{ progress_reports.0.patient.username }}</h1>
-{% for report in progress_reports %}
-    <p><strong>Notes:</strong> {{ report.progress_notes }}</p>
-    <p><strong>Recorded At:</strong> {{ report.recorded_at }}</p>
-    <hr>
-{% endfor %}
+{% extends 'staff/base.html' %}
+{% load static %}
+{% block title %}Progress Tracking — {{ patient.user.get_full_name|default:patient.user.username }}{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'staff/view_progress_tracking.css' %}">
+
+<div class="vp-wrap">
+    <nav class="vp-topbar">
+        <a href="{% url 'staff:dashboard' %}" class="vp-brand">
+            <div class="vp-brand-dot"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg></div>
+            MediCore
+        </a>
+        <div class="vp-topbar-right">
+            <a href="{% url 'staff:display_patient' patient_id=patient.id %}" class="vp-back">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Patient Profile
+            </a>
+            <a href="{% url 'staff:add_progress_tracking' patient_id=patient.id %}" class="vp-add">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Add Note
+            </a>
+        </div>
+    </nav>
+
+    <div class="vp-hero">
+        <div class="vp-hero-eyebrow">Clinical — Progress</div>
+        <h1>Progress Tracking</h1>
+        <p>{{ patient.user.get_full_name|default:patient.user.username }} &mdash; {{ progress_reports|length }} note{{ progress_reports|length|pluralize }} recorded</p>
+    </div>
+
+    <div class="vp-body">
+        {% if progress_reports %}
+        <div class="timeline">
+            {% for report in progress_reports %}
+            <div class="timeline-item">
+                <div class="timeline-dot">
+                    <div class="tl-dot-inner"></div>
+                </div>
+                <div class="timeline-card">
+                    <div class="tl-meta">
+                        <span class="tl-date">{{ report.recorded_at|date:"d M Y, H:i" }}</span>
+                        {% if report.doctor %}
+                        <span class="tl-doctor">
+                            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+                            Dr. {{ report.doctor.user.get_full_name|default:report.doctor.user.username }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="tl-notes">{{ report.progress_notes }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <p>No progress notes have been recorded for this patient yet.</p>
+            <a href="{% url 'staff:add_progress_tracking' patient_id=patient.id %}">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
+                Add First Note
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

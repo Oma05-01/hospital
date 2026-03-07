@@ -1,14 +1,95 @@
-<h1>Insurance Claim Submission for Bill #{{ bill.id }}</h1>
+{% extends "staff/base.html" %}
+{% load static %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit Claim</button>
-</form>
+{% block title %}Insurance Claim | INV-{{ bill.id }}{% endblock %}
 
-<h2>Existing Claims</h2>
-<ul>
-    {% for claim in claims %}
-        <li>Claim ID: {{ claim.id }} - Status: {{ claim.status }} - Date Submitted: {{ claim.date_submitted }}</li>
-    {% endfor %}
-</ul>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-claims.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="claims-layout">
+    <aside class="bill-summary-panel">
+        <div class="panel-header">
+            <span class="badge">Source Invoice</span>
+            <h2>#INV-{{ bill.id }}</h2>
+        </div>
+        
+        <div class="summary-details">
+            <div class="detail-row">
+                <label>Patient</label>
+                <span>{{ bill.patient.user.get_full_name }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Date of Service</label>
+                <span>{{ bill.created_at|date:"M d, Y" }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Total Amount</label>
+                <span class="total-amount">₦{{ bill.amount }}</span>
+            </div>
+            <div class="detail-row status-box">
+                <label>Bill Status</label>
+                <span class="status-{{ bill.status|lower }}">{{ bill.status }}</span>
+            </div>
+        </div>
+
+        <div class="insurance-info">
+            <h4>Patient Insurance</h4>
+            <p><strong>Provider:</strong> {{ bill.patient.insurance_details|default:"N/A" }}</p>
+        </div>
+    </aside>
+
+    <main class="claims-main-content">
+        <div class="section-header">
+            <h3>Insurance Claims History</h3>
+            <button class="btn btn-primary" onclick="toggleClaimForm()">+ File New Claim</button>
+        </div>
+
+        <div id="claimFormSection" class="claim-form-card" style="display:none;">
+            <h4>New Claim Entry</h4>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-grid">
+                    {{ form.as_p }}
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="toggleClaimForm()">Cancel</button>
+                    <button type="submit" class="btn btn-success">Submit to Provider</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="claims-timeline">
+            {% for claim in claims %}
+                <div class="claim-item status-{{ claim.status|lower }}">
+                    <div class="claim-header">
+                        <span class="claim-id">Claim #CLM-{{ claim.id }}</span>
+                        <span class="claim-date">{{ claim.submitted_at|date:"M d, Y H:i" }}</span>
+                    </div>
+                    <div class="claim-body">
+                        <p><strong>Status:</strong> {{ claim.get_status_display }}</p>
+                        {% if claim.response_message %}
+                            <div class="provider-response">
+                                <strong>Provider Note:</strong> {{ claim.response_message }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-claims">
+                    <i class="fas fa-file-medical-alt"></i>
+                    <p>No claims have been filed for this invoice yet.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+
+<script>
+    function toggleClaimForm() {
+        const section = document.getElementById('claimFormSection');
+        section.style.display = section.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+{% endblock %}

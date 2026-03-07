@@ -1,13 +1,74 @@
-<!-- appointments/emergency_contact.html -->
-{% extends "base.html" %}
+{% extends 'patients/base.html' %}
+{% load static %}
+
+{% block title %}Emergency Contacts | CareFirst Medical{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/emergency.css' %}">
+{% endblock %}
 
 {% block content %}
-    <h2>Your Emergency Contact Details</h2>
-    {% if emergency_service %}
-        <p><strong>Emergency Type:</strong> {{ emergency_service.emergency_type }}</p>
-        <p><strong>Location:</strong> {{ emergency_service.location }}</p>
-        <p><strong>Request Time:</strong> {{ emergency_service.request_time }}</p>
-    {% else %}
-        <p>No emergency contact details found.</p>
-    {% endif %}
+<div class="emergency-header">
+    <div class="header-content">
+        <h2><i class="fas fa-ambulance"></i> Emergency Services & Contacts</h2>
+        <p>Your registered emergency contacts and recent dispatch requests.</p>
+    </div>
+    <div class="header-actions">
+        <button class="btn btn-danger btn-pulse"><i class="fas fa-exclamation-triangle"></i> Request Emergency Help</button>
+    </div>
+</div>
+
+<div class="emergency-layout">
+    <div class="contact-section">
+        <div class="emergency-card">
+            <h3><i class="fas fa-phone-alt"></i> Primary Emergency Contact</h3>
+            <div class="contact-details">
+                <p class="phone-number">{{ profile.emergency_contact|default:"Not Provided" }}</p>
+                <a href="{% url 'patients:update_profile' %}" class="btn-text">Update Contact</a>
+            </div>
+        </div>
+
+        <div class="emergency-card">
+            <h3><i class="fas fa-users"></i> Next of Kin</h3>
+            <div class="contact-details">
+                <p><strong>Name:</strong> {{ profile.next_of_kin_name|default:"Not Provided" }} ({{ profile.next_of_kin_relationship|default:"N/A" }})</p>
+                <p><strong>Phone:</strong> {{ profile.next_of_kin_phone_number|default:"Not Provided" }}</p>
+                <p><strong>Address:</strong> {{ profile.next_of_kin_address|default:"Not Provided" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dispatch-section">
+        <h3>Recent Dispatch Requests</h3>
+        
+        {% if latest_emergency %}
+            <div class="dispatch-card {% if latest_emergency.status == 'Pending' or latest_emergency.status == 'Dispatched' %}active-alert{% endif %}">
+                <div class="dispatch-header">
+                    <h4>{{ latest_emergency.emergency_type }}</h4>
+                    <span class="dispatch-status status-{{ latest_emergency.status|lower }}">{{ latest_emergency.status }}</span>
+                </div>
+                <div class="dispatch-body">
+                    <p><strong><i class="fas fa-map-marker-alt"></i> Location:</strong> {{ latest_emergency.location }}</p>
+                    <p><strong><i class="far fa-clock"></i> Time Requested:</strong> {{ latest_emergency.request_time|date:"M d, Y g:i A" }}</p>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-dispatch">
+                <p>No recent emergency requests.</p>
+            </div>
+        {% endif %}
+
+        {% if emergency_history %}
+            <h4 class="history-title">Previous Requests</h4>
+            <div class="history-list">
+                {% for request in emergency_history %}
+                    <div class="history-item">
+                        <span>{{ request.request_time|date:"M d, Y" }} - {{ request.emergency_type }}</span>
+                        <span class="text-muted">{{ request.status }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

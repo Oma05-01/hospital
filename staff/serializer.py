@@ -1,7 +1,7 @@
 # serializers.py
 from rest_framework import serializers
 from .models import *
-from patients.models import Patient
+from patients.models import PatientProfile
 from django.contrib.auth import authenticate
 
 
@@ -234,5 +234,5 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Patient
+        model = PatientProfile
         fields = '__all__'  # Or specify the fields you need

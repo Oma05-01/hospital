@@ -1,18 +1,54 @@
-<!-- templates/audit_logs/audit_log_detail.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audit Log Detail</title>
-</head>
-<body>
-    <h1>Audit Log Detail</h1>
-    <p><strong>ID:</strong> {{ log.id }}</p>
-    <p><strong>Action:</strong> {{ log.action }}</p>
-    <p><strong>User:</strong> {{ log.user }}</p>
-    <p><strong>Timestamp:</strong> {{ log.timestamp }}</p>
-    <p><strong>Details:</strong> {{ log.details }}</p>
-    <a href="{% url 'audit_log_list' %}">Back to Audit Logs</a>
-</body>
-</html>
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Inspect Log #{{ log.id }} | Security{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-audit.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="audit-detail-wrapper">
+    <nav class="breadcrumb">
+        <a href="{% url 'staff:audit_log_list' %}"><i class="fas fa-arrow-left"></i> Back to Audit Trail</a>
+    </nav>
+
+    <div class="audit-card">
+        <div class="audit-card-header">
+            <h3>Event Analysis: Log #{{ log.id }}</h3>
+            <span class="action-badge action-{{ log.action|slugify }}">{{ log.action }}</span>
+        </div>
+
+        <div class="audit-meta-grid">
+            <div class="meta-item">
+                <label>Timestamp</label>
+                <span class="mono">{{ log.timestamp|date:"Y-m-d H:i:s T" }}</span>
+            </div>
+            <div class="meta-item">
+                <label>Actor</label>
+                <span>{{ log.user.get_full_name|default:log.user.username|default:"System Automated" }}</span>
+            </div>
+            <div class="meta-item">
+                <label>IP Address</label>
+                <span class="mono">{{ log.ip_address|default:"Unknown" }}</span>
+            </div>
+            <div class="meta-item">
+                <label>Target Module</label>
+                <span>{{ log.module|default:"N/A" }}</span>
+            </div>
+        </div>
+
+        <div class="audit-data-section">
+            <h4>Event Description</h4>
+            <p>{{ log.description|default:"No description provided for this event." }}</p>
+        </div>
+
+        {% if log.changes %}
+        <div class="audit-data-section">
+            <h4>Payload / Changes</h4>
+            <pre class="json-viewer">{{ log.changes }}</pre>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

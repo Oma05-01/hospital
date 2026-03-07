@@ -1,29 +1,67 @@
-<h1>Emergency Alerts</h1>
+{% extends "staff/base.html" %}
+{% load static %}
 
-<table>
-    <thead>
-        <tr>
-            <th>Alert Type</th>
-            <th>Message</th>
-            <th>Status</th>
-            <th>Created At</th>
-            <th>Resolved At</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for alert in alerts %}
-            <tr>
-                <td>{{ alert.get_alert_type_display }}</td>
-                <td>{{ alert.message }}</td>
-                <td>{{ alert.status }}</td>
-                <td>{{ alert.created_at }}</td>
-                <td>{{ alert.resolved_at }}</td>
-                <td>
-                    <a href="{% url 'acknowledge_alert' alert.id %}">Acknowledge</a> |
-                    <a href="{% url 'resolve_alert' alert.id %}">Resolve</a>
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% block title %}Emergency Dispatch | Command Center{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-alerts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dispatch-wrapper">
+    <header class="dispatch-header">
+        <div class="header-main">
+            <h2><i class="fas fa-satellite-dish"></i> Emergency Dispatch Center</h2>
+            <p>Real-time monitoring of patient emergency triggers.</p>
+        </div>
+        <div class="live-indicator">
+            <span class="pulse-dot"></span> LIVE MONITORING
+        </div>
+    </header>
+
+    <div class="alert-grid">
+        <section class="alert-column active-zone">
+            <h3>Active Alerts</h3>
+            {% for alert in alerts %}
+                <div class="alert-card status-{{ alert.status }}">
+                    <div class="card-top">
+                        <span class="alert-type">{{ alert.alert_type|default:"PANIC TRIGGER" }}</span>
+                        <span class="time-ago">{{ alert.created_at|timesince }} ago</span>
+                    </div>
+                    <div class="patient-info">
+                        <h4>{{ alert.profile.user.get_full_name }}</h4>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ alert.location|default:"Location Shared via GPS" }}</p>
+                    </div>
+                    <div class="card-actions">
+                        {% if alert.status == 'pending' %}
+                            <a href="{% url 'staff:acknowledge_alert' alert.id %}" class="btn btn-warn">Acknowledge</a>
+                        {% elif alert.status == 'acknowledged' %}
+                            <a href="{% url 'staff:resolve_alert' alert.id %}" class="btn btn-success">Mark Resolved</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="all-clear">
+                    <i class="fas fa-check-circle"></i>
+                    <p>All clear. No active emergencies.</p>
+                </div>
+            {% endfor %}
+        </section>
+
+        <aside class="alert-column history-zone">
+            <h3>Recent History</h3>
+            <div class="history-list">
+                {% for item in history %}
+                    <div class="history-item">
+                        <div class="history-meta">
+                            <strong>{{ item.profile.user.last_name }}</strong>
+                            <span>{{ item.resolved_at|date:"H:i" }}</span>
+                        </div>
+                        <p>Resolved by Team Alpha</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}

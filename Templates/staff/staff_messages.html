@@ -1,0 +1,101 @@
+{% extends 'staff/base.html' %}
+{% load static %}
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'staff/staff_messages.css' %}">
+
+<div class="wrap">
+    <nav class="topbar">
+        <a href="{% url 'staff:dashboard' %}" class="brand">
+            <div class="brand-dot"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg></div>
+            MediCore
+        </a>
+        <div class="topbar-right">
+            <a href="{% url 'staff:staff_inbox' %}" class="btn-inbox">Inbox</a>
+            <a href="{% url 'staff:send_staff_message' %}" class="btn-compose">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Compose
+            </a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-eyebrow">Staff</div>
+        <h1>Messages</h1>
+        <p>Internal staff communication hub</p>
+    </div>
+
+    <div class="body">
+        <div class="stat-row">
+            <a href="{% url 'staff:staff_inbox' %}" class="stat-card">
+                <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v13a1 1 0 01-1 1H5a1 1 0 01-1-1V4zM4 4l8 9 8-9"/></svg></div>
+                <div>
+                    <div class="stat-num">{{ unread_count }}</div>
+                    <div class="stat-lbl">Unread messages</div>
+                </div>
+            </a>
+            <a href="{% url 'staff:staff_inbox' %}" class="stat-card">
+                <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+                <div>
+                    <div class="stat-num">{{ inbox|length }}</div>
+                    <div class="stat-lbl">Recent received</div>
+                </div>
+            </a>
+            <a href="{% url 'staff:send_staff_message' %}" class="stat-card">
+                <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></div>
+                <div>
+                    <div class="stat-num">{{ sent|length }}</div>
+                    <div class="stat-lbl">Recently sent</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="two-col">
+            <!-- Recent inbox -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Recent Inbox</span>
+                    <a href="{% url 'staff:staff_inbox' %}" class="panel-link">View all →</a>
+                </div>
+                {% for msg in inbox %}
+                {% with initials=msg.sender.user.get_full_name|default:msg.sender.user.username %}
+                <a href="{% url 'staff:message_detail' msg.id %}" class="msg-row {% if not msg.is_read %}unread{% endif %}">
+                    <div class="avatar">{{ initials|slice:":1"|upper }}</div>
+                    <div class="msg-body">
+                        <div class="msg-from">{{ msg.sender.user.get_full_name|default:msg.sender.user.username }}</div>
+                        <div class="msg-subject">{{ msg.message_content|truncatewords:8 }}</div>
+                    </div>
+                    <div class="msg-time">{{ msg.sent_at|date:"d M" }}</div>
+                    {% if not msg.is_read %}<div class="unread-dot"></div>{% endif %}
+                </a>
+                {% endwith %}
+                {% empty %}
+                <div class="panel-empty">No messages yet.</div>
+                {% endfor %}
+            </div>
+
+            <!-- Recently sent -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Recently Sent</span>
+                    <a href="{% url 'staff:send_staff_message' %}" class="panel-link">Compose →</a>
+                </div>
+                {% for msg in sent %}
+                {% with initials=msg.recipient.user.get_full_name|default:msg.recipient.user.username %}
+                <div class="msg-row">
+                    <div class="avatar" style="background:#374151;">{{ initials|slice:":1"|upper }}</div>
+                    <div class="msg-body">
+                        <div class="msg-from">To: {{ msg.recipient.user.get_full_name|default:msg.recipient.user.username }}</div>
+                        <div class="msg-subject">{{ msg.message_content|truncatewords:8 }}</div>
+                    </div>
+                    <div class="msg-time">{{ msg.sent_at|date:"d M" }}</div>
+                </div>
+                {% endwith %}
+                {% empty %}
+                <div class="panel-empty">No sent messages yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

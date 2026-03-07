@@ -34,33 +34,35 @@ class StaffOnlyMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-
-        # print(request.headers, "\n")
-
-        # Resolve the current request to get the URL namespace
         resolver_match = resolve(request.path)
         url_name = resolver_match.url_name
-        app_name = resolver_match.app_name  # The namespace of the URL
+        app_name = resolver_match.app_name
 
-        # Allow access to non-staff URLs without restrictions
-        if app_name != 'staff':  # Replace 'staff' with your actual app_name if different
+        # 1. Allow non-staff apps and login/register pages
+        if app_name != 'staff' or url_name in ['login', 'register', 'staff-register', 'staff-login']:
             return self.get_response(request)
 
-        if url_name in ['login', 'register', 'staff-register',
-                        'staff-login']:  # Match the name defined in your URL pattern
-            return self.get_response(request)
-
-        jwt_auth = JWTAuthentication()
-        auth_result = jwt_auth.authenticate(request)
-        if auth_result:
-            user, token = auth_result
-            if hasattr(user, 'staff_profile') and hasattr(user.staff_profile, 'role'):
+        # 2. Check Standard Browser Session (For your Dashboard Views)
+        if request.user.is_authenticated:
+            if hasattr(request.user, 'staff_profile'):
                 return self.get_response(request)
-        return HttpResponseForbidden("You must be a staff member to access this resource.")
 
-    def get_user_by_id(user_id):
-        # Implement this function to retrieve the user object based on user_id
-        pass
+        # 3. Check API JWT Token (For Mobile Apps or Postman)
+        jwt_auth = JWTAuthentication()
+        try:
+            auth_result = jwt_auth.authenticate(request)
+            if auth_result:
+                user, token = auth_result
+                if hasattr(user, 'staff_profile'):
+                    # Attach the user to the request so your views know who they are!
+                    request.user = user
+                    return self.get_response(request)
+        except Exception:
+            # If token is expired or invalid, silently fail and let it hit the Forbidden response below
+            pass
+
+        # 4. If neither Session nor JWT worked, block them.
+        return HttpResponseForbidden("You must be a staff member to access this resource.")
 
 
 class DebugToolbarExcludeAPIMiddleware:

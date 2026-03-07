@@ -1,15 +1,46 @@
-{% extends 'base_generic.html' %}
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Infection Control SOPs | Compliance{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-compliance.css' %}">
+{% endblock %}
 
 {% block content %}
-  <h1>Infection Control Practices</h1>
-  <ul>
-    {% for practice in practices %}
-      <li>
-        <h3>{{ practice.name }}</h3>
-        <p>{{ practice.description }}</p>
-        <p>Compliant: {{ practice.is_compliant }}</p>
-        <p>Last Audited: {{ practice.last_audited }}</p>
-      </li>
-    {% endfor %}
-  </ul>
+<div class="compliance-wrapper">
+    <header class="compliance-header bio-theme">
+        <div class="header-main">
+            <h2><i class="fas fa-biohazard"></i> Infection Control Practices</h2>
+            <p>Mandatory clinical protocols for sterilization, PPE, and biohazard management.</p>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search practices..." class="sop-search">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+    </header>
+
+    <div class="sop-grid">
+        {% for practice in practices %}
+            <div class="sop-card">
+                <div class="sop-card-header">
+                    <span class="category-tag type-bio">Bio-Security</span>
+                    <h3>{{ practice.title }}</h3>
+                </div>
+                <div class="sop-card-body">
+                    <p>{{ practice.description|truncatewords:25|default:"Refer to the full manual for detailed steps." }}</p>
+                </div>
+                <div class="sop-card-footer">
+                    <span class="last-reviewed">Last Reviewed: {{ practice.updated_at|date:"M Y"|default:"Recently" }}</span>
+                    <button class="btn-read-more bio-btn">Review Guidelines <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-compliance">
+                <i class="fas fa-shield-virus fa-3x"></i>
+                <p>No Infection Control practices have been published yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

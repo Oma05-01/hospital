@@ -1,10 +1,80 @@
-{% extends "patients/base.html" %}
+{% extends "appointments/base.html" %}
+{% load static %}
+
+{% block title %}Book Virtual Consultation | CareFirst Portal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/patient-booking.css' %}">
+{% endblock %}
 
 {% block content %}
-<h2>Book a Virtual Consultation</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Book Appointment</button>
-</form>
+<div class="booking-wrapper">
+    <nav class="breadcrumb">
+        <a href="{% url 'appointments:appointment_list' %}"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </nav>
+
+    <header class="booking-header virtual-theme">
+        <div class="header-main">
+            <h2><i class="fas fa-laptop-medical"></i> Schedule a Virtual Consultation</h2>
+            <p>Connect with our top specialists from the comfort of your home.</p>
+        </div>
+        <div class="header-badge">
+            <span class="telemed-badge">Telemedicine Service</span>
+        </div>
+    </header>
+
+    <div class="booking-layout">
+        <aside class="instruction-panel">
+            <h3><i class="fas fa-info-circle"></i> What to Expect</h3>
+            <p class="intro-text">Virtual consultations are perfect for follow-ups, prescription refills, and general medical advice.</p>
+
+            <ul class="prep-list">
+                <li>
+                    <div class="prep-icon"><i class="fas fa-wifi"></i></div>
+                    <div class="prep-text">
+                        <strong>Stable Connection</strong>
+                        <span>Ensure you have a strong Wi-Fi or cellular data connection.</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="prep-icon"><i class="fas fa-video"></i></div>
+                    <div class="prep-text">
+                        <strong>Camera & Audio</strong>
+                        <span>Test your device's webcam and microphone before the session.</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="prep-icon"><i class="fas fa-door-closed"></i></div>
+                    <div class="prep-text">
+                        <strong>Quiet Environment</strong>
+                        <span>Find a private, well-lit room for your medical privacy.</span>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="support-box">
+                <i class="fas fa-headset"></i>
+                <p>Need technical help? Call our telemedicine support desk at <strong>0800-CARE-FIRST</strong>.</p>
+            </div>
+        </aside>
+
+        <main class="form-panel">
+            <h3>Appointment Details</h3>
+            <form method="POST" class="custom-form">
+                {% csrf_token %}
+
+                <div class="form-fields">
+                    {{ form.as_p }}
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'appointments:appointment_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary btn-large">
+                        <i class="fas fa-calendar-check"></i> Confirm Virtual Booking
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
 {% endblock %}

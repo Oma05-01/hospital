@@ -1,12 +1,35 @@
 {% extends 'patients/base.html' %}
+{% load static %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Patient Login | CareFirst Medical{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
 
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <i class="fas fa-user-lock auth-icon"></i>
+            <h2>Welcome Back</h2>
+            <p>Please enter your credentials to access your secure portal.</p>
+        </div>
+
+        <form method="post" class="auth-form" novalidate>
+            {% csrf_token %}
+
+            <div class="form-fields">
+                {{ form.as_p }}
+            </div>
+
+            <button type="submit" class="btn-primary btn-block">Log In Securely</button>
+        </form>
+
+        <div class="auth-footer">
+            <p><a href="#" class="forgot-password">Forgot your password?</a></p>
+            <p class="signup-link">Don't have an account? <a href="{% url 'patients:register' %}">Sign up here</a>.</p>
+        </div>
+    </div>
+</div>
 {% endblock %}

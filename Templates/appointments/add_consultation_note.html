@@ -1,20 +1,79 @@
-{% extends "patients/base.html" %}
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Consultation Notes | {{ appointment.patient.user.last_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-consultation.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <h2 class="text-center text-primary mb-4">Add Consultation Note</h2>
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Appointment Details</h5>
-            <p><strong>Doctor:</strong> {{ appointment.doctor_name }}</p>
-            <p><strong>Date:</strong> {{ appointment.date }}</p>
-            <p><strong>Time:</strong> {{ appointment.time }}</p>
+<div class="clinical-workspace">
+    <aside class="context-sidebar">
+        <div class="patient-snapshot">
+            <div class="avatar">
+                {{ appointment.patient.user.first_name|slice:":1" }}{{ appointment.patient.user.last_name|slice:":1" }}
+            </div>
+            <h3>{{ appointment.patient.user.get_full_name }}</h3>
+            <span class="patient-id">ID: #PAT-{{ appointment.patient.id|stringformat:"04d" }}</span>
         </div>
-    </div>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary w-100">Save Note</button>
-    </form>
+
+        <div class="appointment-details">
+            <h4><i class="far fa-calendar-check"></i> Session Details</h4>
+            <div class="detail-row">
+                <label>Date & Time</label>
+                <span>{{ appointment.date|date:"M d, Y" }} at {{ appointment.time|time:"H:i" }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Type</label>
+                <span>{{ appointment.get_appointment_type_display|default:"General Consultation" }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Chief Complaint</label>
+                <span class="text-highlight">{{ appointment.reason_for_visit|default:"Not specified prior to visit." }}</span>
+            </div>
+        </div>
+
+        <div class="medical-alerts">
+            <h4><i class="fas fa-exclamation-circle"></i> Medical Alerts</h4>
+            <p><strong>Allergies:</strong> <span class="text-danger">{{ appointment.patient.allergies|default:"None Reported" }}</span></p>
+            <p><strong>History:</strong> {{ appointment.patient.medical_history|truncatewords:15|default:"Clean" }}</p>
+        </div>
+    </aside>
+
+    <main class="clinical-form-area">
+        <header class="form-header">
+            <h2><i class="fas fa-stethoscope"></i> Physician's Assessment</h2>
+            <p>Record your clinical findings, prescriptions, and follow-up plan.</p>
+        </header>
+
+        <form method="post" class="consultation-form">
+            {% csrf_token %}
+
+            <div class="form-group primary-note">
+                <label for="note">Clinical Notes (Symptoms, Vitals, Diagnosis) <span class="required">*</span></label>
+                <textarea id="note" name="note" rows="8" placeholder="Patient presents with..." required></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="prescription"><i class="fas fa-pills"></i> E-Prescription</label>
+                    <textarea id="prescription" name="prescription" rows="5" placeholder="Medication, Dosage, Frequency..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="treatment_plan"><i class="fas fa-clipboard-list"></i> Treatment & Follow-up Plan</label>
+                    <textarea id="treatment_plan" name="treatment_plan" rows="5" placeholder="Rest, diet recommendations, next visit date..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'staff:view_appointment' appointment.id %}" class="btn btn-outline-secondary">Discard Draft</a>
+                <button type="submit" class="btn btn-primary btn-large">
+                    <i class="fas fa-lock"></i> Sign & Save Record
+                </button>
+            </div>
+        </form>
+    </main>
 </div>
 {% endblock %}

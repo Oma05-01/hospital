@@ -1,32 +1,44 @@
 {% extends 'patients/base.html' %}
+{% load static %}
 
-{% block title %}Patient Messages{% endblock %}
+{% block title %}My Messages | CareFirst Medical{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/messages.css' %}">
+{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div class="header-content">
+        <h2><i class="fas fa-envelope-open-text"></i> Secure Inbox</h2>
+        <p>Direct communication with your healthcare providers.</p>
+    </div>
+</div>
 
-<html>
-
-<body>
-    <h1>Patient Messages</h1>
-
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-        <li>
-            <strong>From:</strong> {{ message.sender.user.username }} <br>
-            <strong>Sent:</strong> {{ message.sent_at }} <br>
-            <p>{{ message.message_content }}</p>
-            {% if message.patient_reply %}
-                <strong>Your Reply:</strong> {{ message.patient_reply }}
-            {% else %}
-                <a href="{% url 'patients:view_message' message.id %}">Reply</a>
-            {% endif %}
-        </li>
+<div class="inbox-container">
+    {% for message in messages %}
+        <a href="{% url 'patients:view_message' message.id %}" class="message-card {% if not message.patient_reply %}unread{% endif %}">
+            <div class="message-meta">
+                <span class="doctor-name">Dr. {{ message.sender.user.last_name }}</span>
+                <span class="message-date">{{ message.sent_at|date:"M d, Y" }}</span>
+            </div>
+            <div class="message-preview">
+                <p>{{ message.message_content|truncatewords:15 }}</p>
+            </div>
+            <div class="message-status">
+                {% if message.patient_reply %}
+                    <span class="status-pill replied"><i class="fas fa-reply"></i> Replied</span>
+                {% else %}
+                    <span class="status-pill pending">Pending Action</span>
+                {% endif %}
+            </div>
+        </a>
+    {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-comment-slash fa-3x"></i>
+            <h3>No Messages</h3>
+            <p>You haven't received any messages from your doctors yet.</p>
+        </div>
     {% endfor %}
-        </ul>
-    {% else %}
-        <p>You have no messages yet.</p>
-    {% endif %}
-</body>
-</html>
+</div>
 {% endblock %}

@@ -3,7 +3,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from patients.models import Patient
+from patients.models import PatientProfile
 
 class Staff(models.Model):
     ROLE_CHOICES = (
@@ -14,7 +14,7 @@ class Staff(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="staff_profile")
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-    specialty = models.CharField(max_length=100, blank=True, null=True)  # Only for doctors
+    specialty = models.CharField(max_length=100, blank=True, null=True)
     phone_number = models.CharField(max_length=15)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
 
@@ -60,40 +60,70 @@ class DoctorSchedule(models.Model):
 
 
 class Appointment(models.Model):
-    linked_appointment = models.OneToOneField(
-        'appointments.Appointment',
+    CONSULTATION_TYPE_CHOICES = [
+        ('Physical', 'Physical'),
+        ('Virtual', 'Virtual'),
+    ]
+    STATUS_CHOICES = [
+        ('Scheduled', 'Scheduled'),
+        ('Completed', 'Completed'),
+        ('Cancelled', 'Cancelled'),
+        ('Rescheduled', 'Rescheduled'),
+    ]
+
+    # --- Relationships ---
+    patient = models.ForeignKey(
+        PatientProfile,
         on_delete=models.CASCADE,
-        related_name='staff_appointment',
+        related_name='appointments'
+    )
+    doctor = models.ForeignKey(
+        Staff,
+        on_delete=models.CASCADE,
+        related_name='doctor_appointments',
+        limit_choices_to={'role__iexact': 'doctor'}
+    )
+
+    # Audit trail: If null, the patient booked it via the app. If set, a receptionist/admin booked it.
+    created_by = models.ForeignKey(
+        Staff,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        related_name='created_appointments'
     )
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='staff_appointment_patient')
-    doctor = models.ForeignKey(
-        Staff, on_delete=models.CASCADE, related_name='appointments_assigned'
-    )  # Doctor assigned to the appointment
-    created_by = models.ForeignKey(
-        Staff, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_appointments'
-    )  # Staff member creating the appointment
-    scheduled_time = models.DateTimeField()
+
+    # --- Appointment Details ---
+    date = models.DateField(blank=True, null=True)
+    time = models.TimeField(blank=True, null=True)
     reason = models.TextField(blank=True, null=True)
-    status = models.CharField(
-        max_length=20,
-        choices=[('scheduled', 'Scheduled'), ('completed', 'Completed'), ('canceled', 'Canceled')],
-        default='scheduled'
-    )
+    consultation_type = models.CharField(max_length=50, choices=CONSULTATION_TYPE_CHOICES, default='Physical')
+
+    # --- Status & Tracking ---
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Scheduled')
+    is_confirmed = models.BooleanField(default=False)
+
+    reschedule_request_date = models.DateField(null=True, blank=True)
+    reschedule_request_time = models.TimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['patient', 'doctor', 'scheduled_time'], name='unique_appointment')
+            # Prevents double-booking a doctor for the same date and time
+            models.UniqueConstraint(fields=['doctor', 'date', 'time'], name='unique_doctor_appointment'),
+            # Prevents double-booking a patient for the same date and time
+            models.UniqueConstraint(fields=['patient', 'date', 'time'], name='unique_patient_appointment')
         ]
 
     def __str__(self):
-        created_by_name = self.created_by.user.username if self.created_by else "Patient"
-        return (f"Appointment for {self.patient.user.username} with Dr. {self.doctor.user.username} ||"
-                f" Created by {created_by_name}")
+        creator = self.created_by.user.username if self.created_by else "Patient (via App)"
+        return f"{self.patient.user.username} with Dr. {self.doctor.user.username} on {self.date} at {self.time} [{creator}]"
 
     def complete_appointment(self):
-        self.status = 'completed'
+        """Helper method to easily mark an appointment as finished."""
+        self.status = 'Completed'
         self.save()
 
 
@@ -111,22 +141,20 @@ class ConsultationNote(models.Model):
 
 class Assignment(models.Model):
     doctor = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='doctor_assignments')
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='patient_assignments')
+    # 2. UPDATED to PatientProfile
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='patient_assignments')
     assigned_at = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True)
 
     def clean(self):
-        # Validate that the staff member being assigned is a doctor
         if self.doctor.role != 'doctor':
             raise ValidationError("Only doctors can be assigned to patients.")
-        
-        # Check if the doctor already has 5 patients assigned
+
         current_patient_count = Assignment.objects.filter(doctor=self.doctor).distinct('patient').count()
         if current_patient_count >= 5:
             raise ValidationError(f"Dr. {self.doctor.user.username} is already assigned to 5 patients.")
 
     def save(self, *args, **kwargs):
-        # Ensure validation is run before saving
         self.full_clean()
         super().save(*args, **kwargs)
 
@@ -135,7 +163,7 @@ class Assignment(models.Model):
 
 
 class VitalSign(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='vitals')
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='vitals')
     recorded_at = models.DateTimeField(auto_now_add=True)
     blood_pressure = models.CharField(max_length=20)
     temperature = models.DecimalField(max_digits=5, decimal_places=2)
@@ -147,7 +175,7 @@ class VitalSign(models.Model):
         return f"Vitals for {self.patient.username} recorded on {self.recorded_at}"
 
 class ProgressTracking(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='progress')
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='progress')
     doctor = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='progress_reports')
     recorded_at = models.DateTimeField(auto_now_add=True)
     progress_notes = models.TextField()
@@ -156,7 +184,7 @@ class ProgressTracking(models.Model):
         return f"Progress for {self.patient.username} by Dr. {self.doctor.username}"
 
 class CarePlan(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='care_plans')
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='care_plans')
     doctor = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='care_plans_created')
     plan_description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -166,7 +194,7 @@ class CarePlan(models.Model):
 
 
 class MedicalRecord(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='staff_medical_records')
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='staff_medical_records')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     diagnoses = models.TextField()
@@ -179,7 +207,7 @@ class MedicalRecord(models.Model):
         return f"Medical Record for {self.patient.user.username}"
 
 class LabTest(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='lab_tests')
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='lab_tests')
     test_name = models.CharField(max_length=255)
     test_date = models.DateTimeField(auto_now_add=True)
     ordered_by = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='ordered_tests')
@@ -199,7 +227,7 @@ class LabResult(models.Model):
 
 
 class Prescription(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='staff_prescriptions')
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='staff_prescriptions')
     doctor = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='prescriptions_written')
     medication_name = models.CharField(max_length=255)
     dosage = models.CharField(max_length=255)
@@ -225,13 +253,15 @@ class StaffMessage(models.Model):
 
 class DoctorPatientMessage(models.Model):
     sender = models.ForeignKey(Staff, related_name='sent_patient_messages', on_delete=models.CASCADE)
-    recipient = models.ForeignKey(Patient, related_name='received_messages', on_delete=models.CASCADE)
+    # UPDATED to PatientProfile
+    recipient = models.ForeignKey(PatientProfile, related_name='received_messages', on_delete=models.CASCADE)
     message_content = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
     patient_reply = models.CharField(max_length=500, default='')
 
     def __str__(self):
-        return f"Message from {self.sender.user.username} to {self.recipient} at {self.sent_at}"
+        # FIX: Added .user.username to recipient
+        return f"Message from {self.sender.user.username} to {self.recipient.user.username} at {self.sent_at}"
 
 
 class TeamMessage(models.Model):
@@ -241,7 +271,8 @@ class TeamMessage(models.Model):
     sent_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Team message from {self.sender.username} to {self.recipient} at {self.sent_at}"
+        # FIX: Added .user.username to recipient
+        return f"Team message from {self.sender.user.username} to {self.recipient.user.username} at {self.sent_at}"
 
 
 class InsuranceProvider(models.Model):
@@ -253,7 +284,7 @@ class InsuranceProvider(models.Model):
         return self.name
 
 class Insurance(models.Model):
-    profile = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name="insurance")
+    profile = models.OneToOneField(PatientProfile, on_delete=models.CASCADE, related_name="insurance")
     insurance_provider = models.CharField(max_length=255)
     policy_number = models.CharField(max_length=255)
     coverage_start_date = models.DateField()
@@ -265,7 +296,7 @@ class Insurance(models.Model):
 
 
 class Bill(models.Model):
-    profile = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="bills")
+    profile = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name="staff_app_bills")
     bill_number = models.CharField(max_length=255, unique=True)
     date_created = models.DateField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -281,7 +312,7 @@ class Bill(models.Model):
 
 class InsuranceClaim(models.Model):
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE, related_name="insurance_claims")
-    profile = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="insurance_claims")
+    profile = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name="insurance_claims")
     claim_number = models.CharField(max_length=255, unique=True)
     claim_date = models.DateField(auto_now_add=True)
     claim_status = models.CharField(max_length=50, choices=[('submitted', 'Submitted'), ('approved', 'Approved'), ('denied', 'Denied')])
@@ -302,7 +333,7 @@ class EmergencyAlert(models.Model):
         ('other', 'Other'),
     ]
 
-    profile = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='emergency_alerts')  # Linked to Patient
+    profile = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='emergency_alerts')  # Linked to Patient
     alert_type = models.CharField(max_length=20, choices=ALERT_TYPES)
     message = models.TextField()
     status = models.CharField(max_length=20, default='pending')  # pending, acknowledged, resolved
@@ -400,7 +431,7 @@ class Report(models.Model):
         choices=[('patient_care', 'Patient Care'), ('financial', 'Financial'), ('performance', 'Performance')]
     )
     generated_at = models.DateTimeField(auto_now_add=True)
-    generated_for = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='patient_reports')
+    generated_for = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='patient_reports')
     generated_by = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='reports')
     file_path = models.FileField(upload_to='reports/', null=True, blank=True)
 
@@ -451,25 +482,28 @@ class Certification(models.Model):
     is_valid = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.name} ({self.staff.first_name} {self.staff.last_name})"
+        # FIX: Traversed through 'user' to get first and last name
+        return f"{self.name} ({self.staff.user.first_name} {self.staff.user.last_name})"
 
 
 class Notification(models.Model):
     message = models.CharField(max_length=255)
-    recipient = models.ForeignKey(Staff, on_delete=models.CASCADE)  # Link to user (patient or staff)
+    # FIX: Linked to built-in User so BOTH patients and staff can receive notifications
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
     notification_type = models.CharField(max_length=50, choices=[('appointment', 'Appointment'), ('bill_payment', 'Bill Payment'), ('emergency', 'Emergency')])
     is_urgent = models.BooleanField(default=False)
 
     def __str__(self):
+        # FIX: recipient is now User, so .username works directly
         return f"Notification for {self.recipient.username} - {self.message}"
 
 
 class TokenLog(models.Model):
-    user = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='staff_user')
+    user = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='staff_user', blank=True)
     token = models.TextField(default='')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
 
     def __str__(self):
         return f"Access token for {self.user.user.username}"

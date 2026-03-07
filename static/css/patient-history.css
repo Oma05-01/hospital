@@ -1,0 +1,181 @@
+.history-wrapper {
+    max-width: 800px;
+    margin: 2rem auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #edf2f7;
+}
+
+.header-text h2 { color: #2d3748; margin: 0 0 5px 0; }
+.header-text p { color: #718096; margin: 0; }
+
+.btn-outline-secondary {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 2px solid #cbd5e0;
+    color: #4a5568;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+    background: transparent;
+}
+.btn-outline-secondary:hover { background: #f7fafc; border-color: #a0aec0; }
+
+/* Timeline Structure */
+.timeline-container {
+    position: relative;
+    padding-left: 2rem;
+}
+
+/* The vertical line */
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e2e8f0;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 2.5rem;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -2.6rem; /* Adjust based on padding to center over the line */
+    top: 0;
+    background: #f8fafc;
+    padding: 5px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+}
+
+/* Status Colors for Markers */
+.text-success { color: #38a169; }
+.text-danger { color: #e53e3e; }
+.text-muted { color: #a0aec0; }
+
+/* Content Card */
+.timeline-content {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: box-shadow 0.2s;
+}
+
+.timeline-content:hover { box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
+
+.cancelled-visit { opacity: 0.75; background: #fdfdfd; }
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.visit-date { font-weight: 700; color: #2b6cb0; font-size: 1.1rem; }
+
+.visit-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.status-completed { background: #f0fff4; color: #22543d; border: 1px solid #c6f6d5; }
+.status-cancelled { background: #fff5f5; color: #9b2c2c; border: 1px solid #fed7d7; }
+.status-no-show { background: #fffff0; color: #9c4221; border: 1px solid #fefcbf; }
+
+.visit-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.doctor-info h3 { margin: 0 0 5px 0; color: #2d3748; font-size: 1.2rem; }
+.specialty { margin: 0; color: #718096; font-size: 0.9rem; }
+
+.visit-meta {
+    display: flex;
+    gap: 1rem;
+}
+
+.meta-item {
+    font-size: 0.85rem;
+    color: #4a5568;
+    background: #f7fafc;
+    padding: 5px 10px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.meta-item i { color: #a0aec0; }
+
+.visit-reason {
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 6px;
+    border-left: 3px solid #cbd5e0;
+    margin-bottom: 1rem;
+}
+
+.visit-reason strong { display: block; font-size: 0.8rem; color: #718096; text-transform: uppercase; margin-bottom: 5px; }
+.visit-reason p { margin: 0; color: #4a5568; font-size: 0.95rem; }
+
+.visit-actions {
+    margin-top: 1.5rem;
+    text-align: right;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    cursor: not-allowed; /* Change when feature is active */
+    opacity: 0.6;
+}
+
+.btn-outline-primary {
+    background: transparent;
+    border: 1px solid #3182ce;
+    color: #3182ce;
+}
+
+/* Empty State */
+.empty-history {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 2px dashed #cbd5e0;
+    margin-left: -2rem; /* Pull it over the timeline line */
+}
+
+.icon-circle {
+    width: 80px; height: 80px;
+    background: #edf2f7; color: #a0aec0;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; margin: 0 auto 1.5rem;
+}
+
+.empty-history h3 { color: #4a5568; margin-bottom: 0.5rem; }
+.empty-history p { color: #a0aec0; margin: 0; }

@@ -1,0 +1,202 @@
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+    :root {
+        --navy:      #0B1F3A;
+        --teal:      #0D7377;
+        --teal-lt:   #14A9A0;
+        --teal-pale: #EAF4F4;
+        --white:     #FFFFFF;
+        --surface:   #F5F8FB;
+        --border:    #DDE5EF;
+        --muted:     #6B7A8D;
+        --text:      #1A2B40;
+        --shadow-sm: 0 2px 8px rgba(11,31,58,.07);
+        --shadow-md: 0 6px 24px rgba(11,31,58,.10);
+
+        /* Status colours */
+        --status-scheduled-bg: #EFF6FF; --status-scheduled-tx: #1D4ED8; --status-scheduled-bd: #BFDBFE;
+        --status-completed-bg: #ECFDF5; --status-completed-tx: #065F46; --status-completed-bd: #A7F3D0;
+        --status-pending-bg:   #FFFBEB; --status-pending-tx:   #92400E; --status-pending-bd:   #FDE68A;
+        --status-cancelled-bg: #FEF2F2; --status-cancelled-tx: #991B1B; --status-cancelled-bd: #FECACA;
+    }
+
+    .va-wrap {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--surface);
+        min-height: 100vh;
+        color: var(--text);
+    }
+
+    /* ── Topbar ── */
+    .va-topbar {
+        background: var(--navy);
+        padding: 0 32px; height: 64px;
+        display: flex; align-items: center; justify-content: space-between;
+        position: sticky; top: 0; z-index: 100;
+    }
+    .va-brand {
+        display: flex; align-items: center; gap: 10px;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem; color: white; text-decoration: none;
+    }
+    .va-brand-dot {
+        width: 32px; height: 32px; background: var(--teal);
+        border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .va-brand-dot svg { width: 18px; height: 18px; fill: white; }
+    .va-back {
+        font-size: .8rem; color: rgba(255,255,255,.55);
+        text-decoration: none; padding: 6px 14px;
+        border: 1px solid rgba(255,255,255,.12); border-radius: 8px;
+        display: flex; align-items: center; gap: 6px; transition: all .2s;
+    }
+    .va-back:hover { color: white; border-color: rgba(255,255,255,.3); }
+    .va-back svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+    /* ── Hero ── */
+    .va-hero {
+        background: linear-gradient(130deg, var(--navy) 0%, #0f3460 60%, #0D7377 100%);
+        padding: 36px 32px 72px;
+        position: relative; overflow: hidden;
+    }
+    .va-hero::after {
+        content: ''; position: absolute; right: -60px; top: -60px;
+        width: 260px; height: 260px; border-radius: 50%;
+        background: rgba(13,115,119,.2); pointer-events: none;
+    }
+    .va-hero-eyebrow {
+        font-size: .72rem; font-weight: 600; color: var(--teal-lt);
+        letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .va-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.75rem; color: white; margin-bottom: 6px; position: relative; z-index: 1;
+    }
+    .va-hero p { color: rgba(255,255,255,.5); font-size: .875rem; position: relative; z-index: 1; }
+
+    /* ── Body ── */
+    .va-body {
+        max-width: 800px;
+        margin: -40px auto 0;
+        padding: 0 24px 56px;
+        position: relative; z-index: 2;
+        display: flex; flex-direction: column; gap: 16px;
+    }
+
+    /* ── Cards ── */
+    .va-card {
+        background: white; border: 1px solid var(--border);
+        border-radius: 16px; padding: 24px 26px;
+        box-shadow: var(--shadow-sm);
+    }
+    .va-card-title {
+        font-size: .72rem; font-weight: 700; color: var(--muted);
+        letter-spacing: .1em; text-transform: uppercase;
+        margin-bottom: 18px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .va-card-title svg {
+        width: 15px; height: 15px; stroke: var(--teal); fill: none;
+        stroke-width: 2; stroke-linecap: round; flex-shrink: 0;
+    }
+
+    /* ── Status badge ── */
+    .status-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: .75rem; font-weight: 700;
+        padding: 4px 11px; border-radius: 20px;
+        letter-spacing: .05em; text-transform: uppercase;
+    }
+    .status-badge::before {
+        content: ''; width: 6px; height: 6px; border-radius: 50%;
+        background: currentColor;
+    }
+    .status-scheduled { background: var(--status-scheduled-bg); color: var(--status-scheduled-tx); border: 1px solid var(--status-scheduled-bd); }
+    .status-completed  { background: var(--status-completed-bg); color: var(--status-completed-tx); border: 1px solid var(--status-completed-bd); }
+    .status-pending    { background: var(--status-pending-bg);   color: var(--status-pending-tx);   border: 1px solid var(--status-pending-bd); }
+    .status-cancelled  { background: var(--status-cancelled-bg); color: var(--status-cancelled-tx); border: 1px solid var(--status-cancelled-bd); }
+
+    /* ── Detail grid ── */
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px 24px;
+    }
+    .detail-item { display: flex; flex-direction: column; gap: 4px; }
+    .detail-label {
+        font-size: .72rem; font-weight: 600; color: var(--muted);
+        letter-spacing: .06em; text-transform: uppercase;
+    }
+    .detail-value { font-size: .9rem; color: var(--navy); font-weight: 500; }
+    .detail-value.full { grid-column: 1 / -1; }
+    .detail-value.reason-text {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 8px; padding: 10px 14px;
+        font-size: .875rem; color: var(--text); font-weight: 400;
+        line-height: 1.6;
+    }
+
+    /* ── Participants row ── */
+    .participants {
+        display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .participant {
+        display: flex; align-items: center; gap: 10px;
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 12px; padding: 10px 14px; flex: 1; min-width: 200px;
+    }
+    .participant-avatar {
+        width: 38px; height: 38px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: .85rem; flex-shrink: 0;
+    }
+    .participant-avatar.patient { background: var(--teal-pale); color: var(--teal); }
+    .participant-avatar.doctor  { background: #EDE9FE; color: #6D28D9; }
+    .participant-info .p-role {
+        font-size: .68rem; font-weight: 600; color: var(--muted);
+        letter-spacing: .07em; text-transform: uppercase;
+    }
+    .participant-info .p-name { font-size: .875rem; font-weight: 600; color: var(--navy); }
+
+    /* ── Note section ── */
+    .note-field { margin-bottom: 18px; }
+    .note-field:last-child { margin-bottom: 0; }
+    .note-label {
+        font-size: .72rem; font-weight: 700; color: var(--muted);
+        letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .note-body {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 10px; padding: 14px 16px;
+        font-size: .875rem; line-height: 1.7; color: var(--text);
+        white-space: pre-wrap;
+    }
+    .note-empty {
+        display: flex; align-items: center; gap: 10px;
+        padding: 18px; border: 1.5px dashed var(--border);
+        border-radius: 12px; color: var(--muted); font-size: .875rem;
+    }
+    .note-empty svg { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 1.5; }
+
+    /* ── Actions ── */
+    .va-actions {
+        display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .btn {
+        padding: 10px 20px; border-radius: 10px;
+        font-family: 'DM Sans', sans-serif; font-size: .875rem; font-weight: 600;
+        text-decoration: none; cursor: pointer; border: none;
+        display: inline-flex; align-items: center; gap: 7px; transition: all .2s;
+    }
+    .btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+    .btn-primary { background: var(--navy); color: white; }
+    .btn-primary:hover { background: var(--teal); }
+    .btn-outline { background: white; color: var(--navy); border: 1.5px solid var(--border); }
+    .btn-outline:hover { border-color: var(--navy); }
+
+    @media (max-width: 560px) {
+        .detail-grid { grid-template-columns: 1fr; }
+        .va-body { padding: 0 16px 40px; }
+        .va-topbar { padding: 0 16px; }
+        .participants { flex-direction: column; }
+    }

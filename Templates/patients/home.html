@@ -1,207 +1,90 @@
-
+{% extends 'patients/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-        }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #343a40;
-            padding: 0.5rem 1rem;
-        }
+{% block title %}Patient Dashboard | CareFirst Medical{% endblock %}
 
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            margin: 0 1rem;
-            font-weight: 700;
-        }
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=2">
+{% endblock %}
 
-        nav a:hover {
-            color: #007bff;
-        }
-
-        .dashboard-header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .card {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: none;
-            border-radius: 8px;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            transition: all 0.3s ease;
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-        }
-
-        footer {
-            background-color: #343a40;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-
+{% block content %}
 <div class="dashboard-header">
-    <h1>Welcome to Your Patient Dashboard</h1>
+    <h2>Welcome back, {{ user.first_name|default:user.username }}</h2>
+    <p>Manage your health, appointments, and records all in one place.</p>
 </div>
 
-
-<nav>
-    <div class="nav-left">
-        <a href="{% url 'patients:home' %}">Home</a>
-        <a href="/about">About</a>
-        <a href="/services">Services</a>
-        <a href="/contact">Contact</a>
+<section class="upcoming-appointments-section">
+    <div class="section-title-row">
+        <h3><i class="fas fa-calendar-check"></i> Upcoming Appointments</h3>
+        <a href="{% url 'appointments:appointment_list' %}" class="btn-text">View All</a>
     </div>
-    <div class="nav-right">
-        {% if user.is_authenticated %}
-            <a href="/profile">Profile</a>
-            <a href="/logout">Logout</a>
-        {% else %}
-            <a href="/login">Login</a>
-            <a href="{% url 'patients:register' %}">Sign Up</a>
-        {% endif %}
+    
+    <div class="appointment-cards">
+        {% for appointment in upcoming_appointments %}
+            <div class="appointment-card">
+                <div class="date-badge">
+                    <span class="month">{{ appointment.date|date:"M" }}</span>
+                    <span class="day">{{ appointment.date|date:"d" }}</span>
+                </div>
+                <div class="appointment-details">
+                    <h4>Dr. {{ appointment.doctor.user.last_name }}</h4>
+                    <p>{{ appointment.consultation_type }} Consultation</p>
+                    <p class="time"><i class="far fa-clock"></i> {{ appointment.time|time:"g:i A" }}</p>
+                </div>
+                <div class="appointment-actions">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Reschedule</a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <p>You have no upcoming appointments.</p>
+                <a href="{% url 'appointments:book_appointment' %}" class="btn btn-primary">Book Now</a>
+            </div>
+        {% endfor %}
     </div>
-</nav>
+</section>
 
-<div class="container my-5">
-    <div class="row g-4">
-        <!-- Profile -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-user-circle fa-3x text-primary"></i>
-                    <h5 class="card-title mt-3">Profile</h5>
-                    <p class="card-text">View and update your profile information.</p>
-                    <a href="/profile" class="btn btn-primary">Manage Profile</a>
-                </div>
-            </div>
-        </div>
+<section class="dashboard-grid">
+    <a href="/profile" class="dashboard-card">
+        <i class="fas fa-user-circle card-icon"></i>
+        <h4>Profile Details</h4>
+        <p>Update your emergency contacts and personal info.</p>
+    </a>
 
-        <!-- Appointments -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-calendar-alt fa-3x text-primary"></i>
-                    <h5 class="card-title mt-3">Appointments</h5>
-                    <p class="card-text">Book and manage your appointments.</p>
-                    <a href="{% url 'appointments:book_appointment' %}" class="btn btn-primary">Book Appointment</a>
-                </div>
-            </div>
-        </div>
+    <a href="{% url 'records:medical_records' %}" class="dashboard-card">
+        <i class="fas fa-file-medical card-icon"></i>
+        <h4>Medical Records</h4>
+        <p>Access your past visit notes and history securely.</p>
+    </a>
 
-        <!-- Medical Records -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-file-medical fa-3x text-primary"></i>
-                    <h5 class="card-title mt-3">Medical Records</h5>
-                    <p class="card-text">Access your medical records securely.</p>
-                    <a href="{% url 'records:medical_records' %}" class="btn btn-primary">View Records</a>
-                </div>
-            </div>
-        </div>
+    <a href="{% url 'patients:report_list' %}" class="dashboard-card">
+        <i class="fas fa-chart-line card-icon"></i>
+        <h4>Lab & Health Reports</h4>
+        <p>Review your detailed test results and analytics.</p>
+    </a>
 
-        <!-- Feedback -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-comment-dots fa-3x text-primary"></i>
-                    <h5 class="card-title mt-3">Feedback</h5>
-                    <p class="card-text">Share your feedback with us.</p>
-                    <a href="#" class="btn btn-primary">Give Feedback</a>
-                </div>
-            </div>
-        </div>
+    <a href="{% url 'patients:patient_messages' %}" class="dashboard-card">
+        <i class="fas fa-envelope card-icon"></i>
+        <h4>Secure Messages</h4>
+        <p>Communicate directly with your care team.</p>
+    </a>
 
-        <!-- Health Reports -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-chart-line fa-3x text-primary"></i>
-                    <h5 class="card-title mt-3">Health Reports</h5>
-                    <p class="card-text">Review your detailed health reports.</p>
-                    <a href="{% url 'records:health_reports' %}" class="btn btn-primary">View Reports</a>
-                </div>
-            </div>
-        </div>
+    <a href="{% url 'records:prescriptions' %}" class="dashboard-card">
+        <i class="fas fa-pills card-icon"></i>
+        <h4>Medications</h4>
+        <p>Manage your prescriptions and reminders.</p>
+    </a>
 
-        <!-- Medication Reminders -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-pills fa-3x text-primary"></i>
-                    <h5 class="card-title mt-3">Medication Reminders</h5>
-                    <p class="card-text">Never miss your medication schedule.</p>
-                    <a href="#" class="btn btn-primary">View Reminders</a>
-                </div>
-            </div>
-        </div>
+    <a href="{% url 'patients:feedback_form' %}" class="dashboard-card">
+        <i class="fas fa-comment-dots card-icon"></i>
+        <h4>Patient Feedback</h4>
+        <p>Report an issue or rate your recent hospital visit.</p>
+    </a>
 
-        <!-- Messages -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-pills fa-3x text-primary"></i>
-                    <h5 class="card-title mt-3">Messages</h5>
-                    <p class="card-text">Messages from Doctors</p>
-                    <a href="{% url 'patients:patient_messages' %}" class="btn btn-primary">View Messages</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reports -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-file-medical fa-3x text-primary"></i>
-                    <h5 class="card-title mt-3">Reports</h5>
-                    <p class="card-text">Access your Reports securely.</p>
-                    <a href="{% url 'patients:report_list' %}" class="btn btn-primary">View Reports</a>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-
-<footer>
-    <p>&copy; 2024 Patient Portal. All rights reserved.</p>
-</footer>
-
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-
-
-<!-- add Upcoming Appointments: Display the date and time of the next appointment, with a quick option to view details or reschedule.
-Feedback & Support
-Patient Feedback: A way for patients to provide feedback or report issues directly to the hospital.
-Help & Support: Easy access to FAQs, customer support, or a chatbot for troubleshooting.-->
+    <a href="#" class="dashboard-card">
+        <i class="fas fa-life-ring card-icon"></i>
+        <h4>Help & Support</h4>
+        <p>Access FAQs or contact technical support.</p>
+    </a>
+</section>
+{% endblock %}

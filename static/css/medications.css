@@ -1,0 +1,116 @@
+/* Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    border-left: 5px solid var(--primary-blue);
+}
+
+.header-content h2 { color: var(--secondary-blue); margin: 0 0 0.5rem 0; }
+.header-content p { margin: 0; color: #666; }
+
+/* List Container */
+.medication-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Individual Medication Card */
+.medication-card {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    border-left: 4px solid #f39c12; /* Orange indicating pending */
+}
+
+.medication-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+/* Time Block */
+.med-time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-light);
+    padding: 1rem;
+    border-radius: 8px;
+    min-width: 100px;
+    color: var(--primary-blue);
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-right: 1.5rem;
+}
+
+.med-time i { font-size: 1.5rem; margin-bottom: 0.3rem; }
+
+/* Details */
+.med-details { flex-grow: 1; }
+.med-details h3 { margin: 0 0 0.4rem 0; color: var(--text-dark); font-size: 1.3rem; }
+.med-details .dosage { color: var(--primary-blue); font-weight: 500; margin: 0 0 0.4rem 0; }
+.med-details .instructions { font-size: 0.9rem; margin: 0; }
+.text-muted { color: #888; }
+
+/* Actions & Buttons */
+.med-actions { margin-left: 1.5rem; }
+
+.toggle-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: 2px solid #d1d8dd;
+    background: transparent;
+    color: #666;
+}
+
+.toggle-btn:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
+
+.btn-success {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+}
+
+.btn-success:hover { background: #27ae60; border-color: #27ae60; color: white; }
+
+/* --- The "Taken" State (The cool part) --- */
+.taken-card {
+    border-left-color: var(--success); /* Turns the edge green */
+    opacity: 0.6; /* Fades the card out slightly */
+    background: #fdfdfd;
+}
+
+.taken-card .med-details h3 {
+    text-decoration: line-through; /* Crosses out the medication name */
+    color: #999;
+}
+
+/* Empty State */
+.empty-state { text-align: center; padding: 3rem; background: #fff; border-radius: 8px; }
+.empty-state i { margin-bottom: 1rem; color: #ccc; }
+.empty-state h3 { color: var(--text-dark); }
+
+/* Mobile */
+@media (max-width: 768px) {
+    .medication-card { flex-direction: column; align-items: flex-start; }
+    .med-time { width: 100%; margin: 0 0 1rem 0; flex-direction: row; gap: 0.5rem; padding: 0.5rem; }
+    .med-actions { margin: 1rem 0 0 0; width: 100%; }
+    .toggle-btn { width: 100%; }
+}

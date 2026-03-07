@@ -1,11 +1,84 @@
-<!-- add_medical_record.html -->
-<h1>Create Medical Record for {{ patient.username }}</h1>
-<form method="POST">
-    {% csrf_token %}
-    <textarea name="diagnoses" placeholder="Diagnoses"></textarea>
-    <textarea name="treatment_history" placeholder="Treatment History"></textarea>
-    <textarea name="allergies" placeholder="Allergies"></textarea>
-    <textarea name="family_history" placeholder="Family History"></textarea>
-    <textarea name="medications" placeholder="Medications"></textarea>
-    <button type="submit">Save Medical Record</button>
-</form>
+{% extends 'staff/base.html' %}
+{% load static %}
+{% block title %}Add Medical Record — {{ patient.user.get_full_name|default:patient.user.username }}{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'staff/add_medical_record.css' %}">
+
+
+<div class="wrap">
+    <nav class="topbar">
+        <a href="{% url 'staff:dashboard' %}" class="brand">
+            <div class="brand-dot"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg></div>
+            MediCore
+        </a>
+        <a href="{% url 'staff:display_patient' patient_id=patient.id %}" class="back">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Patient Profile
+        </a>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-eyebrow">Nursing — Medical Record</div>
+        <h1>Add Medical Record</h1>
+        <p>{{ patient.user.get_full_name|default:patient.user.username }}</p>
+    </div>
+
+    <div class="body">
+        {% if errors %}
+        <div class="error-banner">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+            Please correct the errors below before saving.
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="section-title">Diagnosis</div>
+                <div class="field">
+                    <label for="diagnoses">Diagnoses <span class="required-star">*</span></label>
+                    <textarea id="diagnoses" name="diagnoses"
+                              placeholder="List current diagnoses and conditions…"
+                              class="{% if errors.diagnoses %}has-error{% endif %}">{{ posted.diagnoses|default:'' }}</textarea>
+                    {% if errors.diagnoses %}<span class="field-error">{{ errors.diagnoses }}</span>{% endif %}
+                </div>
+
+                <div class="section-title">Treatment</div>
+                <div class="field">
+                    <label for="treatment_history">Treatment History</label>
+                    <span class="hint">Previous treatments, surgeries, hospitalisations.</span>
+                    <textarea id="treatment_history" name="treatment_history"
+                              placeholder="Describe past and current treatments…">{{ posted.treatment_history|default:'' }}</textarea>
+                </div>
+
+                <div class="field">
+                    <label for="medications">Current Medications</label>
+                    <span class="hint">Include dosage and frequency where known.</span>
+                    <textarea id="medications" name="medications"
+                              placeholder="List active medications…">{{ posted.medications|default:'' }}</textarea>
+                </div>
+
+                <div class="section-title">Patient History</div>
+                <div class="field">
+                    <label for="allergies">Known Allergies</label>
+                    <textarea id="allergies" name="allergies"
+                              style="min-height:80px"
+                              placeholder="Drug allergies, food allergies, environmental…">{{ posted.allergies|default:'' }}</textarea>
+                </div>
+
+                <div class="field">
+                    <label for="family_history">Family Medical History</label>
+                    <textarea id="family_history" name="family_history"
+                              placeholder="Relevant hereditary conditions, family illnesses…">{{ posted.family_history|default:'' }}</textarea>
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'staff:display_patient' patient_id=patient.id %}" class="btn-cancel">Cancel</a>
+                    <button type="submit" class="btn-save">Save Record →</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

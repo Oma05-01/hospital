@@ -1,14 +1,79 @@
-{% extends "staff/base.html" %}
+{% extends 'staff/base.html' %}
+{% load static %}
+{% block title %}Message from {{ message.sender.user.get_full_name|default:message.sender.user.username }}{% endblock %}
 
 {% block content %}
+    <link rel="stylesheet" href="{% static 'staff/message_detail.css' %}">
 
-<h1>Message Detail</h1>
-<p><strong>From:</strong> {{ message.sender.user.username }}</p>
-<p><strong>To:</strong> {{ message.recipient.user.username }}</p>
-<p><strong>Message:</strong> {{ message.message_content }}</p>
-<p><strong>Sent at:</strong> {{ message.sent_at|date:"d M Y H:i" }}</p>
-{% if message.is_read %}
-    <p><strong>Read at:</strong> {{ message.read_at|date:"d M Y H:i" }}</p>
-{% endif %}
+<div class="wrap">
+    <nav class="topbar">
+        <a href="{% url 'staff:dashboard' %}" class="brand">
+            <div class="brand-dot"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg></div>
+            MediCore
+        </a>
+        <div class="topbar-right">
+            <a href="{% url 'staff:staff_inbox' %}" class="back">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Inbox
+            </a>
+            <a href="{% url 'staff:send_staff_message' %}" class="btn-reply">
+                <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                Reply
+            </a>
+        </div>
+    </nav>
 
+    <div class="hero">
+        <div class="hero-eyebrow">Staff — Message</div>
+        <h1>Message Detail</h1>
+        <p>{{ message.sent_at|date:"d M Y, H:i" }}</p>
+    </div>
+
+    <div class="body">
+        <!-- Participants -->
+        <div class="participants">
+            <div class="avatar av-sender">{{ message.sender.user.get_full_name|default:message.sender.user.username|slice:":1"|upper }}</div>
+            <div>
+                <div class="p-name">{{ message.sender.user.get_full_name|default:message.sender.user.username }}</div>
+                <div class="p-role">Sender{% if message.sender.role %} &middot; {{ message.sender.role|capfirst }}{% endif %}</div>
+            </div>
+            <span class="arrow-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <div class="avatar av-recipient">{{ message.recipient.user.get_full_name|default:message.recipient.user.username|slice:":1"|upper }}</div>
+            <div>
+                <div class="p-name">{{ message.recipient.user.get_full_name|default:message.recipient.user.username }}</div>
+                <div class="p-role">Recipient{% if message.recipient.role %} &middot; {{ message.recipient.role|capfirst }}{% endif %}</div>
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="meta-row">
+            <div class="meta-item">
+                <div class="meta-lbl">Sent</div>
+                <div class="meta-val">{{ message.sent_at|date:"d M Y, H:i" }}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-lbl">Status</div>
+                <div class="meta-val">{% if message.is_read %}Read{% else %}Unread{% endif %}</div>
+            </div>
+            {% if message.read_at %}
+            <div class="meta-item">
+                <div class="meta-lbl">Read at</div>
+                <div class="meta-val">{{ message.read_at|date:"d M Y, H:i" }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Message body -->
+        <div class="msg-card">
+            <div class="msg-card-header">
+                <span class="msg-card-label">Message</span>
+            </div>
+            <div class="msg-card-body">{{ message.message_content }}</div>
+        </div>
+
+        <div class="read-note">
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+            Marked as read
+        </div>
+    </div>
+</div>
 {% endblock %}

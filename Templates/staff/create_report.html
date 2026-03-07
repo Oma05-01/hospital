@@ -1,27 +1,51 @@
-{% extends 'staff/base.html' %}
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Upload Medical Report | {{ patient.user.last_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-reports.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Create Report for {{ patient.user.username }} {{ patient.last_name }}</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="title">Report Title</label>
-            <input type="text" id="title" name="title" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="report_type">Report Type</label>
-            <select id="report_type" name="report_type" class="form-control" required>
-                <option value="patient_care">Patient Care</option>
-                <option value="financial">Financial</option>
-                <option value="performance">Performance</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="file_path">Upload Report File</label>
-            <input type="file" id="file_path" name="file_path" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Create Report</button>
-    </form>
+<div class="report-wrapper">
+    <div class="upload-card">
+        <header class="card-header">
+            <h2><i class="fas fa-file-upload"></i> Upload Clinical Document</h2>
+            <p>Attach a new lab result, consultation note, or financial report for <strong>{{ patient.user.get_full_name }}</strong>.</p>
+        </header>
+
+        <form method="post" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="field-wrapper">
+                    <label for="title">Document Title</label>
+                    <input type="text" id="title" name="title" placeholder="e.g., Q1 Blood Work Analysis" required>
+                </div>
+
+                <div class="field-wrapper">
+                    <label for="report_type">Document Category</label>
+                    <select id="report_type" name="report_type" required>
+                        <option value="">-- Select Category --</option>
+                        <option value="clinical">Clinical / Medical Note</option>
+                        <option value="financial">Financial / Billing</option>
+                        <option value="performance">Lab / Performance</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="file-drop-area">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <span class="file-msg">Choose a PDF file or drag it here</span>
+                <input class="file-input" type="file" name="file_path" accept=".pdf" required>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'staff:report_list' patient.id %}" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save to Patient File</button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

@@ -1,40 +1,111 @@
-{% extends 'patients/base.html' %}
+{% extends "appointments/base.html" %}
+{% load static %}
+
+{% block title %}Book Clinic Visit | CareFirst Portal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/patient-booking.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
+{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<div class="booking-wrapper">
+    <nav class="breadcrumb">
+        <a href="{% url 'appointments:appointment_list' %}"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </nav>
 
-<div class="container my-5">
-    <h2 class="text-primary mb-4">Book an Appointment</h2>
-    <form method="post" class="mb-4">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary w-100">Book Appointment</button>
-        <br>
-    </form>
+    <header class="booking-header physical-theme" style="border-top: 5px solid #3182ce;">
+        <div class="header-main">
+            <h2><i class="fas fa-hospital-user"></i> Schedule a Clinic Visit</h2>
+            <p>Book an in-person appointment with our medical specialists.</p>
+        </div>
+        <div class="header-badge">
+            <span class="telemed-badge" style="background: #ebf8ff; color: #2b6cb0; border-color: #bee3f8;">In-Person Visit</span>
+        </div>
+    </header>
 
-    <br>
-    <div class="d-flex flex-column align-items-center">
-        <a href="{% url 'appointments:appointment_list' %}" class="btn btn-secondary mb-2 w-75">View Appointment List</a>
-        <a href="{% url 'appointments:consultation_history' %}" class="btn btn-secondary mb-2 w-75">View Consultation History</a>
-        <a href="{% url 'appointments:book_virtual_consultation' %}" class="btn btn-secondary mb-2 w-75">Book Virtual Consultation</a>
-        <a href="#" class="btn btn-secondary mb-2 w-75">Add Consultation Note</a>
+    <div class="booking-layout">
+        <aside class="instruction-panel">
+            <h3><i class="fas fa-info-circle"></i> Visit Preparation</h3>
+            <p class="intro-text">To ensure you receive the best care during your physical consultation, please note the following:</p>
+
+            <ul class="prep-list">
+                <li>
+                    <div class="prep-icon"><i class="far fa-clock"></i></div>
+                    <div class="prep-text">
+                        <strong>Arrival Time</strong>
+                        <span>Please arrive 15 minutes before your scheduled time to complete any necessary triage or paperwork.</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="prep-icon"><i class="fas fa-id-card"></i></div>
+                    <div class="prep-text">
+                        <strong>Identification & Insurance</strong>
+                        <span>Bring a valid ID and your active HMO/Insurance card for the front desk to verify.</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="prep-icon"><i class="fas fa-pills"></i></div>
+                    <div class="prep-text">
+                        <strong>Current Medications</strong>
+                        <span>Bring a list of any medications or supplements you are currently taking.</span>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="support-box">
+                <i class="fas fa-map-marker-alt"></i>
+                <p><strong>CareFirst Medical Center</strong><br>123 Health Avenue, Medical District.<br>Need directions? Call <strong>0800-CARE-FIRST</strong>.</p>
+            </div>
+        </aside>
+
+        <main class="form-panel">
+            <h3>Appointment Details</h3>
+            <form method="POST" class="custom-form">
+                {% csrf_token %}
+
+                <div class="form-fields">
+                    {{ form.as_p }}
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'appointments:appointment_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary btn-large">
+                        <i class="fas fa-calendar-check"></i> Confirm Booking
+                    </button>
+                </div>
+            </form>
+        </main>
     </div>
-    <br>
 </div>
-<br>
+{% endblock %}
 
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        flatpickr("#date-picker", {
+        // Initialize Flatpickr on Django's default date and time field IDs
+        // If your form fields have different IDs, change '#id_date' and '#id_time' accordingly
+
+        flatpickr("#id_date", {
             dateFormat: "Y-m-d",
+            minDate: "today", // Prevents booking in the past
+            disable: [
+                function(date) {
+                    // Optional: Disable weekends (0 is Sunday, 6 is Saturday)
+                    // return (date.getDay() === 0 || date.getDay() === 6);
+                }
+            ]
         });
-        flatpickr("#time-picker", {
+
+        flatpickr("#id_time", {
             enableTime: true,
             noCalendar: true,
             dateFormat: "H:i",
+            minTime: "08:00", // Clinic opens
+            maxTime: "17:00", // Clinic closes
         });
     });
 </script>
 {% endblock %}
-

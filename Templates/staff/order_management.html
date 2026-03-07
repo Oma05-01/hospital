@@ -1,28 +1,44 @@
-<h1>Order Management</h1>
+{% extends "staff/base.html" %}
+{% load static %}
 
-<table>
-    <thead>
-        <tr>
-            <th>Order Number</th>
-            <th>Supply</th>
-            <th>Quantity Ordered</th>
-            <th>Status</th>
-            <th>Order Date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for order in orders %}
-            <tr>
-                <td>{{ order.order_number }}</td>
-                <td>{{ order.supply.name }}</td>
-                <td>{{ order.quantity_ordered }}</td>
-                <td>{{ order.order_status }}</td>
-                <td>{{ order.order_date }}</td>
-                <td>
-                    <a href="{% url 'update_order' order.id %}">Update Status</a>
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% block title %}Procurement | Order Management{% endblock %}
+
+{% block content %}
+<div class="order-container">
+    <div class="section-header">
+        <h2><i class="fas fa-truck-loading"></i> Supply Orders</h2>
+        <button class="btn btn-primary">+ New Purchase Order</button>
+    </div>
+
+    <div class="table-card">
+        <table class="staff-table">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Supplier</th>
+                    <th>Date Placed</th>
+                    <th>Total Value</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><strong>#ORD-{{ order.id }}</strong></td>
+                    <td>{{ order.supplier_name }}</td>
+                    <td>{{ order.order_date|date:"d M, Y" }}</td>
+                    <td>₦{{ order.total_price }}</td>
+                    <td>
+                        <span class="status-pill status-{{ order.status|lower }}">
+                            {{ order.status }}
+                        </span>
+                    </td>
+                    <td><a href="#" class="view-btn">Details</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

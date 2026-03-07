@@ -1,29 +1,52 @@
-<h1>Medical Supply Inventory</h1>
+{% extends "staff/base.html" %}
+{% load static %}
 
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Quantity in Stock</th>
-            <th>Reorder Level</th>
-            <th>Unit Price</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
+{% block title %}Inventory | Medical Supplies{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-inventory.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="inventory-wrapper">
+    <header class="inventory-header">
+        <div class="header-main">
+            <h2><i class="fas fa-boxes"></i> Medical Supply Inventory</h2>
+            <p>Real-time stock tracking for clinical consumables and equipment.</p>
+        </div>
+        <div class="inventory-stats">
+            <div class="stat-item">
+                <span class="stat-value">{{ supplies.count }}</span>
+                <span class="stat-label">Total SKUs</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="inventory-grid">
         {% for supply in supplies %}
-            <tr>
-                <td>{{ supply.name }}</td>
-                <td>{{ supply.description }}</td>
-                <td>{{ supply.quantity_in_stock }}</td>
-                <td>{{ supply.reorder_level }}</td>
-                <td>${{ supply.unit_price }}</td>
-                <td>
-                    <a href="{% url 'edit_supply' supply.id %}">Edit</a> |
-                    <a href="{% url 'delete_supply' supply.id %}">Delete</a>
-                </td>
-            </tr>
+            <div class="supply-card">
+                <div class="supply-info">
+                    <span class="category-tag">{{ supply.category|default:"General" }}</span>
+                    <h3>{{ supply.name }}</h3>
+                    <p class="sku">SKU: #MED-{{ supply.id|stringformat:"04d" }}</p>
+                </div>
+                
+                <div class="stock-gauge">
+                    <div class="gauge-labels">
+                        <span>Stock Level</span>
+                        <span class="qty">{{ supply.quantity }} / {{ supply.max_stock|default:"100" }}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ supply.stock_percentage|default:75 }}%;"></div>
+                    </div>
+                </div>
+
+                <div class="supply-footer">
+                    <span class="expiry">Expires: {{ supply.expiry_date|date:"M Y"|default:"N/A" }}</span>
+                    <a href="#" class="btn-icon-link"><i class="fas fa-history"></i> Log</a>
+                </div>
+            </div>
         {% endfor %}
-    </tbody>
-</table>
+    </div>
+</div>
+{% endblock %}

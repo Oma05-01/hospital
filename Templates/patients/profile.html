@@ -1,63 +1,90 @@
 {% extends 'patients/base.html' %}
+{% load static %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}My Profile | CareFirst Medical{% endblock %}
 
-{% block content %}
-<h2>Your Profile</h2>
-
-<!-- Display profile details -->
-<table>
-    <tr>
-        <th>Name:</th>
-        <td>{{ profile.user.user.username }}</td>
-    </tr>
-    <tr>
-        <th>Phone Number:</th>
-        <td>{{ profile.phone_number }}</td>
-    </tr>
-    <tr>
-        <th>Emergency Contact:</th>
-        <td>{{ profile.emergency_contact }}</td>
-    </tr>
-    <tr>
-        <th>Medical History:</th>
-        <td>{{ profile.medical_history }}</td>
-    </tr>
-    <tr>
-        <th>Allergies:</th>
-        <td>{{ profile.allergies }}</td>
-    </tr>
-    <tr>
-        <th>Insurance Details:</th>
-        <td>{{ profile.insurance_details }}</td>
-    </tr>
-    <tr>
-        <th>Next of Kin Name:</th>
-        <td>{{ profile.next_of_kin_name }}</td>
-    </tr>
-    <tr>
-        <th>Next of Kin Phone Number:</th>
-        <td>{{ profile.next_of_kin_phone_number }}</td>
-    </tr>
-    <tr>
-        <th>Next of Kin Email:</th>
-        <td>{{ profile.next_of_kin_email }}</td>
-    </tr>
-    <tr>
-        <th>Next of Kin Address:</th>
-        <td>{{ profile.next_of_kin_address }}</td>
-    </tr>
-    <tr>
-        <th>Next of Kin Relationship:</th>
-        <td>{{ profile.next_of_kin_relationship }}</td>
-    </tr>
-</table>
-
-<br>
-
-<!-- Update profile button -->
-<a href="{% url 'patients:update_profile' %}" class="btn btn-primary">Update Profile</a>
-
-<br><br><br>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=1">
 {% endblock %}
 
+{% block content %}
+<div class="profile-header">
+    <div class="profile-title-group">
+        <h2><i class="fas fa-user-circle"></i> Patient Profile</h2>
+        <p>Manage your personal information, medical history, and emergency contacts.</p>
+    </div>
+    <div class="profile-actions">
+        <a href="{% url 'patients:update_profile' %}" class="btn btn-primary"><i class="fas fa-edit"></i> Edit Profile</a>
+    </div>
+</div>
+
+<div class="profile-grid">
+    <div class="profile-card">
+        <div class="card-header">
+            <h3><i class="fas fa-id-card"></i> Personal Information</h3>
+        </div>
+        <div class="card-body">
+            <div class="info-group">
+                <span class="info-label">Full Name</span>
+                <span class="info-value">{{ profile.user.get_full_name|default:profile.user.username }}</span>
+            </div>
+            <div class="info-group">
+                <span class="info-label">Email Address</span>
+                <span class="info-value">{{ profile.user.email }}</span>
+            </div>
+            <div class="info-group">
+                <span class="info-label">Phone Number</span>
+                <span class="info-value">{{ profile.phone_number|default:"Not provided" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-card">
+        <div class="card-header">
+            <h3><i class="fas fa-notes-medical"></i> Medical Details</h3>
+        </div>
+        <div class="card-body">
+            <div class="info-group">
+                <span class="info-label">Medical History</span>
+                <span class="info-value">{{ profile.medical_history|default:"None reported" }}</span>
+            </div>
+            <div class="info-group">
+                <span class="info-label text-danger">Known Allergies</span>
+                <span class="info-value">{{ profile.allergies|default:"None reported" }}</span>
+            </div>
+            <div class="info-group">
+                <span class="info-label">Insurance Details</span>
+                <span class="info-value">{{ profile.insurance_details|default:"Not provided" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-card">
+        <div class="card-header">
+            <h3><i class="fas fa-phone-alt"></i> Emergency Contacts</h3>
+        </div>
+        <div class="card-body">
+            <div class="info-group">
+                <span class="info-label">Primary Emergency Contact</span>
+                <span class="info-value">{{ profile.emergency_contact|default:"Not provided" }}</span>
+            </div>
+            <div class="info-group">
+                <span class="info-label">Next of Kin Name</span>
+                <span class="info-value">{{ profile.next_of_kin_name|default:"Not provided" }} ({{ profile.next_of_kin_relationship|default:"N/A" }})</span>
+            </div>
+            <div class="info-group">
+                <span class="info-label">Next of Kin Phone</span>
+                <span class="info-value">{{ profile.next_of_kin_phone_number|default:"Not provided" }}</span>
+            </div>
+            <div class="info-group">
+                <span class="info-label">Next of Kin Email</span>
+                <span class="info-value">{{ profile.next_of_kin_email|default:"Not provided" }}</span>
+            </div>
+            <div class="info-group full-width">
+                <span class="info-label">Next of Kin Address</span>
+                <span class="info-value">{{ profile.next_of_kin_address|default:"Not provided" }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

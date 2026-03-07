@@ -1,31 +1,56 @@
-{% extends 'staff/base.html' %}
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Patient Files | {{ patient.user.last_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-reports.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Reports for {{ patient.first_name }} {{ patient.last_name }}</h2>
-    <a href="{% url 'staff:create_report' patient.id %}" class="btn btn-success mb-3">Create New Report</a>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Date Generated</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for report in reports %}
-            <tr>
-                <td>{{ report.title }}</td>
-                <td>{{ report.get_report_type_display }}</td>
-                <td>{{ report.generated_at }}</td>
-                <td>
-                    <a href="{% url 'staff:report_detail' report.id %}" class="btn btn-info btn-sm">View</a>
-                    <a href="{% url 'staff:download_report' report.id %}" class="btn btn-secondary btn-sm">Download</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="report-wrapper">
+    <header class="page-header">
+        <div class="header-main">
+            <h2><i class="fas fa-folder-open"></i> Medical Records: {{ patient.user.get_full_name }}</h2>
+            <span class="patient-id">ID: #{{ patient.id|stringformat:"04d" }}</span>
+        </div>
+        <a href="{% url 'staff:create_report' patient.id %}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Upload New Report
+        </a>
+    </header>
+
+    <div class="record-table-container">
+        <table class="record-table">
+            <thead>
+                <tr>
+                    <th>Document Title</th>
+                    <th>Category</th>
+                    <th>Date Uploaded</th>
+                    <th>Author</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td class="doc-title"><i class="far fa-file-pdf"></i> {{ report.title }}</td>
+                    <td><span class="category-pill type-{{ report.report_type }}">{{ report.get_report_type_display }}</span></td>
+                    <td>{{ report.generated_at|date:"d M, Y" }}</td>
+                    <td>Dr. {{ report.generated_by.user.last_name }}</td>
+                    <td class="actions">
+                        <a href="{% url 'staff:report_detail' report.id %}" class="btn-link">View</a>
+                        <a href="{% url 'staff:download_report' report.id %}" class="btn-link text-primary"><i class="fas fa-download"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="empty-state">
+                        <p>No documents found in this patient's medical file.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

@@ -1,0 +1,114 @@
+.claims-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Left Sidebar: Bill Summary */
+.bill-summary-panel {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #e1e8ed;
+    position: sticky;
+    top: 20px;
+}
+
+.panel-header .badge {
+    background: #f0f4f8;
+    color: #4a5568;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.panel-header h2 { margin: 10px 0; color: #1a202c; }
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #edf2f7;
+    font-size: 0.9rem;
+}
+
+.detail-row label { color: #718096; }
+.detail-row span { font-weight: 600; color: #2d3748; }
+
+.total-amount { color: #2f855a !important; font-size: 1.1rem; }
+
+.insurance-info {
+    margin-top: 2rem;
+    background: #f7fafc;
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+.insurance-info h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: #4a5568; }
+
+/* Right Content: Claims */
+.claims-main-content {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.claim-form-card {
+    background: #f8fafc;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px dashed #cbd5e0;
+    margin-bottom: 2rem;
+}
+
+/* Timeline */
+.claims-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.claim-item {
+    border-left: 4px solid #cbd5e0;
+    padding: 1rem 1.5rem;
+    background: #fff;
+    border: 1px solid #edf2f7;
+    border-left-width: 4px;
+    border-radius: 4px;
+}
+
+.claim-item.status-approved { border-left-color: #48bb78; }
+.claim-item.status-denied { border-left-color: #f56565; }
+.claim-item.status-pending { border-left-color: #ed8936; }
+
+.claim-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.claim-id { font-weight: bold; color: #4a5568; }
+.claim-date { font-size: 0.8rem; color: #a0aec0; }
+
+.provider-response {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f7fafc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #4a5568;
+}
+
+.empty-claims {
+    text-align: center;
+    padding: 3rem;
+    color: #a0aec0;
+}
+
+.empty-claims i { font-size: 3rem; margin-bottom: 1rem; }

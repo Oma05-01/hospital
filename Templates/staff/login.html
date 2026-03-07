@@ -1,122 +1,101 @@
-<!-- login.html -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f7fc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+    <title>Staff Login — MediCore</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'staff/register.css' %}">
 
-        .login-container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .login-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-weight: 500;
-            color: #333;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-            margin-top: 5px;
-        }
-
-        .form-group input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 5px;
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .form-group input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .login-footer a {
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        .login-footer a:hover {
-            text-decoration: underline;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-    </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Staff Login</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="username">Username</label>
-                {{ form.username }}
+
+<div class="page-wrap">
+
+    <!-- Left sidebar -->
+    <aside class="side-panel">
+        <div class="brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg>
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                {{ form.password }}
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Login">
-            </div>
-            {% if form.non_field_errors %}
-                <div class="error-message">
-                    {% for error in form.non_field_errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </form>
-        <div class="login-footer">
-            <p>Don't have an account? <a href="{% url 'staff:register' %}">Sign up here</a></p>
+            <span class="brand-name">MediCore</span>
         </div>
-    </div>
+
+        <div class="side-body">
+            <h1>Welcome back</h1>
+            <p>Sign in to access your clinical dashboard, patient records, and scheduling tools.</p>
+        </div>
+
+        <div class="side-features">
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 1a11 11 0 100 22A11 11 0 0012 1zm.5 6v5.25l4.5 2.67-.75 1.23L11 13V7h1.5z"/></svg>
+                </div>
+                <div class="feature-text">
+                    <strong>Real-time Updates</strong>
+                    Live patient status and ward activity
+                </div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7"/></svg>
+                </div>
+                <div class="feature-text">
+                    <strong>Secure Access</strong>
+                    Role-based permissions and audit logs
+                </div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                </div>
+                <div class="feature-text">
+                    <strong>Team Coordination</strong>
+                    Collaborate across departments
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Form panel -->
+    <main class="form-panel">
+        <h2>Sign in to your account</h2>
+        <p class="subtitle">Use your staff credentials to continue.</p>
+
+        {% if alert_message %}
+        <div class="alert-banner">{{ alert_message }}</div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+        <div class="error-list">
+            {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="field">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}<span class="field-error">{{ form.username.errors|join:", " }}</span>{% endif %}
+            </div>
+
+            <div class="field">
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}<span class="field-error">{{ form.password.errors|join:", " }}</span>{% endif %}
+            </div>
+
+            <button type="submit" class="btn-submit">Sign In →</button>
+        </form>
+
+        <p class="footer-link">Don't have an account? <a href="{% url 'staff:register' %}">Register here</a></p>
+    </main>
+</div>
+
 </body>
 </html>

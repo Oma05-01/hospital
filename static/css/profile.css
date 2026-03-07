@@ -1,0 +1,112 @@
+/* Profile Header Area */
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border-left: 5px solid var(--primary-blue);
+}
+
+.profile-title-group h2 {
+    color: var(--secondary-blue);
+    margin: 0 0 0.5rem 0;
+    font-size: 1.8rem;
+}
+
+.profile-title-group p {
+    margin: 0;
+    color: #666;
+}
+
+/* Grid Layout for Cards */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.profile-actions a {
+    color: #ffffff
+}
+
+.profile-actions a:hover {
+    color: #666
+}
+
+/* Individual Profile Cards */
+.profile-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.profile-card .card-header {
+    background-color: var(--bg-light);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.profile-card .card-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--secondary-blue);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile-card .card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+/* Data Grouping */
+.info-group {
+    flex: 1 1 45%; /* Takes up roughly half the card width on desktop */
+    display: flex;
+    flex-direction: column;
+}
+
+.info-group.full-width {
+    flex: 1 1 100%; /* Forces the element to take the full row (good for addresses) */
+}
+
+.info-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.4rem;
+}
+
+.info-value {
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
+/* Helper Classes */
+.text-danger {
+    color: var(--danger);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .info-group {
+        flex: 1 1 100%; /* Stack all info vertically on mobile */
+    }
+}

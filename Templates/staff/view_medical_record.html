@@ -1,13 +1,85 @@
-{% extends "staff/base.html" %}
-<!-- view_medical_record.html -->
+
+{% extends 'staff/base.html' %}
+{% load static %}
+{% block title %}Medical Records — {{ patient.user.get_full_name|default:patient.user.username }}{% endblock %}
+
 {% block content %}
-<h1>Medical Record for {{ patient.user.username }}</h1>
-{% for record in medical_records %}
-    <p><strong>Diagnoses:</strong> {{ record.diagnoses }}</p>
-    <p><strong>Treatment History:</strong> {{ record.treatment_history }}</p>
-    <p><strong>Allergies:</strong> {{ record.allergies }}</p>
-    <p><strong>Family History:</strong> {{ record.family_history }}</p>
-    <p><strong>Medications:</strong> {{ record.medications }}</p>
-    <hr>
-{% endfor %}
+    <link rel="stylesheet" href="{% static 'staff/view_medical_record.css' %}">
+
+<div class="wrap">
+    <nav class="topbar">
+        <a href="{% url 'staff:dashboard' %}" class="brand">
+            <div class="brand-dot"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg></div>
+            MediCore
+        </a>
+        <div class="topbar-right">
+            <a href="{% url 'staff:display_patient' patient_id=patient.id %}" class="back">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Patient Profile
+            </a>
+            <a href="{% url 'staff:add_medical_record' patient_id=patient.id %}" class="btn-add">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Add Record
+            </a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-eyebrow">Clinical — Medical Records</div>
+        <h1>Medical Records</h1>
+        <p>{{ patient.user.get_full_name|default:patient.user.username }} &mdash; {{ medical_records|length }} record{{ medical_records|length|pluralize }} on file</p>
+    </div>
+
+    <div class="body">
+        {% if medical_records %}
+            {% for record in medical_records %}
+            <div class="record-card">
+                <div class="record-header">
+                    <span class="record-number">Record #{{ forloop.revcounter }}</span>
+                    {% if record.created_at %}<span class="record-date">{{ record.created_at|date:"d M Y, H:i" }}</span>{% endif %}
+                </div>
+                <div class="record-body">
+                    <div class="record-field full">
+                        <span class="record-label">Diagnoses</span>
+                        <div class="record-value {% if not record.diagnoses %}empty{% endif %}">
+                            {{ record.diagnoses|default:"Not recorded" }}
+                        </div>
+                    </div>
+                    <div class="record-field">
+                        <span class="record-label">Treatment History</span>
+                        <div class="record-value {% if not record.treatment_history %}empty{% endif %}">
+                            {{ record.treatment_history|default:"Not recorded" }}
+                        </div>
+                    </div>
+                    <div class="record-field">
+                        <span class="record-label">Current Medications</span>
+                        <div class="record-value {% if not record.medications %}empty{% endif %}">
+                            {{ record.medications|default:"Not recorded" }}
+                        </div>
+                    </div>
+                    <div class="record-field">
+                        <span class="record-label">Known Allergies</span>
+                        <div class="record-value {% if not record.allergies %}empty{% endif %}">
+                            {{ record.allergies|default:"None recorded" }}
+                        </div>
+                    </div>
+                    <div class="record-field">
+                        <span class="record-label">Family History</span>
+                        <div class="record-value {% if not record.family_history %}empty{% endif %}">
+                            {{ record.family_history|default:"Not recorded" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+            <p>No medical records have been added for this patient yet.</p>
+            <a href="{% url 'staff:add_medical_record' patient_id=patient.id %}">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
+                Add First Record
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

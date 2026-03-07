@@ -3,8 +3,9 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/Hos" />
+      <excludeFolder url="file://$MODULE_DIR$/hos" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.13 (HospitalApp)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.13 (hospital_app)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

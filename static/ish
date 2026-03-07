@@ -1,0 +1,24 @@
+{% load static %}
+    <link rel="stylesheet" href="{% static 'staff/add_care_plan.css' %}">
+    <link rel="stylesheet" href="{% static 'staff/staff_inbox.css' %}">
+
+    <link rel="stylesheet" href="{% static 'staff/send_staff_message.css' %}">
+    <link rel="stylesheet" href="{% static 'staff/prescribe_medication.css' %}">
+
+
+.form-actions button {
+    color: #ffffff
+}
+
+.form-actions button:hover {
+        color: #666
+}
+
+.form-actions a {
+    color: #ffffff
+}
+
+.form-actions a:hover {
+        color: #666
+}
+

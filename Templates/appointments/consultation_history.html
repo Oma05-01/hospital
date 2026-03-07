@@ -1,36 +1,72 @@
-{% extends "patients/base.html" %}
+{% extends "appointments/base.html" %}
+{% load static %}
+
+{% block title %}Consultation History | CareFirst Portal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/patient-history.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <h2 class="text-center text-primary mb-4">Consultation History</h2>
-    <h3 class="text-secondary">Past Appointments</h3>
-    {% if past_appointments.exists %}
-        <ul class="list-group mb-4">
-            {% for appointment in past_appointments %}
-            <li class="list-group-item">
-                <strong>Date:</strong> {{ appointment.date }}
-                | <strong>Doctor:</strong> {{ appointment.doctor_name }}
-                | <strong>Notes:</strong> {{ appointment.notes|default:"None" }}
-            </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <div class="alert alert-warning" role="alert">No past appointments available.</div>
-    {% endif %}
+<div class="history-wrapper">
+    <header class="history-header">
+        <div class="header-text">
+            <h2><i class="fas fa-history"></i> Consultation History</h2>
+            <p>A complete timeline of your past clinic visits and virtual sessions.</p>
+        </div>
+        <div class="header-actions">
+            <a href="{% url 'appointments:appointment_list' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Active Appointments
+            </a>
+        </div>
+    </header>
 
-    <h3 class="text-secondary">Upcoming Appointments</h3>
-    {% if upcoming_appointments.exists %}
-        <ul class="list-group">
-            {% for appointment in upcoming_appointments %}
-            <li class="list-group-item">
-                <strong>Date:</strong> {{ appointment.date }}
-                | <strong>Time:</strong> {{ appointment.time }}
-                | <strong>Doctor:</strong> {{ appointment.doctor_name }}
-            </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <div class="alert alert-warning" role="alert">No upcoming appointments scheduled.</div>
-    {% endif %}
+    <div class="timeline-container">
+        {% for appt in past_appointments %}
+            <div class="timeline-item">
+                <div class="timeline-marker">
+                    <i class="fas {% if appt.status == 'Completed' %}fa-check-circle text-success{% elif appt.status == 'Cancelled' %}fa-times-circle text-danger{% else %}fa-circle text-muted{% endif %}"></i>
+                </div>
+
+                <div class="timeline-content {% if appt.status == 'Cancelled' %}cancelled-visit{% endif %}">
+                    <div class="content-header">
+                        <span class="visit-date">{{ appt.date|date:"F d, Y" }}</span>
+                        <span class="visit-status status-{{ appt.status|slugify }}">{{ appt.status }}</span>
+                    </div>
+
+                    <div class="visit-details">
+                        <div class="doctor-info">
+                            <h3>Dr. {{ appt.doctor.user.last_name }}</h3>
+                            <p class="specialty">{{ appt.doctor.specialty|default:"General Medicine" }}</p>
+                        </div>
+
+                        <div class="visit-meta">
+                            <span class="meta-item"><i class="far fa-clock"></i> {{ appt.time|time:"h:i A" }}</span>
+                            <span class="meta-item"><i class="fas {% if appt.consultation_type == 'Virtual' %}fa-laptop-medical{% else %}fa-hospital-user{% endif %}"></i> {{ appt.consultation_type|default:"Physical" }}</span>
+                        </div>
+                    </div>
+
+                    <div class="visit-reason">
+                        <strong>Chief Complaint:</strong>
+                        <p>{{ appt.reason|default:"Routine Checkup / Not Specified" }}</p>
+                    </div>
+
+                    {% if appt.status == 'Completed' %}
+                        <div class="visit-actions">
+                            <button class="btn btn-sm btn-outline-primary" disabled title="Feature coming soon">
+                                <i class="fas fa-file-medical"></i> Request Visit Summary
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-history">
+                <div class="icon-circle"><i class="fas fa-notes-medical"></i></div>
+                <h3>No Medical History Found</h3>
+                <p>You do not have any past consultations on record.</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

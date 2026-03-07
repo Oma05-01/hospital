@@ -1,14 +1,69 @@
-{% extends 'staff/base.html' %}
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Credentials | {{ staff_member.user.last_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-directory.css' %}">
+{% endblock %}
 
 {% block content %}
-  <h1>{{ staff.first_name }} {{ staff.last_name }}'s Certifications</h1>
-  <ul>
-    {% for cert in staff.certifications.all %}
-      <li>
-        <h3>{{ cert.name }}</h3>
-        <p>Expires on: {{ cert.expiration_date }}</p>
-        <p>Valid: {{ cert.is_valid }}</p>
-      </li>
-    {% endfor %}
-  </ul>
+<div class="credentials-wrapper">
+    <nav class="breadcrumb">
+        <a href="{% url 'staff:staff_list' %}"><i class="fas fa-arrow-left"></i> Back to Directory</a>
+    </nav>
+
+    <header class="portfolio-header">
+        <div class="portfolio-avatar">
+            {{ staff_member.user.first_name|slice:":1" }}{{ staff_member.user.last_name|slice:":1" }}
+        </div>
+        <div class="portfolio-details">
+            <h2>{{ staff_member.user.get_full_name }}</h2>
+            <p><strong>{{ staff_member.get_role_display|default:staff_member.role }}</strong> &bull; {{ staff_member.specialty|default:"General Medicine" }}</p>
+            <p class="text-muted">Staff ID: #EMP-{{ staff_member.id|stringformat:"04d" }}</p>
+        </div>
+    </header>
+
+    <div class="certifications-section">
+        <h3><i class="fas fa-certificate"></i> Verified Certifications & Licenses</h3>
+
+        <div class="cert-grid">
+            {% for cert in certifications %}
+                <div class="cert-card {% if cert.is_expired %}expired{% endif %}">
+                    <div class="cert-header">
+                        <h4>{{ cert.name }}</h4>
+                        {% if cert.is_expired %}
+                            <span class="status-pill status-expired">Expired</span>
+                        {% else %}
+                            <span class="status-pill status-active">Active</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="cert-body">
+                        <p><strong>Issuing Body:</strong> {{ cert.issuing_organization|default:"Medical Board" }}</p>
+                        <p><strong>Credential ID:</strong> <span class="mono">{{ cert.credential_id|default:"N/A" }}</span></p>
+                    </div>
+
+                    <div class="cert-dates">
+                        <div class="date-col">
+                            <label>Issued</label>
+                            <span>{{ cert.issue_date|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="date-col">
+                            <label>Expires</label>
+                            <span class="{% if cert.is_expired %}text-danger font-bold{% endif %}">
+                                {{ cert.expiry_date|date:"M d, Y"|default:"Does not expire" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-folder-open fa-3x text-muted"></i>
+                    <p>No certifications have been uploaded to this profile yet.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}

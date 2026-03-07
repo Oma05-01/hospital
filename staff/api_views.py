@@ -10,7 +10,7 @@ from rest_framework.generics import ListAPIView
 from .utils import generate_report_pdf
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import NotFound
-from patients.models import Patient
+from patients.models import PatientProfile
 from django.contrib.auth import login, logout
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
@@ -185,7 +185,7 @@ class AppointmentViewSet(viewsets.ModelViewSet):
             return Response({'error': 'The doctor already has an appointment at the requested time.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create the appointment
-        patient = get_object_or_404(Patient, id=patient_id)
+        patient = get_object_or_404(PatientProfile, id=patient_id)
         appointment = Appointment.objects.create(
             patient=patient,
             doctor=doctor,
@@ -205,7 +205,7 @@ class VitalSignViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         patient_id = self.request.data.get('patient_id')
-        patient = get_object_or_404(Patient, id=patient_id)
+        patient = get_object_or_404(PatientProfile, id=patient_id)
         serializer.save(patient=patient)
 
 
@@ -230,7 +230,7 @@ class CarePlanViewSet(viewsets.ModelViewSet):
         Override create method to handle data from request body.
         """
         data = request.data
-        patient = Patient.objects.get(pk=data['patient'])
+        patient = PatientProfile.objects.get(pk=data['patient'])
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save(patient=patient, doctor=request.user)
@@ -257,7 +257,7 @@ class MedicalRecordViewSet(viewsets.ModelViewSet):
         Override create method to handle data from request body.
         """
         data = request.data
-        patient = Patient.objects.get(pk=data['patient'])
+        patient = PatientProfile.objects.get(pk=data['patient'])
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save(patient=patient)
@@ -284,7 +284,7 @@ class LabTestViewSet(viewsets.ModelViewSet):
         Override create method to handle data from request body.
         """
         data = request.data
-        patient = Patient.objects.get(pk=data['patient'])
+        patient = PatientProfile.objects.get(pk=data['patient'])
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save(patient=patient, ordered_by=request.user)
@@ -311,7 +311,7 @@ class PrescriptionViewSet(viewsets.ModelViewSet):
         Override create method to handle data from request body.
         """
         data = request.data
-        patient = Patient.objects.get(pk=data['patient'])
+        patient = PatientProfile.objects.get(pk=data['patient'])
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save(patient=patient, doctor=request.user)
@@ -576,10 +576,10 @@ class PatientViewSet(viewsets.ViewSet):
     def search_patient(self, request):
         query = request.query_params.get('q', '')
         if query:
-            patients = Patient.objects.filter(user__username__icontains=query) | Patient.objects.filter(
+            patients = PatientProfile.objects.filter(user__username__icontains=query) | PatientProfile.objects.filter(
                 user__email__icontains=query)
         else:
-            patients = Patient.objects.all()
+            patients = PatientProfile.objects.all()
 
         serializer = PatientSerializer(patients, many=True)
         return Response(serializer.data)
@@ -588,8 +588,8 @@ class PatientViewSet(viewsets.ViewSet):
     @action(detail=True, methods=['get'])
     def display_patient(self, request, pk=None):
         try:
-            patient = Patient.objects.get(id=pk)
-        except Patient.DoesNotExist:
+            patient = PatientProfile.objects.get(id=pk)
+        except PatientProfile.DoesNotExist:
             raise NotFound("Patient not found")
 
         serializer = PatientSerializer(patient)

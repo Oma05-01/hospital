@@ -1,7 +1,43 @@
-<!-- manage_patient_assignment.html -->
-<h1>Manage Assignment for {{ assignment.patient.username }}</h1>
-<form method="POST">
-    {% csrf_token %}
-    <textarea name="notes" placeholder="Enter notes">{{ assignment.notes }}</textarea>
-    <button type="submit">Save Changes</button>
-</form>
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Manage Assignment | {{ assignment.patient.user.last_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-assignments.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="management-wrapper">
+    <nav class="breadcrumb">
+        <a href="{% url 'staff:patient_assignments' %}"><i class="fas fa-arrow-left"></i> Back to Roster</a>
+    </nav>
+
+    <div class="management-card">
+        <header class="management-header">
+            <div class="patient-summary">
+                <h2>Manage Care Assignment</h2>
+                <p><strong>Patient:</strong> {{ assignment.patient.user.get_full_name }}</p>
+            </div>
+            <div class="assignment-meta">
+                <span class="badge badge-info">Active Care</span>
+            </div>
+        </header>
+
+        <form method="post" class="assignment-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="notes">Clinical Assignment Notes / Handover Instructions</label>
+                <textarea id="notes" name="notes" rows="8" placeholder="Enter specific instructions or ongoing observations for this patient's care...">{{ assignment.notes }}</textarea>
+                <small class="help-text">These notes are attached to the assignment, not the permanent medical record.</small>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'staff:patient_assignments' %}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Notes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,22 +1,84 @@
-{% extends "staff/base.html" %}
+{% extends 'staff/base.html' %}
+{% load static %}
+{% block title %}Inbox{% endblock %}
 
 {% block content %}
-<h1>Inbox</h1>
+    <link rel="stylesheet" href="{% static 'staff/staff_inbox.css' %}">
 
-{% if messages %}
-    <ul>
-    {% for message in messages %}
-        <li class="{% if message.is_read %}read{% else %}unread{% endif %}">
-            <a href="{% url 'staff:message_detail' message.id %}">
-                <strong>From:</strong> {{ message.sender.user.username }}
-                <strong>Message:</strong> {{ message.message_content|truncatewords:10 }}
-                <strong>Sent at:</strong> {{ message.sent_at|date:"d M Y H:i" }}
+<div class="wrap">
+    <nav class="topbar">
+        <a href="{% url 'staff:dashboard' %}" class="brand">
+            <div class="brand-dot"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg></div>
+            MediCore
+        </a>
+        <div class="topbar-right">
+            <a href="{% url 'staff:staff_messages' %}" class="back">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Overview
             </a>
-        </li>
-    {% endfor %}
-</ul>
+            <a href="{% url 'staff:send_staff_message' %}" class="btn-compose">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Compose
+            </a>
+        </div>
+    </nav>
 
-{% else %}
-    <p>No messages found.</p>
-{% endif %}
+    <div class="hero">
+        <div class="hero-eyebrow">Staff</div>
+        <h1>Inbox</h1>
+        <p>
+            {{ inbox_messages|length }} message{{ inbox_messages|length|pluralize }}
+            {% if unread_count %} &mdash; <strong style="color:white;">{{ unread_count }} unread</strong>{% endif %}
+        </p>
+    </div>
+
+    <div class="body">
+        {% if inbox_messages %}
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="unread">Unread</button>
+            <button class="filter-btn" data-filter="read">Read</button>
+        </div>
+
+        <div class="msg-list">
+            {% for msg in inbox_messages %}
+            <a href="{% url 'staff:message_detail' msg.id %}"
+               class="msg-row {% if not msg.is_read %}unread{% endif %}"
+               data-read="{{ msg.is_read|yesno:'read,unread' }}">
+                {% if not msg.is_read %}<div class="unread-pip"></div>{% endif %}
+                <div class="avatar">{{ msg.sender.user.get_full_name|default:msg.sender.user.username|slice:":1"|upper }}</div>
+                <div class="msg-main">
+                    <div class="msg-top">
+                        <span class="msg-from">{{ msg.sender.user.get_full_name|default:msg.sender.user.username }}</span>
+                        <span class="msg-time">{{ msg.sent_at|date:"d M Y, H:i" }}</span>
+                    </div>
+                    <div class="msg-preview">{{ msg.message_content|truncatewords:14 }}</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16v13a1 1 0 01-1 1H5a1 1 0 01-1-1V4zM4 4l8 9 8-9"/></svg>
+            <p>Your inbox is empty.</p>
+            <a href="{% url 'staff:send_staff_message' %}">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
+                Send a Message
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filter = btn.dataset.filter;
+            document.querySelectorAll('.msg-row').forEach(row => {
+                row.style.display = (filter === 'all' || row.dataset.read === filter) ? '' : 'none';
+            });
+        });
+    });
+</script>
 {% endblock %}

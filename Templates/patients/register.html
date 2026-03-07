@@ -1,12 +1,38 @@
 {% extends 'patients/base.html' %}
+{% load static %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Patient Registration | CareFirst Medical{% endblock %}
 
 {% block content %}
-<h2>Register</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
+    <link rel="stylesheet" href="{% static 'css/register_patient.css' %}?v=1">
+
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Create Patient Account</h2>
+            <p>Securely manage your appointments and health records.</p>
+        </div>
+
+        <form method="post" class="auth-form" novalidate>
+            {% csrf_token %}
+
+            <div class="form-fields">
+                <h3 class="form-section-title">Account Information</h3>
+                {{ user_form.as_p }}
+
+                <hr class="form-divider">
+
+                <h3 class="form-section-title">Patient Profile Details</h3>
+                {{ profile_form.as_p }}
+            </div>
+
+            <button type="submit" class="btn-primary btn-block">Register Securely</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{% url 'patients:login' %}">Log in here</a>.</p>
+        </div>
+    </div>
+</div>
 {% endblock %}

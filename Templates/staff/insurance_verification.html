@@ -1,16 +1,92 @@
-<h2>Insurance Verification</h2>
+{% extends "staff/base.html" %}
+{% load static %}
 
-{% if insurance %}
-  <p><strong>Provider:</strong> {{ insurance.insurance_provider }}</p>
-  <p><strong>Policy Number:</strong> {{ insurance.policy_number }}</p>
-  <p><strong>Coverage Details:</strong> {{ insurance.coverage_details }}</p>
+{% block title %}Verify Insurance | {{ insurance.profile.user.last_name }}{% endblock %}
 
-  <!-- Button to verify insurance -->
-  <form method="POST" action="{% url 'verify_insurance' insurance.id %}">
-    {% csrf_token %}
-    <button type="submit">Verify Insurance</button>
-  </form>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-verification.css' %}">
+{% endblock %}
 
-{% else %}
-  <p>{{ error }}</p>
-{% endif %}
+{% block content %}
+<div class="verification-wrapper">
+    <header class="verification-header">
+        <div class="header-main">
+            <a href="{% url 'staff:patient_list' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
+            <h2>Insurance Verification</h2>
+        </div>
+        <div class="status-indicator">
+            <span class="status-badge pending">PENDING VERIFICATION</span>
+        </div>
+    </header>
+
+    {% if error %}
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i> {{ error }}
+        </div>
+    {% else %}
+        <div class="verification-grid">
+            <section class="info-panel patient-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-user-id"></i> Patient Identity</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="data-row">
+                        <label>Full Name</label>
+                        <span>{{ insurance.profile.user.get_full_name }}</span>
+                    </div>
+                    <div class="data-row">
+                        <label>Date of Birth</label>
+                        <span>{{ insurance.profile.date_of_birth|date:"M d, Y"|default:"Not Provided" }}</span>
+                    </div>
+                    <div class="data-row">
+                        <label>Contact Number</label>
+                        <span>{{ insurance.profile.phone_number }}</span>
+                    </div>
+                    <div class="data-row">
+                        <label>Address</label>
+                        <span>{{ insurance.profile.address|default:"Not Provided" }}</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="info-panel insurance-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-shield-alt"></i> Insurance Credentials</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="data-row highlight">
+                        <label>Provider Name</label>
+                        <span>{{ insurance.provider_name|default:insurance.profile.insurance_details }}</span>
+                    </div>
+                    <div class="data-row">
+                        <label>Policy Number</label>
+                        <span class="policy-code">{{ insurance.policy_number|default:"N/A" }}</span>
+                    </div>
+                    <div class="data-row">
+                        <label>Plan Type</label>
+                        <span>{{ insurance.plan_type|default:"Standard HMO" }}</span>
+                    </div>
+                    <div class="data-row">
+                        <label>Expiry Date</label>
+                        <span class="{% if insurance.is_expired %}text-danger{% endif %}">
+                            {{ insurance.expiry_date|date:"M d, Y"|default:"N/A" }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="verification-actions">
+                    <p class="disclaimer">By clicking verify, you confirm that you have checked the provider portal and the credentials are active.</p>
+                    <div class="action-btns">
+                        <a href="{% url 'staff:verify_insurance' insurance.id %}" class="btn btn-success">
+                            <i class="fas fa-check-double"></i> Confirm & Verify
+                        </a>
+                        <button class="btn btn-outline-danger">
+                            <i class="fas fa-times"></i> Reject/Invalid
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

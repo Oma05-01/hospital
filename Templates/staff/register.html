@@ -1,146 +1,139 @@
-<!-- register.html -->
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Registration</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f7fc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+    <title>Staff Registration — MediCore</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'staff/register.css' %}">
 
-        .register-container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 450px;
-        }
-
-        .register-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-weight: 500;
-            color: #333;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"], input[type="password"], input[type="email"] {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-            margin-top: 5px;
-        }
-
-        .form-group input[type="submit"] {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 5px;
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .form-group input[type="submit"]:hover {
-            background-color: #218838;
-        }
-
-        .register-footer {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .register-footer a {
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        .register-footer a:hover {
-            text-decoration: underline;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-    </style>
 </head>
 <body>
-    <div class="register-container">
-        <h2>Staff Registration</h2>
-        <form method="POST">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="username" id="username" >Username</label>
-                {{ form.username }}
+
+<div class="page-wrap">
+
+    <!-- Left sidebar -->
+    <aside class="side-panel">
+        <div class="brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg>
             </div>
-            <div class="form-group">
-                <label for="email" id="email">Email</label>
-                {{ form.email }}
-            </div>
-            <div class="form-group">
-                <label for="password" id="password">Password</label>
-                {{ form.password1 }}
-            </div>
-            <div class="form-group">
-                <label for="confirm_password" id="confirm_password">Confirm Password</label>
-                {{ form.password2 }}
-            </div>
-            <div class="form-group">
-                <label for="role" id="role">Role</label>
-                {{ form.role }}
-            </div>
-            <div class="form-group">
-                <label for="specialty" id="specialty">Specialty (Doctors Only)</label>
-                {{ form.specialty }}
-            </div>
-            <div class="form-group">
-                <label for="phone_number" id="phone_number">Phone Number</label>
-                {{ form.phone_number }}
-            </div>
-            <div class="form-group">
-                <label for="profile_picture" id="profile_picture">Profile Picture</label>
-                {{ form.profile_picture }}
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Register">
-            </div>
-            {% if form.non_field_errors %}
-                <div class="error-message">
-                    {% for error in form.non_field_errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </form>
-        <div class="register-footer">
-            <p>Already have an account? <a href="{% url 'staff:login' %}">Login here</a></p>
+            <span class="brand-name">MediCore</span>
         </div>
-    </div>
+
+        <div class="side-body">
+            <h1>Join the Care Team</h1>
+            <p>Create your staff account to access patient records, appointments, and clinical tools.</p>
+        </div>
+
+        <div class="side-steps">
+            <div class="step active"><div class="step-dot"></div> Account Details</div>
+            <div class="step"><div class="step-dot"></div> Role & Credentials</div>
+            <div class="step"><div class="step-dot"></div> Dashboard Access</div>
+        </div>
+    </aside>
+
+    <!-- Form panel -->
+    <main class="form-panel">
+        <h2>Create your account</h2>
+        <p class="subtitle">All fields are required unless marked optional.</p>
+
+        {% if form.non_field_errors %}
+        <div class="error-list">
+            {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-grid">
+
+                <span class="section-label">Personal Info</span>
+
+                <div class="field full">
+                    <label for="{{ form.username.id_for_label }}">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}<span class="field-error">{{ form.username.errors|join:", " }}</span>{% endif %}
+                </div>
+
+                <div class="field full">
+                    <label for="{{ form.email.id_for_label }}">Email Address</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<span class="field-error">{{ form.email.errors|join:", " }}</span>{% endif %}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.password1.id_for_label }}">Password</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}<span class="field-error">{{ form.password1.errors|join:", " }}</span>{% endif %}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}<span class="field-error">{{ form.password2.errors|join:", " }}</span>{% endif %}
+                </div>
+
+                <hr class="divider">
+                <span class="section-label">Role & Clinical Info</span>
+
+                <div class="field">
+                    <label for="{{ form.role.id_for_label }}">Role</label>
+                    {{ form.role }}
+                    {% if form.role.errors %}<span class="field-error">{{ form.role.errors|join:", " }}</span>{% endif %}
+                </div>
+
+                <div class="field" id="specialty-group">
+                    <label for="{{ form.specialty.id_for_label }}">Specialty</label>
+                    {{ form.specialty }}
+                    <span class="hint">Doctors only</span>
+                    {% if form.specialty.errors %}<span class="field-error">{{ form.specialty.errors|join:", " }}</span>{% endif %}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+                    {{ form.phone_number }}
+                    {% if form.phone_number.errors %}<span class="field-error">{{ form.phone_number.errors|join:", " }}</span>{% endif %}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.profile_picture.id_for_label }}">Profile Picture <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+                    {{ form.profile_picture }}
+                    {% if form.profile_picture.errors %}<span class="field-error">{{ form.profile_picture.errors|join:", " }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="btn-submit">Create Account →</button>
+
+                <p class="footer-link">Already have an account? <a href="{% url 'staff:login' %}">Sign in here</a></p>
+
+            </div>
+        </form>
+    </main>
+</div>
+
+<script>
+    // Show/hide specialty field based on role selection
+    const roleSelect = document.querySelector('#id_role');
+    const specialtyGroup = document.querySelector('#specialty-group');
+
+    function toggleSpecialty() {
+        if (roleSelect.value === 'doctor') {
+            specialtyGroup.classList.add('visible');
+        } else {
+            specialtyGroup.classList.remove('visible');
+            specialtyGroup.querySelector('input, select, textarea').value = '';
+        }
+    }
+
+    if (roleSelect) {
+        roleSelect.addEventListener('change', toggleSpecialty);
+        toggleSpecialty(); // Run on page load
+    }
+</script>
+
 </body>
 </html>

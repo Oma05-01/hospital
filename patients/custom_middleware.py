@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import resolve, reverse
-from .models import Patient
 from django.http import HttpResponseForbidden
 from rest_framework_simplejwt.authentication import JWTAuthentication
 

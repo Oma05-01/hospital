@@ -1,0 +1,61 @@
+{% extends 'patients/base.html' %}
+{% load static %}
+
+{% block title %}Medication Reminders | CareFirst Medical{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/medications.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="header-content">
+        <h2><i class="fas fa-pills"></i> Daily Medications</h2>
+        <p>Track your daily prescriptions and dosages.</p>
+    </div>
+    <a href="#" class="btn btn-primary"><i class="fas fa-plus"></i> Add Medication</a>
+</div>
+
+<div class="medication-list">
+    {% for reminder in reminders %}
+        <div class="medication-card {% if reminder.is_taken %}taken-card{% endif %}">
+
+            <div class="med-time">
+                <i class="far fa-clock"></i>
+                <span>{{ reminder.time|time:"g:i A" }}</span>
+            </div>
+
+            <div class="med-details">
+                <h3>{{ reminder.medication_name }}</h3>
+                <p class="dosage"><i class="fas fa-prescription-bottle-alt"></i> {{ reminder.dosage }}</p>
+                {% if reminder.reminder_text %}
+                    <p class="instructions text-muted">{{ reminder.reminder_text }}</p>
+                {% endif %}
+            </div>
+
+            <div class="med-actions">
+                <form method="post" action="{% url 'appointments:medication_reminders' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="reminder_id" value="{{ reminder.id }}">
+
+                    {% if reminder.is_taken %}
+                        <button type="submit" class="toggle-btn btn-success">
+                            <i class="fas fa-check-circle"></i> Taken
+                        </button>
+                    {% else %}
+                        <button type="submit" class="toggle-btn btn-outline">
+                            Mark as Taken
+                        </button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-prescription-bottle fa-3x text-muted"></i>
+            <h3>No Medications Scheduled</h3>
+            <p>You currently have no medication reminders set up.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

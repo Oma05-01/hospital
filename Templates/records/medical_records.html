@@ -1,15 +1,46 @@
-{% extends "patients/base.html" %}
+{% extends "appointments/base.html" %}
+{% load static %}
+
+{% block title %}My Medical Records | CareFirst Portal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/patient-records.css' %}">
+{% endblock %}
 
 {% block content %}
-<br>
-<h2>Medical Records</h2>
-<ul>
-    {% for record in records %}
-    <li>
-        <strong>Diagnosis:</strong> {{ record.diagnosis }} <br>
-        <strong>Treatment:</strong> {{ record.treatment }} <br>
-        <strong>Date Recorded:</strong> {{ record.date_recorded }}
-    </li>
-    {% endfor %}
-</ul>
+<div class="records-wrapper">
+    <header class="records-header archive-theme">
+        <div class="header-main">
+            <h2><i class="fas fa-notes-medical"></i> Medical Records</h2>
+            <p>Your clinical history, diagnoses, and treatment plans.</p>
+        </div>
+    </header>
+
+    <div class="records-grid">
+        {% for record in records %}
+            <div class="record-card">
+                <div class="card-header">
+                    <span class="record-date"><i class="far fa-calendar-alt"></i> {{ record.date_recorded|date:"F d, Y" }}</span>
+                    <span class="record-doctor"><i class="fas fa-user-md"></i> Dr. {{ record.doctor.user.last_name|default:"Assigned Physician" }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="data-group">
+                        <label>Diagnosis</label>
+                        <p>{{ record.diagnosis }}</p>
+                    </div>
+                    <div class="data-group">
+                        <label>Treatment Plan</label>
+                        <p>{{ record.treatment }}</p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-folder-open fa-3x"></i>
+                <h3>No Medical Records Found</h3>
+                <p>Your clinical history is currently empty.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

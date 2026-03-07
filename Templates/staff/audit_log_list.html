@@ -1,34 +1,76 @@
-<!-- templates/audit_logs/audit_log_list.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audit Logs</title>
-</head>
-<body>
-    <h1>Audit Logs</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Action</th>
-                <th>User</th>
-                <th>Timestamp</th>
-                <th>Details</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for log in logs %}
-            <tr>
-                <td>{{ log.id }}</td>
-                <td>{{ log.action }}</td>
-                <td>{{ log.user }}</td>
-                <td>{{ log.timestamp }}</td>
-                <td><a href="{% url 'audit_log_detail' log.id %}">View</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}System Audit Logs | Security{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-audit.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="audit-wrapper">
+    <header class="audit-header">
+        <div class="header-main">
+            <h2><i class="fas fa-shield-alt"></i> System Audit Trail</h2>
+            <p>Compliance and security logging for all staff actions.</p>
+        </div>
+        <div class="audit-controls">
+            <button class="btn btn-outline-secondary"><i class="fas fa-filter"></i> Filter Logs</button>
+            <button class="btn btn-outline-secondary"><i class="fas fa-download"></i> Export CSV</button>
+        </div>
+    </header>
+
+    <div class="log-table-container">
+        <table class="audit-table">
+            <thead>
+                <tr>
+                    <th>Log ID</th>
+                    <th>Timestamp</th>
+                    <th>User / Actor</th>
+                    <th>Action</th>
+                    <th>Target Module</th>
+                    <th>IP Address</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td class="mono">#{{ log.id }}</td>
+                    <td class="mono">{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
+                    <td><strong>{{ log.user.username|default:"System" }}</strong></td>
+                    <td>
+                        <span class="action-badge action-{{ log.action|slugify }}">
+                            {{ log.action }}
+                        </span>
+                    </td>
+                    <td>{{ log.module|default:"General" }}</td>
+                    <td class="mono text-muted">{{ log.ip_address|default:"127.0.0.1" }}</td>
+                    <td>
+                        <a href="{% url 'staff:audit_log_detail' log.id %}" class="btn-view">Inspect</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="empty-logs">No audit logs recorded yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if logs.has_other_pages %}
+    <div class="pagination">
+        {% if logs.has_previous %}
+            <a href="?page={{ logs.previous_page_number }}" class="page-link">&laquo; Prev</a>
+        {% endif %}
+        
+        <span class="current-page">Page {{ logs.number }} of {{ logs.paginator.num_pages }}</span>
+        
+        {% if logs.has_next %}
+            <a href="?page={{ logs.next_page_number }}" class="page-link">Next &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

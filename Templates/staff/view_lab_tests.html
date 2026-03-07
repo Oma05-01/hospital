@@ -1,12 +1,108 @@
-<!-- view_lab_tests.html -->
-<h1>Lab Tests for {{ lab_tests.0.patient.username }}</h1>
-{% for test in lab_tests %}
-    <p><strong>Test Name:</strong> {{ test.test_name }}</p>
-    <p><strong>Status:</strong> {{ test.status }}</p>
-    {% if test.status == 'completed' %}
-        <p><strong>Findings:</strong> {{ test.result.findings }}</p>
-    {% else %}
-        <a href="{% url 'add_lab_result' test.id %}">Add Result</a>
-    {% endif %}
-    <hr>
-{% endfor %}
+{% extends 'staff/base.html' %}
+{% load static %}
+{% block title %}Lab Tests — {{ patient.user.get_full_name|default:patient.user.username }}{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'staff/view_lab_tests.css' %}">
+
+<div class="wrap">
+    <nav class="topbar">
+        <a href="{% url 'staff:dashboard' %}" class="brand">
+            <div class="brand-dot"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg></div>
+            MediCore
+        </a>
+        <div class="topbar-right">
+            <a href="{% url 'staff:display_patient' patient_id=patient.id %}" class="back">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Patient Profile
+            </a>
+            <a href="{% url 'staff:order_lab_test' patient_id=patient.id %}" class="btn-order">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Order Test
+            </a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-eyebrow">Laboratory</div>
+        <h1>Lab Tests</h1>
+        <p>{{ patient.user.get_full_name|default:patient.user.username }} &mdash; {{ lab_tests|length }} test{{ lab_tests|length|pluralize }} on record</p>
+    </div>
+
+    <div class="body">
+        {% if lab_tests %}
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="ordered">Ordered</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+            <button class="filter-btn" data-filter="pending">Pending</button>
+        </div>
+        <p class="count-tag"><strong>{{ lab_tests|length }}</strong> test{{ lab_tests|length|pluralize }} found</p>
+
+        <div class="test-list">
+            {% for test in lab_tests %}
+            <div class="test-card" data-status="{{ test.status|lower }}">
+                <div class="test-card-header">
+                    <div>
+                        <div class="test-name">{{ test.test_name }}</div>
+                        <div class="test-meta">
+                            {% if test.ordered_by %}
+                            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+                            Ordered by Dr. {{ test.ordered_by.user.get_full_name|default:test.ordered_by.user.username }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <span class="status-badge status-{{ test.status|lower }}">{{ test.status|capfirst }}</span>
+                </div>
+
+                {% if test.status == 'completed' and test.result %}
+                <div class="test-result">
+                    <div class="result-grid">
+                        <div class="result-field">
+                            <span class="result-label">Result Data</span>
+                            <span class="result-value">{{ test.result.result_data|default:"—" }}</span>
+                        </div>
+                        {% if test.result.findings %}
+                        <div class="result-field">
+                            <span class="result-label">Findings</span>
+                            <span class="result-value">{{ test.result.findings }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% elif test.status != 'completed' %}
+                <div class="add-result-strip">
+                    <p>Awaiting results from the laboratory.</p>
+                    <a href="{% url 'staff:add_lab_result' lab_test_id=test.id %}" class="btn-add-result">
+                        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Add Result
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24"><path d="M9 3h6l1 9H8L9 3zM6 21h12a1 1 0 001-1l-2-8H7l-2 8a1 1 0 001 1z"/></svg>
+            <p>No lab tests have been ordered for this patient yet.</p>
+            <a href="{% url 'staff:order_lab_test' patient_id=patient.id %}">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
+                Order First Test
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filter = btn.dataset.filter;
+            document.querySelectorAll('.test-card').forEach(card => {
+                card.style.display = (filter === 'all' || card.dataset.status === filter) ? '' : 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

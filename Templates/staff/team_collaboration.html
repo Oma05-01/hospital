@@ -1,0 +1,60 @@
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Internal Discussion | {{ patient.user.last_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/team-collab.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="huddle-container">
+    <header class="huddle-header">
+        <div class="case-info">
+            <span class="confidential-tag">STAFF ONLY</span>
+            <h2>Internal Notes: {{ patient.user.get_full_name }}</h2>
+        </div>
+        <div class="patient-id-badge">
+            PATIENT ID: #{{ patient.id }}
+        </div>
+    </header>
+
+    <div class="huddle-body">
+        <div class="message-timeline">
+            {% for msg in messages %}
+                <div class="timeline-item {% if msg.sender == user.staff_profile %}sent-by-me{% endif %}">
+                    <div class="staff-meta">
+                        <strong>From: {{ msg.sender.user.get_full_name }}</strong>
+                        <i class="fas fa-long-arrow-alt-right"></i>
+                        <strong>To: {{ msg.recipient.user.get_full_name }}</strong>
+                        <span class="timestamp">{{ msg.sent_at|date:"M d, H:i" }}</span>
+                    </div>
+                    <div class="message-bubble">
+                        {{ msg.message_content }}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-huddle">
+                    <p>No internal team messages found.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="huddle-input">
+            <form method="post" class="collab-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <label>Select Staff Recipient:</label>
+                    {{ form.recipient }}
+                </div>
+                <div class="form-row">
+                    {{ form.message_content }}
+                </div>
+                <button type="submit" class="btn-send">
+                    Send Internal Message <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

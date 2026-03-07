@@ -1,15 +1,62 @@
-{% extends 'staff/base.html' %}
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Staff Directory | CareFirst Medical{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-directory.css' %}">
+{% endblock %}
 
 {% block content %}
-  <h1>Staff Members</h1>
-  <ul>
-    {% for staff_member in staff %}
-      <li>
-        <h3>{{ staff_member.user.username }} | Role: {{ staff_member.role }}</h3>
-        <p>{{ staff_member.job_title }}</p>
-        <p>Email: {{ staff_member.user.email }}</p>
-        <p>Phone: {{ staff_member.phone_number }}</p>
-      </li>
-    {% endfor %}
-  </ul>
+<div class="directory-wrapper">
+    <header class="directory-header">
+        <div class="header-main">
+            <h2><i class="fas fa-users"></i> Clinical & Admin Directory</h2>
+            <p>Internal contact roster and department listings.</p>
+        </div>
+        <div class="directory-search">
+            <input type="text" placeholder="Search by name or department..." class="search-input">
+            <i class="fas fa-search"></i>
+        </div>
+    </header>
+
+    <div class="staff-grid">
+        {% for member in staff %}
+            <div class="staff-card">
+                <div class="card-avatar">
+                    {{ member.user.first_name|slice:":1" }}{{ member.user.last_name|slice:":1" }}
+                </div>
+
+                <div class="staff-info">
+                    <h3>{{ member.user.get_full_name }}</h3>
+                    <span class="role-badge role-{{ member.role|slugify }}">{{ member.get_role_display|default:member.role }}</span>
+                    <p class="specialty">{{ member.specialty|default:"General Medicine" }}</p>
+                </div>
+
+                <div class="staff-contact">
+                    <div class="contact-row">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:{{ member.user.email }}">{{ member.user.email }}</a>
+                    </div>
+                    {% if member.phone_number %}
+                    <div class="contact-row">
+                        <i class="fas fa-phone-alt"></i>
+                        <span>{{ member.phone_number }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-actions">
+                    <a href="{% url 'staff:staff_certifications' member.id %}" class="btn-cert">
+                        <i class="fas fa-award"></i> View Credentials
+                    </a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <p>No staff members found in the directory.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

@@ -3,35 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unauthorized Access</title>
+    <title>Access Restricted | CareFirst Medical</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-blue: #3182ce;
+            --error-red: #e53e3e;
+            --text-dark: #2d3748;
+            --bg-light: #f7fafc;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 50px;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
-        .error {
-            font-size: 24px;
-            color: #ff0000;
-            margin-bottom: 20px;
+
+        .container {
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            max-width: 500px;
+            width: 90%;
+            border-top: 6px solid var(--error-red);
         }
+
+        .icon-box {
+            font-size: 4rem;
+            color: var(--error-red);
+            margin-bottom: 1.5rem;
+        }
+
+        .error-code {
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #a0aec0;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            margin: 0 0 1rem 0;
+            color: var(--text-dark);
+        }
+
         .message {
-            font-size: 18px;
-            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #718096;
+            margin-bottom: 2rem;
         }
-        .link {
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
             text-decoration: none;
-            font-size: 16px;
-            color: #007bff;
+            transition: all 0.2s ease;
+            gap: 8px;
         }
-        .link:hover {
-            text-decoration: underline;
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2b6cb0;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-outline:hover {
+            background-color: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #a0aec0;
         }
     </style>
 </head>
 <body>
-    <div class="error">403 - Unauthorized Access</div>
-    <div class="message">You do not have permission to access this page.</div>
-    <a href="/" class="link">Return to Homepage</a>
+    <div class="container">
+        <div class="icon-box">
+            <i class="fas fa-shield-halved"></i>
+        </div>
+
+        <div class="error-code">Security Protocol 403</div>
+        <h1>Access Restricted</h1>
+
+        <div class="message">
+            Your current account credentials do not have the required permissions to access this clinical module.
+        </div>
+
+        <div class="action-buttons">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i> Return to Homepage
+            </a>
+            <button onclick="history.back()" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </button>
+        </div>
+
+        <div class="footer-note">
+            If you believe this is an error, please contact the IT Administrator.
+        </div>
+    </div>
 </body>
 </html>

@@ -53,7 +53,7 @@ def api_login(request):
         print(f"Token expires at: {expiration_time}")
 
         # Save token to the log model
-        patient = Patient.objects.get(user=user)
+        patient = PatientProfile.objects.get(user=user)
         TokenLog.objects.create(user=patient, token=str(token))
 
         return Response({
@@ -92,7 +92,7 @@ def api_profile(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def api_update_profile(request):
-    profile = get_object_or_404(Profile, user=request.user.Patient)
+    profile = get_object_or_404(PatientProfile, user=request.user.Patient)
     serializer = ProfileSerializer(profile, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()

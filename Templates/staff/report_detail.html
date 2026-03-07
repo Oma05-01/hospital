@@ -1,19 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Detail</title>
-</head>
-<body>
-    <h1>{{ report.title }}</h1>
+{% extends "staff/base.html" %}
+{% load static %}
 
-    <p><strong>Created At:</strong> {{ report.created_at|date:"Y-m-d H:i" }}</p>
-    <p><strong>Description:</strong> {{ report.description }}</p>
+{% block title %}Document Review | {{ report.title }}{% endblock %}
 
-    <h2>Download Report</h2>
-    <p>
-        <a href="{% url 'download_report' report.id %}" class="btn btn-primary">Download PDF</a>
-    </p>
-</body>
-</html>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-report-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="document-viewer-wrapper">
+    <nav class="staff-breadcrumb">
+        <a href="{% url 'staff:patient_list' %}">Patients</a> &rsaquo; 
+        <a href="{% url 'staff:report_list' report.generated_for.id %}">{{ report.generated_for.user.last_name }}'s Files</a> &rsaquo; 
+        <span class="current-page">Document Details</span>
+    </nav>
+
+    <div class="document-card">
+        <div class="document-header">
+            <div class="doc-icon">
+                <i class="fas fa-file-pdf"></i>
+            </div>
+            <div class="doc-title-group">
+                <span class="category-badge type-{{ report.report_type }}">{{ report.get_report_type_display }}</span>
+                <h2>{{ report.title }}</h2>
+                <p class="doc-id">System Reference: #DOC-{{ report.id|stringformat:"06d" }}</p>
+            </div>
+        </div>
+
+        <div class="document-metadata-grid">
+            <div class="meta-section patient-context">
+                <h3><i class="fas fa-user-injured"></i> Patient Information</h3>
+                <div class="meta-row">
+                    <label>Name:</label>
+                    <span>{{ report.generated_for.user.get_full_name }}</span>
+                </div>
+                <div class="meta-row">
+                    <label>Patient ID:</label>
+                    <span>#PAT-{{ report.generated_for.id|stringformat:"04d" }}</span>
+                </div>
+                <div class="meta-row">
+                    <label>Date of Birth:</label>
+                    <span>{{ report.generated_for.date_of_birth|date:"M d, Y"|default:"N/A" }}</span>
+                </div>
+            </div>
+
+            <div class="meta-section auth-context">
+                <h3><i class="fas fa-shield-alt"></i> Authorization & Audit</h3>
+                <div class="meta-row">
+                    <label>Uploaded By:</label>
+                    <span>Dr. {{ report.generated_by.user.last_name }}</span>
+                </div>
+                <div class="meta-row">
+                    <label>Timestamp:</label>
+                    <span>{{ report.generated_at|date:"F d, Y - H:i" }}</span>
+                </div>
+                <div class="meta-row">
+                    <label>Clearance Level:</label>
+                    <span class="text-danger">Confidential Medical Record</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="document-actions">
+            <div class="warning-text">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>You are about to download a secure medical document. Ensure you are compliant with hospital data privacy regulations before proceeding.</p>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="{% url 'staff:report_list' report.generated_for.id %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <a href="{% url 'staff:download_report' report.id %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-cloud-download-alt"></i> Download Secure PDF
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

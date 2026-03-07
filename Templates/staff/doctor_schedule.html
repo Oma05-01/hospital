@@ -1,16 +1,134 @@
-{% load custom_filters %}
+{% extends 'staff/base.html' %}
+{% load static %}
 
-<h1>Manage Your Schedule</h1>
-<form method="post">
-    {% csrf_token %}
-    {% for day in days %}
-        <div>
-            <label for="{{ day|lower }}_start">{{ day }} Start:</label>
-            <input type="time" id="{{ day|lower }}_start" name="{{ day|lower }}_start" value="{{ schedule_data|get_item:day }}.start">
+{% block title %}My Schedule{% endblock %}
 
-            <label for="{{ day|lower }}_end">{{ day }} End:</label>
-            <input type="time" id="{{ day|lower }}_end" name="{{ day|lower }}_end" value="{{ schedule_data|get_item:day }}.end">
+{% block content %}
+    <link rel="stylesheet" href="{% static 'staff/doctor_schedule.css' %}">
+
+
+<div class="sched-wrap">
+
+    <!-- Topbar -->
+    <nav class="sched-topbar">
+        <a href="{% url 'staff:dashboard' %}" class="sched-brand">
+            <div class="sched-brand-dot">
+                <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg>
+            </div>
+            MediCore
+        </a>
+        <a href="{% url 'staff:dashboard' %}" class="sched-back">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            Back to Dashboard
+        </a>
+    </nav>
+
+    <!-- Hero -->
+    <div class="sched-hero">
+        <h1>Weekly Schedule</h1>
+        <p>Dr. {{ request.user.get_full_name|default:request.user.username }} &mdash; set your availability for each day of the week.</p>
+    </div>
+
+    <!-- Body -->
+    <div class="sched-body">
+
+        <div class="sched-info">
+            <svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            Leave both times blank to mark a day as unavailable. Changes take effect immediately after saving.
         </div>
-    {% endfor %}
-    <button type="submit">Save Schedule</button>
-</form>
+
+        <form method="POST" id="schedule-form">
+            {% csrf_token %}
+
+            <div class="day-grid">
+                {% for day in days %}
+                {% with start=schedule_data|default:'' %}
+                <div class="day-card {% if day == 'saturday' or day == 'sunday' %}is-weekend{% endif %}" id="card-{{ day }}">
+
+                    <div class="day-name">
+                        <span class="day-label">{{ day|capfirst }}</span>
+                        {% if day == 'saturday' or day == 'sunday' %}
+                            <span class="day-badge weekend">Weekend</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="time-field">
+                        <label for="{{ day }}_start">Start Time</label>
+                        <input type="time"
+                               id="{{ day }}_start"
+                               name="{{ day }}_start"
+                               data-day="{{ day }}"
+                               class="time-start">
+                    </div>
+
+                    <div class="time-field">
+                        <label for="{{ day }}_end">End Time</label>
+                        <input type="time"
+                               id="{{ day }}_end"
+                               name="{{ day }}_end"
+                               data-day="{{ day }}"
+                               class="time-end">
+                    </div>
+
+                    <div class="off-toggle">
+                        <label for="off-{{ day }}">Day Off</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="off-{{ day }}" data-day="{{ day }}" class="day-off-toggle">
+                            <span class="toggle-track"></span>
+                            <span class="toggle-thumb"></span>
+                        </label>
+                    </div>
+
+                </div>
+                {% endwith %}
+                {% endfor %}
+            </div>
+
+            <div class="submit-bar">
+                <p>Appointments won't be bookable outside your set hours.</p>
+                <button type="submit" class="btn-save">Save Schedule →</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{# Pass schedule_data from Django into JS safely #}
+<script>
+    const rawData = JSON.parse(document.getElementById('schedule-json').textContent);
+
+    document.querySelectorAll('.day-card').forEach(card => {
+        const day   = card.id.replace('card-', '');
+        const data  = rawData[day] || {};
+        const start = data.start || '';
+        const end   = data.end   || '';
+
+        const startInput  = card.querySelector('.time-start');
+        const endInput    = card.querySelector('.time-end');
+        const offToggle   = card.querySelector('.day-off-toggle');
+
+        startInput.value = start;
+        endInput.value   = end;
+
+        const isOff = !start && !end;
+        if (isOff) {
+            offToggle.checked = true;
+            startInput.disabled = true;
+            endInput.disabled   = true;
+            card.classList.add('is-off');
+        }
+
+        offToggle.addEventListener('change', () => {
+            const off = offToggle.checked;
+            startInput.disabled = off;
+            endInput.disabled   = off;
+            card.classList.toggle('is-off', off);
+            if (off) { startInput.value = ''; endInput.value = ''; }
+        });
+    });
+</script>
+
+{# Safe JSON data island — avoids any template filter gymnastics #}
+{{ schedule_data|json_script:"schedule-json" }}
+
+{% endblock %}

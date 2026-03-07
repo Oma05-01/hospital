@@ -11,7 +11,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(source='user.user')
 
     class Meta:
-        model = Profile
+        model = PatientProfile
         fields = [
             'user',
             'phone_number',
@@ -42,7 +42,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         # Create a Patient instance linked to this user
-        patient = Patient.objects.create(user=user, phone_number=validated_data['phone_number'])
+        patient = PatientProfile.objects.create(user=user, phone_number=validated_data['phone_number'])
 
         return patient
 

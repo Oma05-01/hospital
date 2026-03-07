@@ -1,9 +1,111 @@
-<!-- view_prescriptions.html -->
-<h1>Prescriptions for {{ prescriptions.0.patient.username }}</h1>
-{% for prescription in prescriptions %}
-    <p><strong>Medication:</strong> {{ prescription.medication_name }}</p>
-    <p><strong>Dosage:</strong> {{ prescription.dosage }}</p>
-    <p><strong>End Date:</strong> {{ prescription.end_date }}</p>
-    <p><strong>Instructions:</strong> {{ prescription.instructions }}</p>
-    <hr>
-{% endfor %}
+{% extends 'staff/base.html' %}
+{% load static %}
+{% block title %}Prescriptions — {{ patient.user.get_full_name|default:patient.user.username }}{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'staff/view_prescriptions.css' %}">
+
+<div class="wrap">
+    <nav class="topbar">
+        <a href="{% url 'staff:dashboard' %}" class="brand">
+            <div class="brand-dot"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg></div>
+            MediCore
+        </a>
+        <div class="topbar-right">
+            <a href="{% url 'staff:display_patient' patient_id=patient.id %}" class="back">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Patient Profile
+            </a>
+            <a href="{% url 'staff:prescribe_medication' patient_id=patient.id %}" class="btn-new">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> New Prescription
+            </a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-eyebrow">Clinical — Prescriptions</div>
+        <h1>Prescriptions</h1>
+        <p>{{ patient.user.get_full_name|default:patient.user.username }} &mdash; {{ prescriptions|length }} prescription{{ prescriptions|length|pluralize }} on record</p>
+    </div>
+
+    <div class="body">
+        {% if prescriptions %}
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="active">Active</button>
+            <button class="filter-btn" data-filter="expired">Expired</button>
+        </div>
+
+        <div class="rx-list">
+            {% for rx in prescriptions %}
+            {% if rx.end_date and rx.end_date < today %}
+                {% with status="expired" %}
+                <div class="rx-card expired" data-status="expired">
+            {% endwith %}
+            {% else %}
+                <div class="rx-card" data-status="active">
+            {% endif %}
+
+                <div class="rx-header">
+                    <div>
+                        <div class="rx-name">{{ rx.medication_name }}</div>
+                        <div class="rx-dosage">{{ rx.dosage }}</div>
+                    </div>
+                    {% if rx.end_date and rx.end_date < today %}
+                        <span class="rx-badge expired">Expired</span>
+                    {% else %}
+                        <span class="rx-badge active">Active</span>
+                    {% endif %}
+                </div>
+
+                <div class="rx-body">
+                    <div class="rx-field">
+                        <span class="rx-label">Prescribing Doctor</span>
+                        <span class="rx-value">{% if rx.doctor %}Dr. {{ rx.doctor.user.get_full_name|default:rx.doctor.user.username }}{% else %}<span class="empty">—</span>{% endif %}</span>
+                    </div>
+                    <div class="rx-field">
+                        <span class="rx-label">Start Date</span>
+                        <span class="rx-value {% if not rx.start_date %}empty{% endif %}">{{ rx.start_date|date:"d M Y"|default:"Not set" }}</span>
+                    </div>
+                    <div class="rx-field">
+                        <span class="rx-label">End Date</span>
+                        <span class="rx-value {% if not rx.end_date %}empty{% endif %}">{{ rx.end_date|date:"d M Y"|default:"Ongoing" }}</span>
+                    </div>
+                </div>
+
+                {% if rx.instructions %}
+                <div class="rx-instructions">
+                    <div class="rx-label">Patient Instructions</div>
+                    <div class="rx-value">{{ rx.instructions }}</div>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24"><path d="M9 12h6M9 16h6M17 2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V4a2 2 0 00-2-2z"/></svg>
+            <p>No prescriptions have been issued for this patient yet.</p>
+            <a href="{% url 'staff:prescribe_medication' patient_id=patient.id %}">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
+                Issue First Prescription
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filter = btn.dataset.filter;
+            document.querySelectorAll('.rx-card').forEach(card => {
+                card.style.display = (filter === 'all' || card.dataset.status === filter) ? '' : 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

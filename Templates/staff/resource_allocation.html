@@ -1,21 +1,67 @@
-<h1>Resource Allocation</h1>
-<table>
-    <thead>
-        <tr>
-            <th>Resource Type</th>
-            <th>Resource Name</th>
-            <th>Allocated</th>
-            <th>Allocated To</th>
-        </tr>
-    </thead>
-    <tbody>
+{% extends "staff/base.html" %}
+{% load static %}
+
+{% block title %}Resource Allocation | Facility Management{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff-resources.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="resource-wrapper">
+    <header class="resource-header">
+        <div class="header-main">
+            <h2><i class="fas fa-layer-group"></i> Facility Resource Board</h2>
+            <p>Real-time status of rooms, equipment, and critical care assets.</p>
+        </div>
+        <div class="header-stats">
+            <div class="stat-pill available">
+                <span class="val">{{ stats.available }}</span>
+                <span class="lbl">Available</span>
+            </div>
+            <div class="stat-pill in-use">
+                <span class="val">{{ stats.in_use }}</span>
+                <span class="lbl">In Use</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="resource-grid">
         {% for resource in resources %}
-            <tr>
-                <td>{{ resource.resource_type }}</td>
-                <td>{{ resource.resource_name }}</td>
-                <td>{{ resource.is_allocated }}</td>
-                <td>{{ resource.allocated_to }}</td>
-            </tr>
+            <div class="resource-card status-{{ resource.status|slugify }}">
+                <div class="card-top">
+                    <span class="type-badge">{{ resource.resource_type }}</span>
+                    <span class="status-dot"></span>
+                </div>
+                
+                <div class="card-body">
+                    <h3>{{ resource.resource_name }}</h3>
+                    <p class="location"><i class="fas fa-map-marker-alt"></i> {{ resource.location|default:"General Ward" }}</p>
+                    
+                    {% if resource.assigned_to %}
+                        <div class="assignment-info">
+                            <label>Assigned To:</label>
+                            <span>{{ resource.assigned_to.user.get_full_name }}</span>
+                        </div>
+                    {% else %}
+                        <div class="assignment-info empty">
+                            <span>Ready for Assignment</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-footer">
+                    <span class="last-update">Updated: {{ resource.updated_at|time:"H:i" }}</span>
+                    <div class="actions">
+                        <a href="#" class="action-link" title="Edit Allocation"><i class="fas fa-edit"></i></a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <p>No resources have been registered in the system yet.</p>
+            </div>
         {% endfor %}
-    </tbody>
-</table>
+    </div>
+</div>
+{% endblock %}

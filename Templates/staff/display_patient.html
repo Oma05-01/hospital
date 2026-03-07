@@ -1,130 +1,453 @@
 {% extends 'staff/base.html' %}
+{% load static %}
 
-{% block title %}Patient Details{% endblock %}
+{% block title %}{{ patient.user.get_full_name|default:patient.user.username }} — Patient Profile{% endblock %}
 
 {% block content %}
-<h2>Patient: {{ patient.user.username }}</h2>
-<p>Email: {{ patient.user.email }}</p>
-
-{% if user.staff_profile.role == 'doctor' %}
-    <h3>Doctor Actions</h3>
-
-    <h3>Prescriptions</h3>
-    <ul>
-        {% for prescription in prescriptions %}
-            <li>{{ prescription.medication_name }} | {{ prescription.dosage }}</li>
-        {% empty %}
-            <p>No prescriptions</p>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'staff:prescribe_medication' patient.id %}">Prescribe Medication</a>
-
-    <h3>Lab Tests</h3>
-    <ul>
-        {% for test in lab_tests %}
-            <li>{{ test.test_name }} | {{ test.status }}</li>
-        {% empty %}
-            <p>No lab tests</p>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'staff:order_lab_test' patient.id %}">Order Lab Test</a>
+    <link rel="stylesheet" href="{% static 'staff/display_patient.css' %}">
 
 
-    <h3>Care Plans</h3>
-    <ul>
-        {% for plan in care_plans %}
-            <li>{{ plan.plan_description }}</li>
-        {% empty %}
-            <p>No care plans</p>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'staff:add_care_plan' patient.id %}">Add Care Plan</a>
+<div class="dp-wrap">
 
-    <h3>Progress Tracking</h3>
-    <ul>
-        {% for report in progress_reports %}
-            <li>{{ report.progress_notes }}</li>
-        {% empty %}
-            <p>No progress reports</p>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'staff:add_progress_tracking' patient.id %}">Add Progress Tracking</a>
+    <!-- Topbar -->
+    <nav class="dp-topbar">
+        <a href="{% url 'staff:dashboard' %}" class="dp-brand">
+            <div class="dp-brand-dot">
+                <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg>
+            </div>
+            MediCore
+        </a>
+        <a href="{% url 'staff:search_patient' %}" class="dp-back">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            Patient Search
+        </a>
+    </nav>
 
-    <ul>
-        <li><a href="{% url 'staff:assign_appointment' patient.id %}" class="btn btn-primary">Book appointment</a></li>
-        <li><a href="{% url 'staff:view_patient_appointments' patient.id %}" class="btn btn-primary">View Patient Appointments</a></li>
-        <li><a href="{% url 'staff:order_lab_test' patient_id=patient.id %}">Order Lab Test</a></li>
-        <li><a href="{% url 'staff:add_lab_result' lab_test_id=1 %}">Add Lab Result</a></li>
-        <li><a href="{% url 'staff:prescribe_medication' patient_id=patient.id %}">Prescribe Medication</a></li>
-        <li><a href="{% url 'staff:view_prescriptions' patient_id=patient.id %}">View Prescriptions</a></li>
-        <li><a href="{% url 'staff:doctor_patient_messages' patient_id=patient.id %}">Patient Messages</a></li>
-        <li><a href="{% url 'staff:report_list' patient.id %}" class="btn btn-primary">View Reports</a></li>
-        <li><a href="{% url 'staff:health_and_safety_protocols' %}">Health & Safety Protocols</a></li>
-        <li><a href="{% url 'staff:infection_control_practices' %}">Infection Control Practices</a></li>
-        <li><a href="{% url 'staff:staff_certifications' staff_id=1 %}">Staff Certifications</a></li>
-        <li><a href="{% url 'staff:send_staff_message' %}">Send Staff Message</a></li>
-        <li><a href="{% url 'staff:doctor_patient_messages' patient_id=patient.id %}">Send Patient Message</a></li>
-        <li><a href="{% url 'staff:team_collaboration' patient_id=patient.id %}">Team Messages</a></li>
-    </ul>
+    <!-- Hero -->
+    <div class="dp-hero">
+        <div class="dp-hero-inner">
+            <div class="dp-hero-avatar">
+                {{ patient.user.first_name|first|upper }}{{ patient.user.last_name|first|upper }}
+            </div>
+            <div class="dp-hero-info">
+                <div class="dp-hero-name">{{ patient.user.get_full_name|default:patient.user.username }}</div>
+                <div class="dp-hero-meta">
+                    <span>
+                        <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 2v4M16 2v4"/></svg>
+                        Patient #{{ patient.id }}
+                    </span>
+                    <span>
+                        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.8 19.8 0 013.09 4.18 2 2 0 015.07 2h3a2 2 0 012 1.72c.127.96.361 1.9.7 2.81a2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006.99 7l1.27-1.27a2 2 0 012.11-.45c.91.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                        {{ patient.phone_number|default:"No phone" }}
+                    </span>
+                    <span>
+                        <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM22 6l-10 7L2 6"/></svg>
+                        {{ patient.user.email }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-{% elif user.staff_profile.role == 'nurse' %}
-    <h3>Nurse Actions</h3>
+    <!-- Body -->
+    <div class="dp-body">
 
-    <h3>Medical Records</h3>
-    <ul>
-        {% for record in medical_records %}
-            <li>{{ record.diagnoses }}</li>
-        {% empty %}
-            <p>No medical records</p>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'staff:add_medical_record' patient.id %}">Add Medical Record</a>
+        <!-- ══ MAIN COLUMN ══ -->
+        <div class="dp-main">
 
-    <h3>Vitals</h3>
-    <ul>
-        {% for vital in vitals %}
-            <li>{{ vital.blood_pressure }} | {{ vital.temperature }} | {{ vital.pulse }}</li>
-        {% empty %}
-            <p>No vitals recorded</p>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'staff:add_vitals' patient.id %}">Add Vitals</a>
+            <!-- Patient Info -->
+            <div class="dp-card">
+                <div class="dp-card-header">
+                    <div class="dp-card-title">
+                        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+                        Patient Information
+                    </div>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Full Name</span>
+                        <span class="info-value">{{ patient.user.get_full_name|default:"—" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">{{ patient.user.email|default:"—" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value">{{ patient.phone_number|default:"—" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Emergency Contact</span>
+                        <span class="info-value">{{ patient.emergency_contact|default:"—" }}</span>
+                    </div>
+                    {% if patient.medical_history %}
+                    <div class="info-item info-full">
+                        <span class="info-label">Medical History</span>
+                        <div class="info-value text-block">{{ patient.medical_history }}</div>
+                    </div>
+                    {% endif %}
+                    {% if patient.allergies %}
+                    <div class="info-item info-full">
+                        <span class="info-label">Known Allergies</span>
+                        <div class="info-value text-block">{{ patient.allergies }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
 
-    <ul>
-        <li><a href="{% url 'staff:view_patient_appointments' patient.id %}" class="btn btn-primary">View Patient Appointments</a></li>
-        <li><a href="{% url 'staff:assign_appointment' patient.id %}" class="btn btn-primary">Book appointment</a></li>
-        <li><a href="{% url 'staff:view_lab_tests' patient_id=patient.id %}">View Lab Tests</a></li>
-        <li><a href="#">Patient Messages</a></li>
-        <li><a href="{% url 'staff:report_list' patient.id %}" class="btn btn-primary">View Reports</a></li>
-        <li><a href="{% url 'staff:team_collaboration' patient_id=patient.id %}">Team Collaboration</a></li>
-        <li><a href="{% url 'staff:emergency_alert_list' %}">Emergency Alerts</a></li>
-        <li><a href="{% url 'staff:acknowledge_alert' pk=1 %}">Acknowledge Alert</a></li>
-        <li><a href="{% url 'staff:resolve_alert' pk=1 %}">Resolve Alert</a></li>
-        <li><a href="{% url 'staff:stock_alerts' %}">Stock Alerts</a></li>
-        <li><a href="{% url 'staff:medical_supply_inventory' %}">Medical Supply Inventory</a></li>
-        <li><a href="{% url 'staff:staff_messages' %}">Staff Messages</a></li>
-        <li><a href="#">Team Collaboration</a></li>
-    </ul>
+            <!-- Upcoming Appointments (all roles) -->
+            <div class="dp-card">
+                <div class="dp-card-header">
+                    <div class="dp-card-title">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                        Upcoming Appointments
+                    </div>
+                    <a href="{% url 'staff:view_patient_appointments' patient.id %}" class="dp-card-action">
+                        View all <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+                {% if upcoming_appointments %}
+                <div class="clinical-list">
+                    {% for appt in upcoming_appointments %}
+                    <a href="{% url 'staff:view_appointment' appointment_id=appt.id %}"
+                       style="text-decoration:none" class="clinical-item">
+                        <div class="clinical-item-main">
+                            <div class="clinical-item-name">Dr. {{ appt.doctor.user.get_full_name|default:appt.doctor.user.username }}</div>
+                            <div class="clinical-item-sub">{{ appt.scheduled_time|date:"d M Y, H:i" }}{% if appt.reason %} &middot; {{ appt.reason|truncatechars:45 }}{% endif %}</div>
+                        </div>
+                        <span class="clinical-item-badge status-{{ appt.status|lower }}">{{ appt.status|capfirst }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-note">No upcoming appointments.</p>
+                {% endif %}
+            </div>
 
-{% elif user.staff_profile.role == 'admin' %}
-    <h3>Admin Actions</h3>
-    <ul>
-        <li><a href="{% url 'staff:view_patient_appointments' patient.id %}" class="btn btn-primary">View Patient Appointments</a></li>
-        <li><a href="{% url 'staff:order_management' %}">Order Management</a></li>
-        <li><a href="{% url 'staff:stock_alerts' %}">Stock Alerts</a></li>
-        <li><a href="{% url 'staff:medical_supply_inventory' %}">Medical Supply Inventory</a></li>
-        <li><a href="{% url 'staff:dashboard' %}">Hospital Dashboard</a></li>
-        <li><a href="{% url 'staff:report_list' patient.id %}" class="btn btn-primary">View Reports</a></li>
-        <li><a href="{% url 'staff:resource_allocation' %}">Resource Allocation</a></li>
-        <li><a href="{% url 'staff:report_list' %}">Report List</a></li>
-        <li><a href="{% url 'staff:audit_log_list' %}">Audit Logs</a></li>
-        <li><a href="{% url 'staff:staff_list' %}">Staff List</a></li>
-        <li><a href="{% url 'staff:staff_certifications' staff_id=1 %}">Staff Certifications</a></li>
-        <li><a href="#">Notifications</a></li>
-        <li><a href="#">add send patient message, for admin</a></li>
-        <li><a href="{% url 'staff:send_staff_message' %}">Send Staff Message</a></li>
-    </ul>
-{% else %}
-    <p>You do not have access to this section.</p>
-{% endif %}
+            <!-- ══ DOCTOR SECTIONS ══ -->
+            {% if user.staff_profile.role == 'doctor' %}
+
+            <div class="dp-card">
+                <div class="dp-card-header">
+                    <div class="dp-card-title">
+                        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 004 0M12 12h3M12 16h3M9 12h.01"/></svg>
+                        Prescriptions
+                    </div>
+                    <a href="{% url 'staff:prescribe_medication' patient_id=patient.id %}" class="dp-card-action">
+                        + Add <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+                {% if prescriptions %}
+                <div class="clinical-list">
+                    {% for rx in prescriptions %}
+                    <div class="clinical-item">
+                        <div class="clinical-item-main">
+                            <div class="clinical-item-name">{{ rx.medication_name }}</div>
+                            <div class="clinical-item-sub">{{ rx.dosage }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <a href="{% url 'staff:view_prescriptions' patient_id=patient.id %}" class="dp-card-action" style="margin-top:12px;display:inline-flex">
+                    View all prescriptions <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                {% else %}
+                <p class="empty-note">No prescriptions on record.</p>
+                {% endif %}
+            </div>
+
+            <div class="dp-card">
+                <div class="dp-card-header">
+                    <div class="dp-card-title">
+                        <svg viewBox="0 0 24 24"><path d="M9 3h6l1 9H8L9 3zM6 21h12a1 1 0 001-1l-2-8H7l-2 8a1 1 0 001 1z"/></svg>
+                        Lab Tests
+                    </div>
+                    <a href="{% url 'staff:order_lab_test' patient_id=patient.id %}" class="dp-card-action">
+                        + Order <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+                {% if lab_tests %}
+                <div class="clinical-list">
+                    {% for test in lab_tests %}
+                    <div class="clinical-item">
+                        <div class="clinical-item-main">
+                            <div class="clinical-item-name">{{ test.test_name }}</div>
+                        </div>
+                        <span class="clinical-item-badge status-{{ test.status|lower }}">{{ test.status|capfirst }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-note">No lab tests ordered.</p>
+                {% endif %}
+            </div>
+
+            <div class="dp-card">
+                <div class="dp-card-header">
+                    <div class="dp-card-title">
+                        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                        Care Plans
+                    </div>
+                    <a href="{% url 'staff:add_care_plan' patient.id %}" class="dp-card-action">
+                        + Add <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+                {% if care_plans %}
+                <div class="clinical-list">
+                    {% for plan in care_plans %}
+                    <div class="clinical-item">
+                        <div class="clinical-item-main">
+                            <div class="clinical-item-name">{{ plan.plan_description|truncatechars:80 }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-note">No care plans on record.</p>
+                {% endif %}
+            </div>
+
+            <div class="dp-card">
+                <div class="dp-card-header">
+                    <div class="dp-card-title">
+                        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        Progress Tracking
+                    </div>
+                    <a href="{% url 'staff:add_progress_tracking' patient.id %}" class="dp-card-action">
+                        + Add <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+                {% if progress_reports %}
+                <div class="clinical-list">
+                    {% for report in progress_reports %}
+                    <div class="clinical-item">
+                        <div class="clinical-item-main">
+                            <div class="clinical-item-name">{{ report.progress_notes|truncatechars:80 }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-note">No progress notes recorded.</p>
+                {% endif %}
+            </div>
+
+            <!-- ══ NURSE SECTIONS ══ -->
+            {% elif user.staff_profile.role == 'nurse' %}
+
+            <div class="dp-card">
+                <div class="dp-card-header">
+                    <div class="dp-card-title">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+                        Medical Records
+                    </div>
+                    <a href="{% url 'staff:add_medical_record' patient.id %}" class="dp-card-action">
+                        + Add <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+                {% if medical_records %}
+                <div class="clinical-list">
+                    {% for record in medical_records %}
+                    <div class="clinical-item">
+                        <div class="clinical-item-main">
+                            <div class="clinical-item-name">{{ record.diagnoses|truncatechars:80 }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-note">No medical records found.</p>
+                {% endif %}
+            </div>
+
+            <div class="dp-card">
+                <div class="dp-card-header">
+                    <div class="dp-card-title">
+                        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        Latest Vitals
+                    </div>
+                    <a href="{% url 'staff:add_vitals' patient.id %}" class="dp-card-action">
+                        + Record <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+                {% if vitals %}
+                {% with v=vitals.0 %}
+                <div class="vitals-strip">
+                    <div class="vital-box">
+                        <div class="vital-label">Blood Pressure</div>
+                        <div class="vital-value">{{ v.blood_pressure|default:"—" }}</div>
+                    </div>
+                    <div class="vital-box">
+                        <div class="vital-label">Temperature</div>
+                        <div class="vital-value">{{ v.temperature|default:"—" }}</div>
+                    </div>
+                    <div class="vital-box">
+                        <div class="vital-label">Pulse</div>
+                        <div class="vital-value">{{ v.pulse|default:"—" }}</div>
+                    </div>
+                </div>
+                {% endwith %}
+                {% else %}
+                <p class="empty-note">No vitals recorded yet.</p>
+                {% endif %}
+            </div>
+
+            {% endif %}
+            {# Admins see patient info + appointments only in the main column #}
+
+        </div>
+
+        <!-- ══ SIDEBAR ══ -->
+        <div class="dp-side">
+
+            <!-- Quick actions card -->
+            <div class="dp-card">
+                <div class="dp-card-header">
+                    <div class="dp-card-title">
+                        <svg viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9l-7-7z"/></svg>
+                        Quick Actions
+                    </div>
+                </div>
+                <div class="action-grid">
+
+                    {% if user.staff_profile.role == 'doctor' %}
+                        <span class="action-section-title">Appointments</span>
+                        <a href="{% url 'staff:assign_appointment' patient.id %}" class="action-link primary">
+                            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Book Appointment
+                        </a>
+                        <a href="{% url 'staff:view_patient_appointments' patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> View Appointments
+                        </a>
+
+                        <span class="action-section-title">Clinical</span>
+                        <a href="{% url 'staff:prescribe_medication' patient_id=patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M12 12h3M12 16h3M9 12h.01"/></svg> Prescribe Medication
+                        </a>
+                        <a href="{% url 'staff:order_lab_test' patient_id=patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M9 3h6l1 9H8L9 3zM6 21h12a1 1 0 001-1l-2-8H7l-2 8a1 1 0 001 1z"/></svg> Order Lab Test
+                        </a>
+                        <a href="{% url 'staff:add_lab_result' lab_test_id=1 %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Add Lab Result
+                        </a>
+                        <a href="{% url 'staff:view_prescriptions' patient_id=patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M16 13H8M16 17H8M10 9H8"/></svg> View Prescriptions
+                        </a>
+
+                        <span class="action-section-title">Communication</span>
+                        <a href="{% url 'staff:doctor_patient_messages' patient_id=patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> Patient Messages
+                        </a>
+                        <a href="{% url 'staff:team_collaboration' patient_id=patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/></svg> Team Messages
+                        </a>
+                        <a href="{% url 'staff:send_staff_message' %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Send Staff Message
+                        </a>
+
+                        <span class="action-section-title">Reports</span>
+                        <a href="{% url 'staff:report_list' patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/></svg> View Reports
+                        </a>
+
+                    {% elif user.staff_profile.role == 'nurse' %}
+                        <span class="action-section-title">Appointments</span>
+                        <a href="{% url 'staff:assign_appointment' patient.id %}" class="action-link primary">
+                            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Book Appointment
+                        </a>
+                        <a href="{% url 'staff:view_patient_appointments' patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> View Appointments
+                        </a>
+
+                        <span class="action-section-title">Clinical</span>
+                        <a href="{% url 'staff:view_lab_tests' patient_id=patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M9 3h6l1 9H8L9 3zM6 21h12a1 1 0 001-1l-2-8H7l-2 8a1 1 0 001 1z"/></svg> View Lab Tests
+                        </a>
+
+                        <span class="action-section-title">Alerts</span>
+                        <a href="{% url 'staff:emergency_alert_list' %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg> Emergency Alerts
+                        </a>
+
+                        <span class="action-section-title">Communication</span>
+                        <a href="{% url 'staff:team_collaboration' patient_id=patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/></svg> Team Collaboration
+                        </a>
+                        <a href="{% url 'staff:staff_messages' %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> Staff Messages
+                        </a>
+
+                        <span class="action-section-title">Reports</span>
+                        <a href="{% url 'staff:report_list' patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/></svg> View Reports
+                        </a>
+
+                    {% elif user.staff_profile.role == 'admin' %}
+                        <span class="action-section-title">Patient</span>
+                        <a href="{% url 'staff:view_patient_appointments' patient.id %}" class="action-link primary">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> View Appointments
+                        </a>
+                        <a href="{% url 'staff:report_list' patient.id %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/></svg> Patient Reports
+                        </a>
+
+                        <span class="action-section-title">Administration</span>
+                        <a href="{% url 'staff:order_management' %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/></svg> Order Management
+                        </a>
+                        <a href="{% url 'staff:audit_log_list' %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z"/></svg> Audit Logs
+                        </a>
+                        <a href="{% url 'staff:staff_list' %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> Staff List
+                        </a>
+                        <a href="{% url 'staff:send_staff_message' %}" class="action-link">
+                            <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Send Staff Message
+                        </a>
+
+                    {% else %}
+                        <p style="font-size:.85rem;color:var(--muted)">You don't have access to actions for this patient.</p>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <!-- Next of kin -->
+            {% if patient.next_of_kin_name %}
+            <div class="dp-card">
+                <div class="dp-card-header">
+                    <div class="dp-card-title">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+                        Next of Kin
+                    </div>
+                </div>
+                <div class="info-grid" style="grid-template-columns:1fr">
+                    <div class="info-item">
+                        <span class="info-label">Name</span>
+                        <span class="info-value">{{ patient.next_of_kin_name }}</span>
+                    </div>
+                    {% if patient.next_of_kin_relationship %}
+                    <div class="info-item">
+                        <span class="info-label">Relationship</span>
+                        <span class="info-value">{{ patient.next_of_kin_relationship|capfirst }}</span>
+                    </div>
+                    {% endif %}
+                    {% if patient.next_of_kin_phone_number %}
+                    <div class="info-item">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value">{{ patient.next_of_kin_phone_number }}</span>
+                    </div>
+                    {% endif %}
+                    {% if patient.next_of_kin_email %}
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">{{ patient.next_of_kin_email }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div><!-- /dp-side -->
+    </div><!-- /dp-body -->
+</div><!-- /dp-wrap -->
 {% endblock %}

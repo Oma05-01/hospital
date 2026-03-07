@@ -1,0 +1,210 @@
+
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
+
+    :root {
+        --navy:      #0B1F3A;
+        --teal:      #0D7377;
+        --teal-lt:   #14A9A0;
+        --teal-pale: #EAF4F4;
+        --white:     #FFFFFF;
+        --surface:   #F5F8FB;
+        --border:    #DDE5EF;
+        --muted:     #6B7A8D;
+        --text:      #1A2B40;
+        --error:     #C0392B;
+        --error-bg:  #FDF0EF;
+        --error-bd:  #F0C5C2;
+        --success-bg:#ECFDF5;
+        --success-bd:#A7F3D0;
+        --success-tx:#065F46;
+        --shadow-sm: 0 2px 8px rgba(11,31,58,.07);
+        --shadow-md: 0 6px 24px rgba(11,31,58,.10);
+    }
+
+    .appt-wrap {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--surface);
+        min-height: 100vh;
+        color: var(--text);
+    }
+
+    /* ── Topbar ── */
+    .appt-topbar {
+        background: var(--navy);
+        padding: 0 32px; height: 64px;
+        display: flex; align-items: center; justify-content: space-between;
+        position: sticky; top: 0; z-index: 100;
+    }
+    .appt-brand {
+        display: flex; align-items: center; gap: 10px;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem; color: white; text-decoration: none;
+    }
+    .appt-brand-dot {
+        width: 32px; height: 32px; background: var(--teal);
+        border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .appt-brand-dot svg { width: 18px; height: 18px; fill: white; }
+    .appt-back {
+        font-size: .8rem; color: rgba(255,255,255,.55);
+        text-decoration: none; padding: 6px 14px;
+        border: 1px solid rgba(255,255,255,.12); border-radius: 8px;
+        display: flex; align-items: center; gap: 6px; transition: all .2s;
+    }
+    .appt-back:hover { color: white; border-color: rgba(255,255,255,.3); }
+    .appt-back svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+    /* ── Hero ── */
+    .appt-hero {
+        background: linear-gradient(130deg, var(--navy) 0%, #0f3460 60%, #0D7377 100%);
+        padding: 36px 32px 72px;
+        position: relative; overflow: hidden;
+    }
+    .appt-hero::after {
+        content: ''; position: absolute; right: -60px; top: -60px;
+        width: 260px; height: 260px; border-radius: 50%;
+        background: rgba(13,115,119,.2); pointer-events: none;
+    }
+    .appt-hero-eyebrow {
+        font-size: .72rem; font-weight: 600; color: var(--teal-lt);
+        letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .appt-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.75rem; color: white; margin-bottom: 6px; position: relative; z-index: 1;
+    }
+    .appt-hero p { color: rgba(255,255,255,.5); font-size: .875rem; position: relative; z-index: 1; }
+
+    /* ── Body ── */
+    .appt-body {
+        max-width: 780px;
+        margin: -40px auto 0;
+        padding: 0 24px 56px;
+        position: relative; z-index: 2;
+    }
+
+    /* ── Patient card ── */
+    .patient-card {
+        background: white; border: 1px solid var(--border);
+        border-radius: 14px; padding: 18px 22px;
+        display: flex; align-items: center; gap: 16px;
+        margin-bottom: 20px; box-shadow: var(--shadow-sm);
+    }
+    .patient-avatar {
+        width: 46px; height: 46px; border-radius: 50%;
+        background: var(--teal-pale);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 1rem; color: var(--teal); flex-shrink: 0;
+    }
+    .patient-info { flex: 1; }
+    .patient-name { font-weight: 600; font-size: .95rem; color: var(--navy); }
+    .patient-meta { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── Messages ── */
+    .msg-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+    .msg {
+        padding: 12px 16px; border-radius: 10px;
+        font-size: .85rem; display: flex; align-items: center; gap: 8px;
+    }
+    .msg.error   { background: var(--error-bg); border: 1px solid var(--error-bd); color: var(--error); }
+    .msg.success { background: var(--success-bg); border: 1px solid var(--success-bd); color: var(--success-tx); }
+    .msg svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; stroke-linecap: round; }
+
+    /* ── Form card ── */
+    .form-card {
+        background: white; border: 1px solid var(--border);
+        border-radius: 16px; padding: 28px 28px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 22px; }
+    .field:last-of-type { margin-bottom: 0; }
+
+    .field label {
+        font-size: .78rem; font-weight: 600;
+        color: var(--navy); letter-spacing: .05em; text-transform: uppercase;
+    }
+    .field .hint { font-size: .75rem; color: var(--muted); margin-top: -2px; }
+
+    .field input[type="datetime-local"],
+    .field select,
+    .field textarea {
+        font-family: 'DM Sans', sans-serif;
+        font-size: .9rem; color: var(--navy);
+        padding: 11px 14px;
+        border: 1.5px solid var(--border); border-radius: 10px;
+        background: #FAFCFE;
+        transition: border-color .2s, box-shadow .2s;
+        outline: none; width: 100%;
+    }
+    .field textarea { resize: vertical; min-height: 96px; }
+    .field input:focus, .field select:focus, .field textarea:focus {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(13,115,119,.1);
+        background: white;
+    }
+    .field select { appearance: none; cursor: pointer; }
+
+    /* Doctor option with schedule indicator */
+    .doctor-option-wrap { position: relative; }
+    .doctor-option-wrap select { padding-right: 36px; }
+    .doctor-option-wrap::after {
+        content: '';
+        position: absolute; right: 14px; top: 50%;
+        transform: translateY(-50%);
+        width: 0; height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 6px solid var(--muted);
+        pointer-events: none;
+    }
+
+    .form-divider {
+        border: none; border-top: 1px solid var(--border);
+        margin: 24px 0;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* ── Availability note ── */
+    .avail-note {
+        background: var(--teal-pale);
+        border: 1px solid #b2dede;
+        border-radius: 10px; padding: 12px 16px;
+        font-size: .82rem; color: #0a5f63;
+        display: flex; align-items: flex-start; gap: 10px;
+        margin-top: 14px;
+    }
+    .avail-note svg { width: 16px; height: 16px; stroke: var(--teal); fill: none; stroke-width: 2; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Submit ── */
+    .form-actions {
+        display: flex; align-items: center; justify-content: flex-end;
+        gap: 12px; margin-top: 28px;
+    }
+    .btn-cancel {
+        padding: 11px 22px;
+        background: transparent; color: var(--muted);
+        border: 1.5px solid var(--border); border-radius: 10px;
+        font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 600;
+        cursor: pointer; text-decoration: none;
+        transition: all .2s;
+    }
+    .btn-cancel:hover { border-color: var(--navy); color: var(--navy); }
+    .btn-submit {
+        padding: 11px 28px;
+        background: var(--navy); color: white;
+        border: none; border-radius: 10px;
+        font-family: 'DM Sans', sans-serif; font-size: .95rem; font-weight: 600;
+        cursor: pointer; transition: background .2s, transform .1s;
+    }
+    .btn-submit:hover { background: var(--teal); }
+    .btn-submit:active { transform: scale(.98); }
+
+    @media (max-width: 560px) {
+        .form-row { grid-template-columns: 1fr; }
+        .appt-body { padding: 0 16px 40px; }
+        .appt-topbar { padding: 0 16px; }
+        .form-actions { flex-direction: column-reverse; }
+        .btn-cancel, .btn-submit { width: 100%; text-align: center; }
+    }

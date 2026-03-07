@@ -1,68 +1,84 @@
+import os
+from datetime import date
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from .forms import *
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from staff.models import DoctorPatientMessage, Report
+from staff.models import DoctorPatientMessage, Report, Appointment
 from django.contrib import messages
-from django.http import FileResponse
+from django.http import FileResponse, Http404
 
 
 def landing(request):
+    context = {
+        'hospital_name': 'CareFirst Medical Center' # Example dynamic data
+    }
+    return render(request, 'patients/landing.html', context)
 
-    return render(request, 'patients/landing.html')
 
-
-# Registration View
 def register(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            # Save User model fields
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
+        # Instantiate both forms with the POST data
+        user_form = UserRegistrationForm(request.POST)
+        profile_form = ProfileForm(request.POST)
+
+        # Both forms must be valid to proceed
+        if user_form.is_valid() and profile_form.is_valid():
+            # 1. Save the User securely
+            # NOTE: The moment user.save() runs, your signals.py creates a blank PatientProfile!
+            user = user_form.save(commit=False)
+            user.set_password(user_form.cleaned_data['password'])
             user.save()
 
-            # Create the Patient instance linked to the User
-            patient, created = Patient.objects.get_or_create(user=user)
+            # 2. Fetch the blank profile that the signal just created
+            profile = PatientProfile.objects.get(user=user)
 
-            if not created:
-                # Patient instance already exists
-                print('Patient already exists')
-                return redirect('patients:register')
+            # 3. Update the blank profile with the data the patient typed into the form
+            for field, value in profile_form.cleaned_data.items():
+                setattr(profile, field, value)
 
-            # Save Profile model fields
-            Profile.objects.create(
-                user=patient,
-                phone_number=form.cleaned_data.get('phone_number'),
-                emergency_contact=form.cleaned_data.get('emergency_contact'),
-                medical_history=form.cleaned_data.get('medical_history'),
-                allergies=form.cleaned_data.get('allergies'),
-                insurance_details=form.cleaned_data.get('insurance_details'),
-            )
+            # 4. Save the updated profile
+            profile.save()
 
+            messages.success(request, 'Account created successfully! You can now log in.')
             return redirect('patients:login')
+        else:
+            # If validation fails, Django will automatically display the errors on the forms
+            messages.error(request, 'Please correct the errors below.')
     else:
-        form = UserRegistrationForm()
+        # GET request: send empty forms
+        user_form = UserRegistrationForm()
+        profile_form = ProfileForm()
 
-    return render(request, 'patients/register.html', {'form': form})
+    return render(request, 'patients/register.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
 
 
-# Login View
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            user = authenticate(username=username, password=password)
-            if user:
+
+            # authenticate() verifies the credentials against the database
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
                 login(request, user)
-                print('logged in')
+                messages.success(request, f'Welcome back, {user.first_name or user.username}!')
                 return redirect('patients:home')
+            else:
+                # Provide feedback if credentials are wrong
+                messages.error(request, 'Invalid username or password.')
     else:
         form = LoginForm()
+
     return render(request, 'patients/login.html', {'form': form})
 
 
@@ -83,38 +99,70 @@ def logout_view(request):
 
 @login_required
 def home(request):
+    patient_profile = request.user.patient_profile
 
-    return render(request, 'patients/home.html')
+    # Fetch the next 3 upcoming, scheduled appointments
+    upcoming_appointments = Appointment.objects.filter(
+        patient=patient_profile,
+        date__gte=date.today(),
+        status='Scheduled'
+    ).order_by('date', 'time')[:3]
+
+    context = {
+        'upcoming_appointments': upcoming_appointments,
+    }
+    return render(request, 'patients/home.html', context)
 
 
-@login_required
 # Profile View
+@login_required
 def profile(request):
+    # Fetch directly using the one-to-one related_name we established
+    patient_profile = request.user.patient_profile
 
-    view_profile = get_object_or_404(Profile, user=request.user.Patient)
-
-    return render(request, 'patients/profile.html', {'profile': view_profile})
+    return render(request, 'patients/profile.html', {'profile': patient_profile})
 
 
 @login_required
 def update_profile(request):
-    profile = get_object_or_404(Profile, user=request.user.Patient)
+    patient_profile = request.user.patient_profile
 
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, instance=profile)
+        # Pass the existing profile instance so Django knows to UPDATE, not create
+        form = ProfileForm(request.POST, instance=patient_profile)
         if form.is_valid():
-            # Save the form and automatically set `modified_by` in the signal
             form.save()
-            return redirect('patients:profile')  # Redirect to profile page after saving
+            # Add a success message for a better user experience
+            messages.success(request, "Your medical profile has been updated successfully.")
+            return redirect('patients:profile')
     else:
-        form = ProfileUpdateForm(instance=profile)
+        # Pre-fill the form with the user's current data
+        form = ProfileForm(instance=patient_profile)
 
-    return render(request, 'patients/update_profile.html', {'form': form, 'profile': profile})
+    return render(request, 'patients/update_profile.html', {
+        'form': form,
+        'profile': patient_profile
+    })
 
 
 @login_required
 def medication_reminders(request):
-    reminders = MedicationReminder.objects.filter(patient=request.user.Patient)
+    patient_profile = request.user.patient_profile
+
+    # Handle the patient checking off a medication
+    if request.method == 'POST':
+        reminder_id = request.POST.get('reminder_id')
+        if reminder_id:
+            # Ensure the reminder actually belongs to this patient
+            reminder = get_object_or_404(MedicationReminder, id=reminder_id, patient=patient_profile)
+            # Toggle the status (if False it becomes True, and vice versa)
+            reminder.is_taken = not reminder.is_taken
+            reminder.save()
+            return redirect('appointments:medication_reminders')  # Adjust namespace if needed
+
+    # Fetch reminders and order them chronologically by time
+    reminders = MedicationReminder.objects.filter(patient=patient_profile).order_by('time')
+
     return render(request, 'appointments/medication_reminders.html', {'reminders': reminders})
 
 
@@ -129,60 +177,78 @@ def feedback_form(request):
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
         if form.is_valid():
-            feedback = form.save(commit=False)  # Create a feedback instance but don't save yet
-            feedback.patient = request.user.patient  # Assign the patient
-            feedback.save()  # Now save the instance
-            return redirect('appointments:feedback_submitted')
+            feedback = form.save(commit=False)
+            # FIX: Use the updated related_name for the unified profile
+            feedback.patient = request.user.patient_profile
+            feedback.save()
+
+            # UX Enhancement: Flash a success message and send them to the dashboard
+            messages.success(request, "Thank you! Your feedback helps us improve our care.")
+            return redirect('patients:home')
     else:
         form = FeedbackForm()
+
     return render(request, 'appointments/feedback_form.html', {'form': form})
 
 
-# Treatment Plans View
 @login_required
 def treatment_plans(request):
-    plans = TreatmentPlan.objects.filter(patient=request.user.Patient)
+    # Fixed the relationship and ordered by most recent first
+    plans = TreatmentPlan.objects.filter(
+        patient=request.user.patient_profile
+    ).order_by('-start_date')
+
     return render(request, 'appointments/treatment_plans.html', {'plans': plans})
 
 
-# Emergency Contact View
 @login_required
 def emergency_contact(request):
-    emergency_service = EmergencyService.objects.filter(patient=request.user.Patient).first()  # Assuming only one service request per patient
-    return render(request, 'appointments/emergency_contact.html', {'emergency_service': emergency_service})
+    patient_profile = request.user.patient_profile
+
+    # Fetch all emergency requests, ordered by the most recent
+    emergency_requests = EmergencyService.objects.filter(
+        patient=patient_profile
+    ).order_by('-request_time')
+
+    # Grab the latest one to show current status, and pass the rest as history
+    latest_emergency = emergency_requests.first()
+
+    return render(request, 'appointments/emergency_contact.html', {
+        'profile': patient_profile,  # Passed the profile to show the actual emergency contacts
+        'latest_emergency': latest_emergency,
+        'emergency_history': emergency_requests[1:5]  # Show the last 4 historical requests
+    })
 
 
 # This is for the patient viewing messages
 @login_required
 def patient_messages(request):
-    messages = DoctorPatientMessage.objects.filter(recipient_id=request.user.Patient.id)
-    if messages:
-        print('message')
-    else:
-        print('crazy')
-    for message in messages:
-        print(message, 'jjjj')
-    return render(request, 'patients/patient_messages.html', {'messages': messages})
+    # Fetch messages sent to the logged-in patient
+    # Ordered by the most recent message first
+    user_messages = DoctorPatientMessage.objects.filter(
+        recipient=request.user.patient_profile
+    ).order_by('-sent_at')
+
+    return render(request, 'patients/patient_messages.html', {'messages': user_messages})
 
 
 @login_required
 def view_message(request, message_id):
-    # Get the specific message
-    message = get_object_or_404(DoctorPatientMessage, id=message_id)
-
-    # Ensure only the recipient (patient) can view and reply
-    if message.recipient.user != request.user:
-        messages.error(request, "You are not authorized to view this message.")
-        return redirect('patients:login')  # Redirect to the patient's inbox
+    # Security: Ensure the message exists and belongs to the logged-in patient
+    message = get_object_or_404(
+        DoctorPatientMessage,
+        id=message_id,
+        recipient=request.user.patient_profile
+    )
 
     if request.method == 'POST':
-        reply_content = request.POST.get('patient_reply')  # Get the reply from the form
+        reply_content = request.POST.get('patient_reply')
 
         if reply_content:
-            message.patient_reply = reply_content  # Save the reply
+            message.patient_reply = reply_content
             message.save()
-            messages.success(request, "Your reply has been sent.")
-            return redirect('patients:patient_messages')  # Redirect back to inbox or messages list
+            messages.success(request, "Your reply has been sent to the doctor.")
+            return redirect('patients:patient_messages')
         else:
             messages.error(request, "Reply content cannot be empty.")
 
@@ -190,22 +256,43 @@ def view_message(request, message_id):
 
 
 @login_required
-def download_report(request, report_id):
-    # Ensure the logged-in patient can only access their reports
-    report = get_object_or_404(Report, id=report_id, generated_for=request.user.patient)
-    return FileResponse(open(report.file_path.path, 'rb'), content_type='application/pdf')
-
-
-@login_required
 def report_list(request):
-    # Filter reports to show only those belonging to the logged-in patient
-    patient = request.user.Patient  # Assuming `request.user` is linked to a `Patient` profile
-    reports = Report.objects.filter(generated_for=patient)
+    # Fetching reports for the optimized patient_profile relationship
+    reports = Report.objects.filter(
+        generated_for=request.user.patient_profile
+    ).order_by('-generated_at')
+
     return render(request, 'patients/report_list.html', {'reports': reports})
 
 
 @login_required
 def report_detail(request, report_id):
-    # Ensure the logged-in patient can only view details of their reports
-    report = get_object_or_404(Report, id=report_id, generated_for=request.user.patient)
+    # Securely fetch the report belonging only to this patient
+    report = get_object_or_404(
+        Report,
+        id=report_id,
+        generated_for=request.user.patient_profile
+    )
     return render(request, 'patients/report_detail.html', {'report': report})
+
+
+@login_required
+def download_report(request, report_id):
+    report = get_object_or_404(
+        Report,
+        id=report_id,
+        generated_for=request.user.patient_profile
+    )
+
+    # Ensure the file path exists on the storage before opening
+    if not report.file_path or not os.path.exists(report.file_path.path):
+        raise Http404("The requested PDF file does not exist on the server.")
+
+    # Open the file in binary mode
+    response = FileResponse(
+        open(report.file_path.path, 'rb'),
+        content_type='application/pdf'
+    )
+    # This header suggests the browser download the file rather than just viewing it
+    response['Content-Disposition'] = f'attachment; filename="{report.title}.pdf"'
+    return response

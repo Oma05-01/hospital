@@ -1,13 +1,153 @@
-<!-- view_appointment.html -->
-<h1>Appointment Details</h1>
-<p>Patient: {{ appointment.patient.username }}</p>
-<p>Reason: {{ appointment.reason }}</p>
-<p>Status: {{ appointment.status }}</p>
-{% if note %}
-    <h3>Consultation Notes</h3>
-    <p>{{ note.note }}</p>
-    <p>Prescription: {{ note.prescription }}</p>
-    <p>Treatment Plan: {{ note.treatment_plan }}</p>
-{% else %}
-    <p>No consultation notes available.</p>
-{% endif %}
+{% extends 'staff/base.html' %}
+{% load static %}
+
+{% block title %}Appointment Details{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'staff/view_appointment.css' %}">
+
+
+<div class="va-wrap">
+
+    <!-- Topbar -->
+    <nav class="va-topbar">
+        <a href="{% url 'staff:dashboard' %}" class="va-brand">
+            <div class="va-brand-dot">
+                <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg>
+            </div>
+            MediCore
+        </a>
+        <a href="{% url 'staff:display_patient' patient_id=appointment.patient.id %}" class="va-back">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            Patient Profile
+        </a>
+    </nav>
+
+    <!-- Hero -->
+    <div class="va-hero">
+        <div class="va-hero-eyebrow">Appointment #{{ appointment.id }}</div>
+        <h1>Appointment Details</h1>
+        <p>{{ appointment.scheduled_time|date:"l, d F Y \a\t H:i" }}</p>
+    </div>
+
+    <!-- Body -->
+    <div class="va-body">
+
+        <!-- Participants -->
+        <div class="va-card">
+            <div class="va-card-title">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                Participants
+            </div>
+            <div class="participants">
+                <div class="participant">
+                    <div class="participant-avatar patient">
+                        {{ appointment.patient.user.first_name|first|upper }}{{ appointment.patient.user.last_name|first|upper }}
+                    </div>
+                    <div class="participant-info">
+                        <div class="p-role">Patient</div>
+                        <div class="p-name">{{ appointment.patient.user.get_full_name|default:appointment.patient.user.username }}</div>
+                    </div>
+                </div>
+                <div class="participant">
+                    <div class="participant-avatar doctor">
+                        {{ appointment.doctor.user.first_name|first|upper }}{{ appointment.doctor.user.last_name|first|upper }}
+                    </div>
+                    <div class="participant-info">
+                        <div class="p-role">Physician{% if appointment.doctor.specialty %} — {{ appointment.doctor.specialty }}{% endif %}</div>
+                        <div class="p-name">Dr. {{ appointment.doctor.user.get_full_name|default:appointment.doctor.user.username }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment meta -->
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Status</span>
+                    <span>
+                        <span class="status-badge status-{{ appointment.status|lower }}">
+                            {{ appointment.status|capfirst }}
+                        </span>
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Scheduled</span>
+                    <span class="detail-value">{{ appointment.scheduled_time|date:"d M Y, H:i" }}</span>
+                </div>
+                {% if appointment.created_by %}
+                <div class="detail-item">
+                    <span class="detail-label">Booked By</span>
+                    <span class="detail-value">{{ appointment.created_by.user.get_full_name|default:appointment.created_by.user.username }}</span>
+                </div>
+                {% endif %}
+                <div class="detail-item" style="grid-column: 1 / -1">
+                    <span class="detail-label">Reason</span>
+                    <div class="detail-value reason-text">{{ appointment.reason|default:"No reason provided." }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultation Notes -->
+        <div class="va-card">
+            <div class="va-card-title">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+                Consultation Notes
+            </div>
+
+            {% if note %}
+                {% if note.note %}
+                <div class="note-field">
+                    <div class="note-label">Clinical Notes</div>
+                    <div class="note-body">{{ note.note }}</div>
+                </div>
+                {% endif %}
+                {% if note.prescription %}
+                <div class="note-field">
+                    <div class="note-label">Prescription</div>
+                    <div class="note-body">{{ note.prescription }}</div>
+                </div>
+                {% endif %}
+                {% if note.treatment_plan %}
+                <div class="note-field">
+                    <div class="note-label">Treatment Plan</div>
+                    <div class="note-body">{{ note.treatment_plan }}</div>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="note-empty">
+                    <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 004 0M9 5a2 2 0 014 0"/></svg>
+                    No consultation notes have been added for this appointment.
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        {% if is_assigned_doctor %}
+        <div class="va-card">
+            <div class="va-card-title">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                Actions
+            </div>
+            <div class="va-actions">
+                {% if not note %}
+                <a href="{% url 'staff:add_consultation_note' appointment_id=appointment.id %}" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                    Add Consultation Note
+                </a>
+                {% else %}
+                <a href="{% url 'staff:edit_consultation_note' note_id=note.id %}" class="btn btn-outline">
+                    <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Edit Notes
+                </a>
+                {% endif %}
+                <a href="{% url 'staff:prescribe_medication' patient_id=appointment.patient.id %}" class="btn btn-outline">
+                    <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 004 0M12 12h3M12 16h3M9 12h.01"/></svg>
+                    Prescribe Medication
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

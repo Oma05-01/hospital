@@ -1,23 +1,48 @@
 {% extends 'patients/base.html' %}
+{% load static %}
 
-{% block title %}Patient Messages{% endblock %}
+{% block title %}Message Detail | CareFirst Medical{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/messages.css' %}">
+{% endblock %}
 
 {% block content %}
+<div class="message-view-container">
+    <div class="view-header">
+        <a href="{% url 'patients:patient_messages' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Inbox</a>
+    </div>
 
-<div class="message-detail">
-    <h2>Message from {{ message.sender.user.username }}</h2>
-    <p><strong>Sent at:</strong> {{ message.sent_at }}</p>
-    <p><strong>Message:</strong> {{ message.message_content }}</p>
+    <div class="conversation-thread">
+        <div class="chat-bubble doctor-bubble">
+            <div class="bubble-header">
+                <strong>Dr. {{ message.sender.user.get_full_name }}</strong>
+                <span>{{ message.sent_at|date:"g:i A, M d" }}</span>
+            </div>
+            <div class="bubble-content">
+                {{ message.message_content }}
+            </div>
+        </div>
 
-    {% if message.patient_reply %}
-        <p><strong>Your Reply:</strong> {{ message.patient_reply }}</p>
-    {% else %}
-        <form method="POST">
-            {% csrf_token %}
-            <textarea name="patient_reply" rows="4" placeholder="Type your reply here..." required></textarea>
-            <button type="submit">Send Reply</button>
-        </form>
-    {% endif %}
+        {% if message.patient_reply %}
+            <div class="chat-bubble patient-bubble">
+                <div class="bubble-header">
+                    <strong>You (Reply)</strong>
+                </div>
+                <div class="bubble-content">
+                    {{ message.patient_reply }}
+                </div>
+            </div>
+        {% else %}
+            <div class="reply-section">
+                <form method="post">
+                    {% csrf_token %}
+                    <label for="patient_reply">Your Reply</label>
+                    <textarea name="patient_reply" id="patient_reply" placeholder="Type your response here..." required></textarea>
+                    <button type="submit" class="btn btn-primary">Send Response</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
 </div>
-
 {% endblock %}

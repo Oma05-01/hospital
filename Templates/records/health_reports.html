@@ -1,27 +1,44 @@
-{% extends "patients/base.html" %}
+{% extends "appointments/base.html" %}
+{% load static %}
+
+{% block title %}Lab Results & Reports | CareFirst Portal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/patient-records.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <h2 class="text-center text-primary mb-4">Health Reports</h2>
-    {% if reports.exists %}
-        <div class="row">
-            {% for report in reports %}
-            <div class="col-md-6 col-lg-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary">{{ report.title }}</h5>
-                        <p class="card-text">{{ report.description|truncatewords:20 }}</p>
-                        <p class="text-muted"><strong>Date:</strong> {{ report.date }}</p>
-                        <a href="{{ report.document.url }}" class="btn btn-primary" target="_blank">View Full Report</a>
-                    </div>
+<div class="records-wrapper">
+    <header class="records-header reports-theme">
+        <div class="header-main">
+            <h2><i class="fas fa-file-medical-alt"></i> Lab Results & Reports</h2>
+            <p>Securely download your test results and imaging reports.</p>
+        </div>
+    </header>
+
+    <div class="reports-list">
+        {% for report in reports %}
+            <div class="report-row">
+                <div class="report-icon">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="report-info">
+                    <h3>{{ report.report_name }}</h3>
+                    <span class="report-meta">Uploaded: {{ report.uploaded_at|date:"M d, Y - h:i A" }}</span>
+                </div>
+                <div class="report-action">
+                    <a href="{{ report.report_file.url }}" class="btn btn-outline-primary" download>
+                        <i class="fas fa-download"></i> Download
+                    </a>
                 </div>
             </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="alert alert-warning text-center" role="alert">
-            No health reports available.
-        </div>
-    {% endif %}
+        {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-vial fa-3x"></i>
+                <h3>No Health Reports</h3>
+                <p>You have no pending lab results or uploaded documents.</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

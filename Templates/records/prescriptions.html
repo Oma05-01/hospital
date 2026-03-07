@@ -1,28 +1,49 @@
-{% extends "patients/base.html" %}
+{% extends "appointments/base.html" %}
+{% load static %}
+
+{% block title %}My Prescriptions | CareFirst Portal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/patient-records.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <h2 class="text-center text-primary mb-4">Prescriptions</h2>
-    {% if prescriptions.exists %}
-        <div class="row">
-            {% for prescription in prescriptions %}
-            <div class="col-md-6 col-lg-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary">{{ prescription.medication_name }}</h5>
-                        <p class="card-text">{{ prescription.dosage_instructions|truncatewords:20 }}</p>
-                        <p class="text-muted"><strong>Prescribed On:</strong> {{ prescription.date_prescribed }}</p>
-                        <p class="text-muted"><strong>Prescribing Doctor:</strong> {{ prescription.doctor_name }}</p>
-                        <a href="{{ prescription.document.url }}" class="btn btn-primary" target="_blank">View Full Prescription</a>
+<div class="records-wrapper">
+    <header class="records-header pharmacy-theme">
+        <div class="header-main">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Active Prescriptions</h2>
+            <p>Current medications and pharmacy instructions.</p>
+        </div>
+    </header>
+
+    <div class="records-grid">
+        {% for rx in prescriptions %}
+            <div class="record-card rx-card">
+                <div class="card-header rx-header">
+                    <span class="record-doctor"><i class="fas fa-signature"></i> Issued by: Dr. {{ rx.prescribing_doctor.user.last_name|default:"Physician" }}</span>
+                    <span class="rx-date">Issued: {{ rx.issued_at|date:"M d, Y" }}</span>
+                </div>
+
+                <div class="card-body">
+                    <div class="data-group rx-details">
+                        <label><i class="fas fa-pills"></i> Medication & Dosage Instructions</label>
+                        <p>{{ rx.prescription_details|linebreaks }}</p>
+                    </div>
+                </div>
+
+                <div class="card-footer rx-footer">
+                    <div class="expiry-warning">
+                        <i class="fas fa-exclamation-circle"></i> Valid until: <strong>{{ rx.expires_at|date:"F d, Y" }}</strong>
                     </div>
                 </div>
             </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="alert alert-warning text-center" role="alert">
-            No prescriptions available.
-        </div>
-    {% endif %}
+        {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-capsules fa-3x"></i>
+                <h3>No Active Prescriptions</h3>
+                <p>You do not have any current medications on file.</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

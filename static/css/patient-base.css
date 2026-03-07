@@ -1,0 +1,173 @@
+/* Reset & Base Typography */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.patient-portal-body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f7f6; /* Soft, calming grey/blue background */
+    color: #2d3748;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Patient Navbar */
+.patient-navbar {
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #2d3748;
+    font-size: 1.25rem;
+}
+
+.brand-icon {
+    color: #3182ce;
+    font-size: 1.5rem;
+}
+
+.nav-brand span strong {
+    color: #3182ce;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #4a5568;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-link:hover {
+    color: #3182ce;
+}
+
+.btn-nav-book {
+    background: #3182ce;
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+
+.btn-nav-book:hover {
+    background: #2b6cb0;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-left: 1px solid #e2e8f0;
+    padding-left: 1.5rem;
+    margin-left: 0.5rem;
+}
+
+.user-greeting {
+    font-size: 0.9rem;
+    color: #718096;
+    font-weight: 500;
+}
+
+.logout-link { color: #a0aec0; }
+.logout-link:hover { color: #e53e3e; }
+
+/* Django Flash Messages */
+.messages-container {
+    max-width: 800px;
+    margin: 1.5rem auto 0;
+    padding: 0 2rem;
+}
+
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.alert-success { background: #f0fff4; color: #22543d; border: 1px solid #c6f6d5; }
+.alert-success i { color: #38a169; font-size: 1.2rem; }
+
+.alert-error { background: #fff5f5; color: #742a2a; border: 1px solid #fed7d7; }
+.alert-error i { color: #e53e3e; font-size: 1.2rem; }
+
+.close-alert {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+}
+
+.close-alert:hover { opacity: 1; }
+
+/* Main Content Area */
+.main-content {
+    flex-grow: 1; /* Pushes the footer to the bottom */
+    padding: 0 2rem;
+}
+
+/* Footer */
+.patient-footer {
+    background: #2d3748;
+    color: #a0aec0;
+    padding: 2rem;
+    margin-top: 4rem;
+    text-align: center;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.patient-footer p { margin-bottom: 0.5rem; font-size: 0.9rem; }
+.emergency-text { color: #fc8181; font-weight: 600; margin-top: 10px; }

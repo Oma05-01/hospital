@@ -1,0 +1,48 @@
+{% extends 'patients/base.html' %}
+{% load static %}
+
+{% block title %}My Treatment Plans | CareFirst Medical{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/treatment.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="header-content">
+        <h2><i class="fas fa-notes-medical"></i> Treatment Plans</h2>
+        <p>Review your active and past medical care plans.</p>
+    </div>
+</div>
+
+<div class="treatment-grid">
+    {% for plan in plans %}
+        <div class="treatment-card">
+            <div class="card-header">
+                <span class="status-badge status-{{ plan.status|lower }}">{{ plan.status }}</span>
+                <span class="date-range">
+                    <i class="far fa-calendar-alt"></i> {{ plan.start_date|date:"M d, Y" }}
+                    {% if plan.end_date %} - {{ plan.end_date|date:"M d, Y" }}{% else %} - Ongoing{% endif %}
+                </span>
+            </div>
+            <div class="card-body">
+                <h3>Treatment Overview</h3>
+                <p class="description">{{ plan.treatment_description }}</p>
+
+                {% if plan.progress_notes %}
+                <div class="progress-notes">
+                    <h4><i class="fas fa-clipboard-check"></i> Doctor's Progress Notes</h4>
+                    <p>{{ plan.progress_notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-folder-open fa-3x text-muted"></i>
+            <h3>No Treatment Plans</h3>
+            <p>You do not have any active or past treatment plans on record.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

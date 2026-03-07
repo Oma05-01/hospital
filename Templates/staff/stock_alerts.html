@@ -1,24 +1,38 @@
-<h1>Stock Alerts</h1>
+{% extends "staff/base.html" %}
+{% load static %}
 
-<table>
-    <thead>
-        <tr>
-            <th>Supply</th>
-            <th>Alert Message</th>
-            <th>Status</th>
-            <th>Created At</th>
-            <th>Resolved At</th>
-        </tr>
-    </thead>
-    <tbody>
+{% block title %}Stock Alerts | Inventory Control{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/stock_alerts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="alerts-wrapper">
+    <header class="alerts-header">
+        <div class="header-main">
+            <h2><i class="fas fa-exclamation-triangle"></i> Inventory Stock Alerts</h2>
+            <p>Immediate attention required for the following supply items.</p>
+        </div>
+        <div class="alert-summary">
+            <span class="count-badge">{{ alerts.count }}</span>
+            <span class="label">Unresolved Alerts</span>
+        </div>
+    </header>
+
+    <div class="alerts-grid">
         {% for alert in alerts %}
-            <tr>
-                <td>{{ alert.supply.name }}</td>
-                <td>{{ alert.alert_message }}</td>
-                <td>{{ alert.alert_status }}</td>
-                <td>{{ alert.created_at }}</td>
-                <td>{{ alert.resolved_at }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            <div class="alert-card priority-{{ alert.severity|default:'medium' }}">
+                <div class="alert-top">
+                    <span class="severity-tag">{{ alert.severity|upper|default:"LOW STOCK" }}</span>
+                    <span class="alert-date">{{ alert.alert_date|date:"M d, H:i" }}</span>
+                </div>
+                
+                <div class="alert-body">
+                    <h3>{{ alert.supply.name }}</h3>
+                    <p class="alert-msg">{{ alert.message|default:"Item has fallen below the minimum safety threshold." }}</p>
+                    
+                    <div class="stock-stats">
+                        <div class="stat">
+                            <label>Current Qty</label>
+                            <span class="val text-danger">{{ alert.supply.quantity }}</span>

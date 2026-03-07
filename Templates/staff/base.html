@@ -4,40 +4,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %} Dashboard {% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>{% block title %}Dashboard{% endblock %} — MediCore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'staff/base.css' %}?v=1">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <header>
-        <nav>
-            <ul>
-                <li><a href="{% url 'staff:dashboard' %}">Home</a></li>
-                <li><a href="#">Profile</a></li> <!--I might need to remove this -->
-                <li><a href="{% url 'staff:logout' %}">Logout</a></li>
-                <!-- Add links based on user role -->
-                <!--I might need to remove this guy too since the page is going to redirect the user based on their roles -->
-                {% if user.role == 'doctor' %}
-                    <li><a href="{% url 'staff:doctor_dashboard' %}">Doctor Dashboard</a></li>
-                {% elif user.role == 'nurse' %}
-                    <li><a href="{% url 'staff:nurse_dashboard' %}">Nurse Dashboard</a></li>
-                {% elif user.role == 'admin' %}
-                    <li><a href="{% url 'staff:admin_dashboard' %}">Admin Dashboard</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-    </header>
 
-    <!-- Main Content Area -->
+    {% if messages %}
+    <div class="messages-bar" role="alert" aria-live="polite">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <main>
-        {% block content %}
-        <!-- Content specific to each role will be injected here -->
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
     <footer>
-        <p>&copy; 2024 Hospital Management System</p>
+        <p>&copy; {% now "Y" %} MediCore Hospital Management System</p>
+        <nav class="footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Support</a>
+            <a href="{% url 'staff:logout' %}">Sign out</a>
+        </nav>
     </footer>
+
+    <script>
+        // Auto-dismiss flash messages after 4 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.message').forEach(el => {
+                el.style.transition = 'opacity .4s, transform .4s';
+                el.style.opacity = '0';
+                el.style.transform = 'translateX(16px)';
+                setTimeout(() => el.remove(), 400);
+            });
+        }, 4000);
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>

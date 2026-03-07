@@ -1,54 +1,112 @@
 {% extends "staff/base.html" %}
 {% load static %}
 
-{% block content %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Doctor-Patient Messages</title>
-    <style>
-        /* Basic styling - customize as needed */
-        body {
-            font-family: sans-serif;
-            margin: 20px;
-        }
-        .message-container {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-        .message-sender {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .message-timestamp {
-            color: #888;
-            font-size: smaller;
-        }
-    </style>
-</head>
-<body>
+{% block title %}Consultation: {{ patient.user.get_full_name }}{% endblock %}
 
-    <h1>Doctor-Patient Messages</h1>
-    <h3>Sending messages from Dr. {{ user.username }} to {{ patient }}</h3>
-
-    {% for message in messages %}
-        <div class="message-container">
-            <span class="message-sender">{% if message.sender == 'doctor' %}Doctor{% else %}You{% endif %}</span><br>
-            <span class="message-timestamp">{{ message.timestamp }}</span><br>
-            <p>{{ message.message_content }} </p>
-        </div>
-    {% endfor %}
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Send Message</button>
-    </form>
-
-</body>
-</html>
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/staff-messaging.css' %}?v=4">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}
 
+{% block content %}
+<div class="consult-page">
 
+    {# ── Topbar (base.html has no topbar so we add one here) ── #}
+    <nav class="consult-topbar">
+        <a href="{% url 'staff:dashboard' %}" class="consult-brand">
+            <div class="consult-brand-dot">
+                <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 13h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg>
+            </div>
+            MediCore
+        </a>
+        <a href="{% url 'staff:display_patient' patient_id=patient.id %}" class="consult-back">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            Patient Profile
+        </a>
+    </nav>
+
+    <div class="consult-body">
+
+        {# ── Sidebar ── #}
+        <aside class="patient-sidebar">
+            <div class="sidebar-header">
+                <div class="patient-avatar">
+                    {{ patient.user.first_name|slice:":1" }}{{ patient.user.last_name|slice:":1" }}
+                </div>
+                <h3>{{ patient.user.get_full_name }}</h3>
+                <span class="patient-id">PAT-{{ patient.id|stringformat:"04d" }}</span>
+            </div>
+            <div class="quick-vitals">
+                <p><strong>Phone:</strong><br>{{ patient.phone_number|default:"—" }}</p>
+                <p><strong>Allergies:</strong><br>
+                    <span class="text-danger">{{ patient.allergies|default:"None recorded" }}</span>
+                </p>
+            </div>
+            <a href="{% url 'staff:display_patient' patient_id=patient.id %}" class="btn-full">
+                View Medical File
+            </a>
+        </aside>
+
+        {# ── Chat ── #}
+        <main class="chat-area">
+            <div class="chat-header">
+                <h4><i class="fas fa-comments"></i> Secure Consultation Channel</h4>
+            </div>
+
+            <div class="chat-history" id="chatHistory">
+                {% for msg in messages %}
+                <div class="msg-group">
+                    <div class="msg-bubble doctor-msg">
+                        <div class="msg-meta">
+                            Dr. {{ msg.sender.user.last_name }} &bull; {{ msg.sent_at|date:"g:i A" }}
+                        </div>
+                        <p>{{ msg.message_content }}</p>
+                    </div>
+                    {% if msg.patient_reply %}
+                    <div class="msg-bubble patient-reply">
+                        <div class="msg-meta">Patient Reply</div>
+                        <p>{{ msg.patient_reply }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="empty-chat">
+                    <p>No messages sent to this patient yet. Start the consultation below.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="chat-input-area">
+                <form method="post" class="staff-form">
+                    {% csrf_token %}
+                    <div class="input-container">
+                        {{ form.message_content }}
+                        <button type="submit" class="send-btn">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+    </div>{# end consult-body #}
+</div>{# end consult-page #}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Auto-scroll chat to bottom on load
+    const chat = document.getElementById('chatHistory');
+    if (chat) chat.scrollTop = chat.scrollHeight;
+
+    // Ctrl+Enter or Cmd+Enter to submit
+    const textarea = chat && chat.closest('.chat-area').querySelector('textarea');
+    if (textarea) {
+        textarea.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.target.closest('form').submit();
+            }
+        });
+    }
+</script>
+{% endblock %}

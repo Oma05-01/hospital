@@ -1,0 +1,72 @@
+.page-header {
+    background: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    border-left: 5px solid var(--primary-blue);
+}
+
+.inbox-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.message-card {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+    border: 1px solid #e1e8ed;
+    transition: all 0.2s;
+}
+
+.message-card:hover {
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.unread { border-left: 4px solid var(--primary-blue); background-color: #f0f7ff; }
+
+.doctor-name { font-weight: 700; color: var(--secondary-blue); font-size: 1.1rem; }
+.message-date { font-size: 0.85rem; color: #888; text-align: right; }
+.message-preview { grid-column: 1 / -1; color: #555; margin: 0.5rem 0; }
+
+.status-pill {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-weight: 600;
+}
+.replied { background: #d4edda; color: #155724; }
+.pending { background: #fff3cd; color: #856404; }
+
+/* Detail View Bubbles */
+.message-view-container { max-width: 700px; margin: 0 auto; }
+.back-link { text-decoration: none; color: var(--primary-blue); font-weight: 500; margin-bottom: 1.5rem; display: inline-block; }
+
+.chat-bubble {
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 1.5rem;
+    max-width: 85%;
+    line-height: 1.6;
+}
+
+.doctor-bubble { background: #ffffff; border: 1px solid #e1e8ed; border-bottom-left-radius: 2px; }
+.patient-bubble { background: var(--primary-blue); color: #ffffff; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 2px; }
+
+.bubble-header { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 0.3rem; }
+
+.reply-section { margin-top: 2rem; background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.reply-section textarea { width: 100%; height: 120px; padding: 1rem; border: 1px solid #d1d8dd; border-radius: 5px; margin: 0.5rem 0 1rem; font-family: inherit; }
+
+.empty-state { text-align: center; padding: 4rem; background: #fff; border-radius: 8px; color: #ccc; }
