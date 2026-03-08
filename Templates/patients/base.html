@@ -24,7 +24,7 @@
             <nav class="nav-links">
                 <a href="{% url 'patients:home' %}">Home</a>
                 <a href="#">Services</a>
-                <a href="{% url 'patients:home' %}">Contact</a>
+                <a href="{% url 'patients:contact' %}">Contact</a>
 
                 {% if user.is_authenticated %}
                     {% if user.patient_profile %}
