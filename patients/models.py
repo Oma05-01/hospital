@@ -130,3 +130,19 @@ class Bill(models.Model):
     def __str__(self):
         status = "Paid" if self.is_paid else "Unpaid"
         return f"{status} Bill: {self.patient.user.username} - Total: {self.total_amount}"
+
+
+class ContactMessage(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name  = models.CharField(max_length=100)
+    email      = models.EmailField()
+    phone      = models.CharField(max_length=30, blank=True)
+    subject    = models.CharField(max_length=200, blank=True)
+    message    = models.TextField()
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} — {self.subject or 'No subject'} ({self.submitted_at:%Y-%m-%d})"
+
+    class Meta:
+        ordering = ['-submitted_at']

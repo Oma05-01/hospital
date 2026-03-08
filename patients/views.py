@@ -1,6 +1,9 @@
+import logging
 import os
 from datetime import date
 
+from django.conf import settings
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from .forms import *
@@ -10,6 +13,16 @@ from django.core.exceptions import ObjectDoesNotExist
 from staff.models import DoctorPatientMessage, Report, Appointment
 from django.contrib import messages
 from django.http import FileResponse, Http404
+
+logger = logging.getLogger(__name__)
+
+HOSPITAL_CONTEXT = {
+    'hospital_name':    'CareFirst Medical Center',
+    'hospital_address': '14 Broad Street, Lagos Island, Lagos',
+    'hospital_phone':   '+234 (0) 800 123 4567',
+    'hospital_phone_2': '+234 (0) 800 765 4321',
+    'hospital_email':   'info@carefirst.com',
+}
 
 
 def landing(request):
@@ -97,16 +110,47 @@ def contact(request):
     submitted = False
 
     if request.method == 'POST':
-        # In a real implementation, send email or save to DB here
-        submitted = True
+        first_name = request.POST.get('first_name', '').strip()
+        last_name  = request.POST.get('last_name', '').strip()
+        email      = request.POST.get('email', '').strip()
+        phone      = request.POST.get('phone', '').strip()
+        subject    = request.POST.get('subject', '').strip()
+        message    = request.POST.get('message', '').strip()
+
+        if first_name and last_name and email and message:
+            # ── Save to database ──────────────────────────────────────────
+            contact_msg = ContactMessage.objects.create(
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                phone=phone,
+                subject=subject,
+                message=message,
+            )
+
+            # ── Send email (fail silently) ────────────────────────────────
+            try:
+                send_mail(
+                    subject=f"[CareFirst Contact] {subject or 'New Message'} from {first_name} {last_name}",
+                    message=(
+                        f"Name:    {first_name} {last_name}\n"
+                        f"Email:   {email}\n"
+                        f"Phone:   {phone or 'Not provided'}\n"
+                        f"Subject: {subject or 'Not provided'}\n\n"
+                        f"Message:\n{message}"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.CONTACT_RECIPIENT_EMAIL],
+                    fail_silently=True,
+                )
+            except Exception:
+                logger.warning("Contact email failed for submission id=%s", contact_msg.id)
+
+            submitted = True
 
     return render(request, 'patients/contact.html', {
         'submitted': submitted,
-        'hospital_name': 'CareFirst Medical Center',
-        'hospital_address': '14 Broad Street, Lagos Island, Lagos',
-        'hospital_phone': '+234 (0) 800 123 4567',
-        'hospital_phone_2': '+234 (0) 800 765 4321',
-        'hospital_email': 'info@carefirst.com',
+        **HOSPITAL_CONTEXT,
     })
 
 @login_required
