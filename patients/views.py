@@ -83,18 +83,8 @@ def login_view(request):
 
 
 def logout_view(request):
-    # Check if the logged-in user has a Profile (i.e., is a patient)
-    try:
-        # Attempt to access the Profile using the related_name 'profile'
-        profile = request.user.Patient.profile  # This will raise an exception if no Profile exists
-
-        # If the user has a Profile, they are a patient
-        logout(request)
-        return redirect('patients:login')
-
-    except ObjectDoesNotExist:
-        # If no Profile exists for the user, they are not a patient
-        logout(request)
+    logout(request)
+    return redirect('patients:login')
 
 
 @login_required
