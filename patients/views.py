@@ -13,8 +13,11 @@ from django.http import FileResponse, Http404
 
 
 def landing(request):
+    if request.user.is_authenticated:
+        return redirect('patients:home')
+
     context = {
-        'hospital_name': 'CareFirst Medical Center' # Example dynamic data
+        'hospital_name': 'CareFirst Medical Center'
     }
     return render(request, 'patients/landing.html', context)
 
@@ -60,6 +63,10 @@ def register(request):
 
 
 def login_view(request):
+
+    if request.user.is_authenticated:
+        return redirect('patients:home')
+
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -86,6 +93,21 @@ def logout_view(request):
     logout(request)
     return redirect('patients:login')
 
+def contact(request):
+    submitted = False
+
+    if request.method == 'POST':
+        # In a real implementation, send email or save to DB here
+        submitted = True
+
+    return render(request, 'patients/contact.html', {
+        'submitted': submitted,
+        'hospital_name': 'CareFirst Medical Center',
+        'hospital_address': '14 Broad Street, Lagos Island, Lagos',
+        'hospital_phone': '+234 (0) 800 123 4567',
+        'hospital_phone_2': '+234 (0) 800 765 4321',
+        'hospital_email': 'info@carefirst.com',
+    })
 
 @login_required
 def home(request):

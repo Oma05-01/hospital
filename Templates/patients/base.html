@@ -23,8 +23,8 @@
 
             <nav class="nav-links">
                 <a href="{% url 'patients:home' %}">Home</a>
-                <a href="/services">Services</a>
-                <a href="/contact">Contact</a>
+                <a href="#">Services</a>
+                <a href="{% url 'patients:home' %}">Contact</a>
 
                 {% if user.is_authenticated %}
                     {% if user.patient_profile %}
@@ -33,7 +33,7 @@
                     {% endif %}
                     <a href="{% url 'patients:logout' %}" class="btn btn-outline">Logout</a>
                 {% else %}
-                    <a href="{% url 'patients:login' %}">Login</a>
+                    <a href="{% url 'patients:login' %}" class="btn">Login</a>
                     <a href="{% url 'patients:register' %}" class="btn">Sign Up</a>
                 {% endif %}
             </nav>
