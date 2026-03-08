@@ -1,0 +1,97 @@
+/* Header and Stats */
+.inventory-header, .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.stat-item {
+    text-align: right;
+}
+
+.stat-value { display: block; font-size: 1.8rem; font-weight: 800; color: #2d3748; }
+.stat-label { font-size: 0.75rem; text-transform: uppercase; color: #a0aec0; letter-spacing: 1px; }
+
+/* Supply Card Grid */
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.supply-card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 1px solid #edf2f7;
+    display: flex;
+    flex-direction: column;
+}
+
+.category-tag {
+    font-size: 0.7rem;
+    background: #edf2f7;
+    color: #4a5568;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.supply-info h3 { margin: 10px 0 5px 0; font-size: 1.1rem; color: #1a202c; }
+.sku { font-size: 0.8rem; color: #a0aec0; margin: 0; }
+
+/* Progress Gauge */
+.stock-gauge { margin: 1.5rem 0; }
+.gauge-labels { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; }
+
+.progress-bar {
+    height: 8px;
+    background: #edf2f7;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #48bb78, #38a169);
+    border-radius: 10px;
+}
+
+.supply-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #f7fafc;
+    font-size: 0.8rem;
+    color: #718096;
+}
+
+/* Table Card */
+.table-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 1px solid #edf2f7;
+    overflow: hidden;
+}
+
+.staff-table { width: 100%; border-collapse: collapse; }
+.staff-table th { background: #f8fafc; padding: 15px; text-align: left; font-size: 0.85rem; color: #718096; border-bottom: 2px solid #edf2f7; }
+.staff-table td { padding: 15px; border-bottom: 1px solid #edf2f7; font-size: 0.95rem; }
+
+/* Status Pills */
+.status-pill {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+.status-pending { background: #feebc8; color: #744210; }
+.status-delivered { background: #c6f6d5; color: #22543d; }
+.status-cancelled { background: #fed7d7; color: #822727; }

@@ -1,0 +1,47 @@
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
+    :root {
+        --navy:#0B1F3A;--teal:#0D7377;--teal-lt:#14A9A0;--teal-pale:#EAF4F4;
+        --surface:#F5F8FB;--border:#DDE5EF;--muted:#6B7A8D;--text:#1A2B40;
+        --error:#C0392B;--error-bg:#FDF0EF;--error-bd:#F0C5C2;
+        --shadow-sm:0 2px 8px rgba(11,31,58,.07);
+    }
+    .wrap{font-family:'DM Sans',sans-serif;background:var(--surface);min-height:100vh;color:var(--text);}
+    .topbar{background:var(--navy);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+    .brand{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-size:1.1rem;color:white;text-decoration:none;}
+    .brand-dot{width:32px;height:32px;background:var(--teal);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+    .brand-dot svg{width:18px;height:18px;fill:white;}
+    .back{font-size:.8rem;color:rgba(255,255,255,.55);text-decoration:none;padding:6px 14px;border:1px solid rgba(255,255,255,.12);border-radius:8px;display:flex;align-items:center;gap:6px;transition:all .2s;}
+    .back:hover{color:white;border-color:rgba(255,255,255,.3);}
+    .back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+    .hero{background:linear-gradient(130deg,var(--navy) 0%,#0f3460 60%,#0D7377 100%);padding:36px 32px 72px;position:relative;overflow:hidden;}
+    .hero::after{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:rgba(13,115,119,.2);pointer-events:none;}
+    .hero-eyebrow{font-size:.72rem;font-weight:600;color:var(--teal-lt);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+    .hero h1{font-family:'Playfair Display',serif;font-size:1.75rem;color:white;margin-bottom:6px;position:relative;z-index:1;}
+    .hero p{color:rgba(255,255,255,.5);font-size:.875rem;position:relative;z-index:1;}
+    .body{max-width:780px;margin:-40px auto 0;padding:0 24px 56px;position:relative;z-index:2;}
+    .card{background:white;border:1px solid var(--border);border-radius:16px;padding:28px;box-shadow:var(--shadow-sm);}
+
+    .section-title{font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:24px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+    .section-title:first-child{margin-top:0;}
+
+    .field{display:flex;flex-direction:column;gap:5px;margin-bottom:18px;}
+    .field:last-of-type{margin-bottom:0;}
+    .field label{font-size:.75rem;font-weight:600;color:var(--navy);letter-spacing:.05em;text-transform:uppercase;}
+    .field .hint{font-size:.72rem;color:var(--muted);}
+    .field textarea{font-family:'DM Sans',sans-serif;font-size:.875rem;color:var(--navy);padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:#FAFCFE;outline:none;width:100%;resize:vertical;min-height:100px;line-height:1.65;transition:border-color .2s,box-shadow .2s;}
+    .field textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,115,119,.1);background:white;}
+    .field textarea.has-error{border-color:var(--error);}
+    .field-error{font-size:.75rem;color:var(--error);}
+
+    .required-star{color:var(--error);}
+
+    .error-banner{background:var(--error-bg);border:1px solid var(--error-bd);border-radius:10px;padding:12px 16px;font-size:.85rem;color:var(--error);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+    .error-banner svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
+
+    .form-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:24px;}
+    .btn-cancel{padding:10px 22px;background:transparent;color:var(--muted);border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;}
+    .btn-cancel:hover{border-color:var(--navy);color:var(--navy);}
+    .btn-save{padding:11px 28px;background:var(--navy);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:background .2s,transform .1s;}
+    .btn-save:hover{background:var(--teal);}
+    .btn-save:active{transform:scale(.98);}
+    @media(max-width:520px){.body{padding:0 16px 40px;}.topbar{padding:0 16px;}}

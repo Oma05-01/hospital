@@ -1,0 +1,90 @@
+.page-header {
+    background: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    border-left: 5px solid var(--primary-blue);
+}
+
+.reports-container {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.report-table-wrapper {
+    overflow-x: auto;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.report-table th {
+    background-color: var(--bg-light);
+    padding: 1rem;
+    font-weight: 700;
+    color: var(--secondary-blue);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.report-table td {
+    padding: 1.2rem 1rem;
+    border-bottom: 1px solid #edf2f7;
+    font-size: 0.95rem;
+}
+
+.report-title i {
+    color: #e74c3c;
+    margin-right: 0.5rem;
+}
+
+/* Badge Styling */
+.badge {
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.badge-clinical { background: #e3f2fd; color: #1976d2; }
+.badge-financial { background: #fff3cd; color: #856404; }
+.badge-performance { background: #f0f4f8; color: #4a5568; }
+
+.text-right { text-align: right; }
+
+/* Icon Buttons */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 4px;
+    background: #f8f9fa;
+    color: #718096;
+    text-decoration: none;
+    margin-left: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.btn-icon.download:hover {
+    background: var(--success);
+}
+
+.empty-row {
+    text-align: center;
+    padding: 4rem !important;
+    color: #a0aec0;
+}
+
+.empty-row i { margin-bottom: 1rem; }

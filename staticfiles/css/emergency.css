@@ -1,0 +1,89 @@
+.emergency-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    border-left: 5px solid var(--danger);
+}
+
+.header-content h2 { color: var(--danger); margin: 0 0 0.5rem 0; }
+.header-content p { margin: 0; color: #666; }
+
+.btn-danger {
+    background-color: var(--danger);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+}
+
+.btn-danger:hover { background-color: #c0392b; }
+
+/* Pulse animation for the emergency button to draw the eye */
+.btn-pulse {
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+}
+
+.emergency-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.emergency-card {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 1.5rem;
+}
+
+.emergency-card h3 { color: var(--secondary-blue); margin: 0 0 1rem 0; font-size: 1.2rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+.phone-number { font-size: 1.5rem; font-weight: 700; color: var(--text-dark); margin: 0 0 0.5rem 0; }
+.contact-details p { margin: 0 0 0.5rem 0; color: #555; }
+
+.dispatch-section h3 { color: var(--text-dark); margin-bottom: 1rem; }
+
+.dispatch-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+    border: 1px solid #e1e8ed;
+}
+
+.active-alert {
+    border-color: var(--danger);
+    background-color: #fffafa;
+}
+
+.dispatch-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.dispatch-header h4 { margin: 0; font-size: 1.2rem; color: var(--text-dark); }
+
+.dispatch-status { padding: 0.3rem 0.8rem; border-radius: 4px; font-size: 0.85rem; font-weight: 700; }
+.status-pending { background: #fff3cd; color: #856404; }
+.status-dispatched { background: #cce5ff; color: #004085; }
+.status-resolved { background: #d4edda; color: #155724; }
+
+.dispatch-body p { margin: 0 0 0.5rem 0; color: #555; }
+
+.history-title { margin: 2rem 0 1rem 0; color: #666; font-size: 1rem; text-transform: uppercase; }
+.history-list { background: #ffffff; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+.history-item { display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+.history-item:last-child { border-bottom: none; }
+
+.empty-dispatch { background: #fff; padding: 2rem; text-align: center; border-radius: 8px; color: #888; }
+
+@media (max-width: 768px) {
+    .emergency-header { flex-direction: column; text-align: center; gap: 1rem; }
+    .emergency-layout { grid-template-columns: 1fr; }
+}

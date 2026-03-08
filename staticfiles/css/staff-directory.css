@@ -1,0 +1,195 @@
+/* Layout Wrappers */
+.directory-wrapper, .credentials-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 3rem;
+}
+
+/* Directory Header */
+.directory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.header-main h2 { color: #1a202c; margin: 0 0 5px 0; }
+.header-main p { color: #718096; margin: 0; }
+
+.directory-search { position: relative; width: 300px; }
+.search-input {
+    width: 100%;
+    padding: 10px 15px 10px 35px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #f8fafc;
+}
+.directory-search i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+}
+
+/* Staff Grid & Cards */
+.staff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.staff-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-avatar, .portfolio-avatar {
+    width: 80px;
+    height: 80px;
+    background: #3182ce;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2);
+}
+
+.staff-info h3 { margin: 0 0 8px 0; color: #2d3748; font-size: 1.2rem; }
+
+.role-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.role-doctor { background: #ebf8ff; color: #2b6cb0; }
+.role-nurse { background: #f0fff4; color: #22543d; }
+.role-admin { background: #fffaf0; color: #c05621; }
+
+.specialty { font-size: 0.85rem; color: #718096; margin: 10px 0 1.5rem 0; font-style: italic; }
+
+.staff-contact {
+    width: 100%;
+    border-top: 1px solid #edf2f7;
+    padding-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.contact-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: #4a5568;
+    margin-bottom: 8px;
+}
+
+.contact-row i { color: #a0aec0; }
+.contact-row a { color: #4a5568; text-decoration: none; }
+.contact-row a:hover { color: #3182ce; }
+
+.card-actions { width: 100%; margin-top: auto; }
+.btn-cert {
+    display: block;
+    width: 100%;
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    color: #4a5568;
+    padding: 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-cert:hover { background: #3182ce; color: #fff; border-color: #3182ce; }
+
+/* Portfolio Specifics (staff_certifications.html) */
+.breadcrumb { margin-bottom: 1.5rem; font-size: 0.95rem; }
+.breadcrumb a { color: #3182ce; text-decoration: none; font-weight: 600; }
+
+.portfolio-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.portfolio-details h2 { margin: 0 0 5px 0; color: #1a202c; font-size: 1.8rem; }
+.portfolio-details p { margin: 0 0 5px 0; color: #4a5568; font-size: 1.1rem; }
+.text-muted { color: #a0aec0 !important; font-size: 0.9rem !important; }
+
+/* Certifications Grid */
+.certifications-section h3 { margin-bottom: 1.5rem; color: #2d3748; display: flex; align-items: center; gap: 10px; }
+
+.cert-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.cert-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid #edf2f7;
+    border-left: 5px solid #38a169; /* Active Green */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.cert-card.expired {
+    border-left-color: #e53e3e; /* Expired Red */
+    background: #fff5f5;
+}
+
+.cert-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+.cert-header h4 { margin: 0; color: #2d3748; font-size: 1.1rem; max-width: 70%; }
+
+.status-pill { font-size: 0.7rem; font-weight: 800; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; }
+.status-active { background: #c6f6d5; color: #22543d; }
+.status-expired { background: #fed7d7; color: #822727; }
+
+.cert-body { margin-bottom: 1.5rem; font-size: 0.9rem; color: #4a5568; }
+.cert-body p { margin: 0 0 5px 0; }
+.mono { font-family: 'Courier New', Courier, monospace; letter-spacing: 0.5px; }
+
+.cert-dates {
+    display: flex;
+    justify-content: space-between;
+    background: #f8fafc;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.cert-card.expired .cert-dates { background: #fff; border: 1px solid #fed7d7; }
+
+.date-col label { display: block; font-size: 0.7rem; color: #718096; text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
+.date-col span { font-weight: 600; color: #2d3748; }
+
+.text-danger { color: #e53e3e !important; }
+.font-bold { font-weight: 800 !important; }

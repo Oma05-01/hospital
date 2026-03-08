@@ -1,0 +1,141 @@
+.records-wrapper {
+    max-width: 900px;
+    margin: 2rem auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Headers */
+.records-header {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    border-left: 6px solid #3182ce; /* Default Blue */
+}
+
+.archive-theme { border-left-color: #3182ce; }
+.reports-theme { border-left-color: #38a169; } /* Green for labs */
+.pharmacy-theme { border-left-color: #805ad5; } /* Purple for pharmacy */
+
+.header-main h2 { color: #2d3748; margin: 0 0 5px 0; font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
+.archive-theme h2 i { color: #3182ce; }
+.reports-theme h2 i { color: #38a169; }
+.pharmacy-theme h2 i { color: #805ad5; }
+.header-main p { color: #718096; margin: 0; font-size: 1.05rem; }
+
+/* Grid & Cards (Used in Medical Records & Prescriptions) */
+.records-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.record-card {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    overflow: hidden;
+}
+
+.card-header {
+    background: #f8fafc;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid #edf2f7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #4a5568;
+    font-weight: 600;
+}
+
+.record-date i, .record-doctor i { color: #a0aec0; margin-right: 5px; }
+
+.card-body { padding: 1.5rem; }
+
+.data-group { margin-bottom: 1.5rem; }
+.data-group:last-child { margin-bottom: 0; }
+
+.data-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: #718096;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.data-group p { margin: 0; color: #2d3748; line-height: 1.6; font-size: 1rem; }
+
+/* Prescription Specific Overrides */
+.rx-card { border-left: 4px solid #805ad5; }
+.rx-header { background: #faf5ff; border-bottom: 1px solid #e9d8fd; color: #553c9a; }
+.rx-header i { color: #805ad5; }
+.rx-date { font-weight: normal; font-size: 0.85rem; color: #718096; }
+.rx-details label { color: #553c9a; }
+.rx-footer {
+    background: #fffaf0;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #feebc8;
+}
+.expiry-warning { color: #c05621; font-size: 0.9rem; }
+
+/* List View (Used in Health Reports) */
+.reports-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.report-row {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid #edf2f7;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.report-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.report-icon {
+    font-size: 2.5rem;
+    color: #e53e3e; /* PDF Red */
+}
+
+.report-info { flex-grow: 1; }
+.report-info h3 { margin: 0 0 5px 0; color: #2d3748; font-size: 1.1rem; }
+.report-meta { color: #a0aec0; font-size: 0.85rem; }
+
+.btn-outline-primary {
+    background: transparent;
+    border: 1px solid #3182ce;
+    color: #3182ce;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-outline-primary:hover { background: #ebf8ff; }
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 2px dashed #cbd5e0;
+    color: #a0aec0;
+}
+.empty-state i { margin-bottom: 1rem; color: #cbd5e0; }
+.empty-state h3 { color: #4a5568; margin: 0 0 5px 0; }
+.empty-state p { margin: 0; }

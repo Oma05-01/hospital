@@ -1,0 +1,98 @@
+.alerts-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.alerts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    border-left: 5px solid #e53e3e;
+}
+
+.header-main h2 { color: #1a202c; margin-bottom: 5px; }
+.header-main p { color: #718096; margin: 0; }
+
+.alert-summary { text-align: center; }
+.count-badge {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #e53e3e;
+    line-height: 1;
+}
+.label { font-size: 0.7rem; font-weight: 700; color: #a0aec0; text-transform: uppercase; }
+
+/* Alerts Grid */
+.alerts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.alert-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 1px solid #edf2f7;
+    position: relative;
+    overflow: hidden;
+}
+
+.alert-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.severity-tag {
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* Priority Colors */
+.priority-critical { border-top: 4px solid #e53e3e; }
+.priority-critical .severity-tag { background: #fed7d7; color: #9b2c2c; }
+
+.priority-medium { border-top: 4px solid #ed8936; }
+.priority-medium .severity-tag { background: #feebc8; color: #7b341e; }
+
+.alert-body h3 { margin: 0 0 10px 0; color: #2d3748; }
+.alert-msg { font-size: 0.9rem; color: #718096; line-height: 1.5; margin-bottom: 1.5rem; }
+
+.stock-stats {
+    display: flex;
+    gap: 2rem;
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+}
+
+.stat label { display: block; font-size: 0.75rem; color: #a0aec0; margin-bottom: 4px; }
+.stat .val { font-weight: 800; font-size: 1.1rem; color: #2d3748; }
+.text-danger { color: #e53e3e !important; }
+
+.alert-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.empty-alerts {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem;
+    background: #fff;
+    border-radius: 8px;
+    color: #a0aec0;
+}
+
+.empty-alerts i { color: #48bb78; margin-bottom: 1rem; }

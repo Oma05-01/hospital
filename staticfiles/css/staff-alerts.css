@@ -1,0 +1,93 @@
+.dispatch-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dispatch-header {
+    background: #1a202c;
+    color: #fff;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.live-indicator {
+    font-weight: 800;
+    font-size: 0.8rem;
+    color: #f56565;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pulse-dot {
+    width: 10px;
+    height: 10px;
+    background: #f56565;
+    border-radius: 50%;
+    box-shadow: 0 0 0 rgba(245, 101, 101, 0.4);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 101, 101, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(245, 101, 101, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 101, 101, 0); }
+}
+
+.alert-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.alert-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.status-pending {
+    border-color: #f56565;
+    background: #fff5f5;
+    animation: border-flicker 2s infinite;
+}
+
+@keyframes border-flicker {
+    0%, 100% { border-color: #f56565; }
+    50% { border-color: #feb2b2; }
+}
+
+.status-acknowledged {
+    border-color: #ed8936;
+    background: #fffaf0;
+}
+
+.alert-type {
+    background: #2d3748;
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.patient-info h4 { margin: 10px 0 5px 0; font-size: 1.25rem; }
+.patient-info p { color: #718096; font-size: 0.9rem; }
+
+.card-actions { margin-top: 1.5rem; display: flex; gap: 1rem; }
+
+.btn-warn { background: #ed8936; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; text-decoration: none; }
+.btn-success { background: #38a169; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; text-decoration: none; }
+
+/* History Sidebar */
+.history-zone { background: #f7fafc; padding: 1.5rem; border-radius: 8px; }
+.history-item { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+.history-meta { display: flex; justify-content: space-between; font-size: 0.9rem; }
+.history-item p { font-size: 0.8rem; color: #a0aec0; margin: 5px 0 0 0; }

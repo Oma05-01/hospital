@@ -1,0 +1,140 @@
+/* Container Layout */
+.staff-chat-wrapper {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    height: calc(100vh - 150px);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* Sidebar */
+.patient-sidebar {
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.patient-avatar {
+    width: 60px;
+    height: 60px;
+    background: #3498db;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.patient-id {
+    font-size: 0.8rem;
+    background: rgba(255,255,255,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.quick-vitals {
+    margin: 2rem 0;
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 1.5rem;
+}
+
+.btn-full {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    background: #34495e;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: auto;
+}
+
+/* Chat Area */
+.chat-area {
+    display: flex;
+    flex-direction: column;
+    background: #fdfdfd;
+}
+
+.chat-header {
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+}
+
+.chat-history {
+    flex-grow: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.msg-bubble {
+    max-width: 70%;
+    padding: 1rem;
+    border-radius: 10px;
+    position: relative;
+    line-height: 1.5;
+}
+
+.doctor-msg {
+    background: #ebf5fb;
+    border: 1px solid #d6eaf8;
+    align-self: flex-start;
+}
+
+.patient-reply {
+    background: #f4f6f7;
+    border: 1px solid #dee2e6;
+    align-self: flex-end;
+    margin-top: 5px;
+}
+
+.msg-meta {
+    font-size: 0.7rem;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+/* Form Styling */
+.chat-input-area {
+    padding: 1.5rem 2rem;
+    background: #fff;
+    border-top: 1px solid #eee;
+}
+
+.input-container {
+    display: flex;
+    gap: 1rem;
+}
+
+.input-container textarea {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    height: 50px;
+    resize: none;
+}
+
+.send-btn {
+    background: #27ae60;
+    color: #fff;
+    border: none;
+    padding: 0 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.send-btn:hover { background: #219150; }

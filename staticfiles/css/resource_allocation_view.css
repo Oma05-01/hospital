@@ -1,0 +1,113 @@
+.resource-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.resource-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.header-stats {
+    display: flex;
+    gap: 1rem;
+}
+
+.stat-pill {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-align: center;
+    min-width: 80px;
+}
+
+.stat-pill.available { background: #e6fffa; color: #2c7a7b; border: 1px solid #b2f5ea; }
+.stat-pill.in-use { background: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8; }
+
+.stat-pill .val { display: block; font-size: 1.2rem; font-weight: 800; }
+.stat-pill .lbl { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+
+/* Grid Layout */
+.resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.resource-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid #edf2f7;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.resource-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.type-badge {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #718096;
+    background: #f7fafc;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/* Status specific styling */
+.status-available { border-top: 4px solid #38a169; }
+.status-available .status-dot { background: #38a169; box-shadow: 0 0 5px #38a169; }
+
+.status-in-use { border-top: 4px solid #3182ce; }
+.status-in-use .status-dot { background: #3182ce; }
+
+.status-maintenance { border-top: 4px solid #e53e3e; background: #fff5f5; }
+.status-maintenance .status-dot { background: #e53e3e; }
+
+.card-body h3 { margin: 0 0 5px 0; font-size: 1.2rem; color: #2d3748; }
+.location { font-size: 0.85rem; color: #a0aec0; margin: 0 0 1.5rem 0; }
+
+.assignment-info {
+    font-size: 0.9rem;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 6px;
+}
+
+.assignment-info label { display: block; font-size: 0.7rem; color: #a0aec0; font-weight: 700; margin-bottom: 2px; }
+.assignment-info.empty { color: #cbd5e0; font-style: italic; text-align: center; }
+
+.card-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: #cbd5e0;
+}
+
+.action-link { color: #cbd5e0; }
+.action-link:hover { color: #3182ce; }

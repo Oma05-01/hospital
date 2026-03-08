@@ -1,0 +1,86 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --navy:    #0B1F3A;
+    --teal:    #0D7377;
+    --border:  #DDE5EF;
+    --surface: #F5F8FB;
+    --muted:   #6B7A8D;
+    --white:   #FFFFFF;
+    --text:    #1A2B40;
+}
+
+html, body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Main content fills remaining space ── */
+main {
+    flex: 1;
+    /* No extra padding — dashboards manage their own layout */
+}
+
+/* ── Footer ── */
+footer {
+    background: var(--navy);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+footer p {
+    font-size: .78rem;
+    color: rgba(255,255,255,.35);
+}
+footer .footer-links {
+    display: flex;
+    gap: 20px;
+}
+footer .footer-links a {
+    font-size: .78rem;
+    color: rgba(255,255,255,.3);
+    text-decoration: none;
+    transition: color .2s;
+}
+footer .footer-links a:hover {
+    color: rgba(255,255,255,.65);
+}
+
+/* ── Flash / Django messages ── */
+.messages-bar {
+    position: fixed;
+    top: 72px;
+    right: 20px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 340px;
+}
+.message {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: .85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    animation: slideIn .25s ease;
+}
+.message.success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+.message.error   { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+.message.warning { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
+.message.info    { background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(16px); }
+    to   { opacity: 1; transform: translateX(0); }
+}

@@ -1,0 +1,113 @@
+.report-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Upload Card Styling */
+.upload-card {
+    background: #fff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-top: 5px solid #3182ce;
+}
+
+.card-header { margin-bottom: 2rem; border-bottom: 1px solid #edf2f7; padding-bottom: 1rem; }
+.card-header h2 { color: #2d3748; margin: 0 0 0.5rem 0; }
+.card-header p { color: #718096; margin: 0; }
+
+.form-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.field-wrapper label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+}
+
+.upload-form input[type="text"],
+.upload-form select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-family: inherit;
+    background: #f8fafc;
+}
+
+.upload-form input:focus, .upload-form select:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+/* File Drop Area */
+.file-drop-area {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    background: #f7fafc;
+    transition: all 0.2s;
+    margin-bottom: 2rem;
+}
+
+.file-drop-area:hover { background: #ebf8ff; border-color: #3182ce; }
+
+.upload-icon { font-size: 3rem; color: #a0aec0; margin-bottom: 1rem; }
+.file-msg { font-size: 1rem; color: #4a5568; font-weight: 500; }
+
+.file-input {
+    position: absolute;
+    left: 0; top: 0; height: 100%; width: 100%;
+    cursor: pointer;
+    opacity: 0; /* Hides the ugly default file input while keeping it clickable */
+}
+
+.form-actions { display: flex; justify-content: flex-end; gap: 1rem; }
+
+/* Table Styling for Report List */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.patient-id { font-size: 0.9rem; color: #718096; font-family: monospace; }
+
+.record-table-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 1px solid #edf2f7;
+    overflow: hidden;
+}
+
+.record-table { width: 100%; border-collapse: collapse; }
+.record-table th { background: #f8fafc; padding: 1rem; text-align: left; color: #4a5568; font-size: 0.85rem; border-bottom: 2px solid #edf2f7; }
+.record-table td { padding: 1rem; border-bottom: 1px solid #edf2f7; font-size: 0.95rem; color: #2d3748; }
+
+.doc-title { font-weight: 600; }
+.doc-title i { color: #e53e3e; margin-right: 8px; }
+
+.category-pill { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+.type-clinical { background: #ebf8ff; color: #2b6cb0; }
+.type-financial { background: #fffaf0; color: #c05621; }
+.type-performance { background: #f0fff4; color: #2f855a; }
+
+.btn-link { color: #4a5568; text-decoration: none; margin-right: 15px; font-weight: 600; }
+.btn-link:hover { color: #3182ce; }
+.text-primary { color: #3182ce; }
+
+.empty-state { text-align: center; padding: 3rem !important; color: #a0aec0; }
