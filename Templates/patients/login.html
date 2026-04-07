@@ -16,6 +16,16 @@
             <p>Please enter your credentials to access your secure portal.</p>
         </div>
 
+        {% if messages %}
+        <div class="auth-messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <form method="post" class="auth-form" novalidate>
             {% csrf_token %}
 

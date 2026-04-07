@@ -1,0 +1,7112 @@
+openapi: 3.0.3
+info:
+  title: Hospital Management System API
+  version: 1.0.0
+  description: REST API for the Flutter Mobile Client, handling RBAC, appointments,
+    and patient records.
+paths:
+  /api-token-auth/:
+    post:
+      operationId: api_token_auth_create
+      tags:
+      - api-token-auth
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+  /api/emergency-contact/:
+    get:
+      operationId: api_emergency_contact_retrieve
+      description: Retrieves the emergency service record for the authenticated patient.
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmergencyService'
+          description: ''
+    post:
+      operationId: api_emergency_contact_create
+      description: Submits a new emergency service request for the authenticated patient.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmergencyService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmergencyService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmergencyService'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmergencyServiceSuccess'
+          description: ''
+  /api/feedback/:
+    post:
+      operationId: api_feedback_create
+      description: Submits patient feedback to the hospital system.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackSuccess'
+          description: ''
+  /api/landing/:
+    get:
+      operationId: api_landing_retrieve
+      description: Public welcome endpoint for the Patients API.
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LandingResponse'
+          description: ''
+  /api/login/:
+    post:
+      operationId: api_login_create
+      description: Authenticates a patient using their username and password, returning
+        a JWT access token for session management.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginErrorResponse'
+          description: ''
+  /api/logout/:
+    post:
+      operationId: api_logout_create
+      description: Logs out the authenticated patient and invalidates their current
+        session.
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientLogoutResponse'
+          description: ''
+  /api/medication-reminders/:
+    get:
+      operationId: api_medication_reminders_list
+      description: Retrieves a list of all active medication reminders for the authenticated
+        patient.
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicationReminder'
+          description: ''
+  /api/profile/:
+    get:
+      operationId: api_profile_retrieve
+      description: Retrieves the detailed profile information for the authenticated
+        patient.
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileNotFoundError'
+          description: ''
+  /api/profile/update/:
+    put:
+      operationId: api_profile_update_update
+      description: Updates the authenticated patient's profile. You only need to send
+        the specific fields you wish to change.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Profile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Profile'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileUpdateError'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileNotFound'
+          description: ''
+  /api/register/:
+    post:
+      operationId: api_register_create
+      description: Registers a new patient account in the hospital system.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterSuccess'
+          description: ''
+  /api/treatment-plans/:
+    get:
+      operationId: api_treatment_plans_list
+      description: Retrieves a list of all active treatment plans for the authenticated
+        patient.
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TreatmentPlan'
+          description: ''
+  /appointments/api/appointments/:
+    get:
+      operationId: appointments_api_appointments_list
+      tags:
+      - appointments
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+          description: ''
+    post:
+      operationId: appointments_api_appointments_create
+      tags:
+      - appointments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+          description: ''
+  /appointments/api/appointments/{id}/:
+    get:
+      operationId: appointments_api_appointments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this appointment.
+        required: true
+      tags:
+      - appointments
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+          description: ''
+    put:
+      operationId: appointments_api_appointments_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this appointment.
+        required: true
+      tags:
+      - appointments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+          description: ''
+    patch:
+      operationId: appointments_api_appointments_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this appointment.
+        required: true
+      tags:
+      - appointments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAppointment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAppointment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAppointment'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+          description: ''
+    delete:
+      operationId: appointments_api_appointments_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this appointment.
+        required: true
+      tags:
+      - appointments
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /appointments/api/appointments/consultation-history/:
+    get:
+      operationId: appointments_api_appointments_consultation_history_retrieve
+      description: Custom action to retrieve past and upcoming consultations for the
+        authenticated patient.
+      tags:
+      - appointments
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+          description: ''
+  /appointments/api/consultation-notes/:
+    get:
+      operationId: appointments_api_consultation_notes_list
+      tags:
+      - appointments
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConsultationNote'
+          description: ''
+    post:
+      operationId: appointments_api_consultation_notes_create
+      tags:
+      - appointments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsultationNote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ConsultationNote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ConsultationNote'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationNote'
+          description: ''
+  /appointments/api/consultation-notes/{id}/:
+    get:
+      operationId: appointments_api_consultation_notes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this consultation note.
+        required: true
+      tags:
+      - appointments
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationNote'
+          description: ''
+    put:
+      operationId: appointments_api_consultation_notes_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this consultation note.
+        required: true
+      tags:
+      - appointments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsultationNote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ConsultationNote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ConsultationNote'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationNote'
+          description: ''
+    patch:
+      operationId: appointments_api_consultation_notes_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this consultation note.
+        required: true
+      tags:
+      - appointments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedConsultationNote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedConsultationNote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedConsultationNote'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsultationNote'
+          description: ''
+    delete:
+      operationId: appointments_api_consultation_notes_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this consultation note.
+        required: true
+      tags:
+      - appointments
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /records/api/health-reports/:
+    get:
+      operationId: records_api_health_reports_list
+      tags:
+      - records
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HealthReport'
+          description: ''
+    post:
+      operationId: records_api_health_reports_create
+      tags:
+      - records
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealthReport'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HealthReport'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HealthReport'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthReport'
+          description: ''
+  /records/api/health-reports/{id}/:
+    get:
+      operationId: records_api_health_reports_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this health report.
+        required: true
+      tags:
+      - records
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthReport'
+          description: ''
+    put:
+      operationId: records_api_health_reports_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this health report.
+        required: true
+      tags:
+      - records
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealthReport'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HealthReport'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HealthReport'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthReport'
+          description: ''
+    patch:
+      operationId: records_api_health_reports_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this health report.
+        required: true
+      tags:
+      - records
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHealthReport'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHealthReport'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHealthReport'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthReport'
+          description: ''
+    delete:
+      operationId: records_api_health_reports_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this health report.
+        required: true
+      tags:
+      - records
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /records/api/medical-records/:
+    get:
+      operationId: records_api_medical_records_list
+      tags:
+      - records
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicalRecord'
+          description: ''
+    post:
+      operationId: records_api_medical_records_create
+      tags:
+      - records
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicalRecord'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MedicalRecord'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MedicalRecord'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalRecord'
+          description: ''
+  /records/api/medical-records/{id}/:
+    get:
+      operationId: records_api_medical_records_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical record.
+        required: true
+      tags:
+      - records
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalRecord'
+          description: ''
+    put:
+      operationId: records_api_medical_records_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical record.
+        required: true
+      tags:
+      - records
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicalRecord'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MedicalRecord'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MedicalRecord'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalRecord'
+          description: ''
+    patch:
+      operationId: records_api_medical_records_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical record.
+        required: true
+      tags:
+      - records
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMedicalRecord'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMedicalRecord'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMedicalRecord'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalRecord'
+          description: ''
+    delete:
+      operationId: records_api_medical_records_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical record.
+        required: true
+      tags:
+      - records
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /records/api/prescriptions/:
+    get:
+      operationId: records_api_prescriptions_list
+      tags:
+      - records
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prescription'
+          description: ''
+    post:
+      operationId: records_api_prescriptions_create
+      tags:
+      - records
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Prescription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Prescription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Prescription'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prescription'
+          description: ''
+  /records/api/prescriptions/{id}/:
+    get:
+      operationId: records_api_prescriptions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prescription.
+        required: true
+      tags:
+      - records
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prescription'
+          description: ''
+    put:
+      operationId: records_api_prescriptions_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prescription.
+        required: true
+      tags:
+      - records
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Prescription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Prescription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Prescription'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prescription'
+          description: ''
+    patch:
+      operationId: records_api_prescriptions_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prescription.
+        required: true
+      tags:
+      - records
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPrescription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPrescription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPrescription'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prescription'
+          description: ''
+    delete:
+      operationId: records_api_prescriptions_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prescription.
+        required: true
+      tags:
+      - records
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/alerts/:
+    get:
+      operationId: staff_api_alerts_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockAlert'
+          description: ''
+    post:
+      operationId: staff_api_alerts_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockAlert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StockAlert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StockAlert'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAlert'
+          description: ''
+  /staff/api/alerts/{id}/:
+    get:
+      operationId: staff_api_alerts_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stock alert.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAlert'
+          description: ''
+    put:
+      operationId: staff_api_alerts_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stock alert.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockAlert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StockAlert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StockAlert'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAlert'
+          description: ''
+    patch:
+      operationId: staff_api_alerts_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stock alert.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStockAlert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStockAlert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStockAlert'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAlert'
+          description: ''
+    delete:
+      operationId: staff_api_alerts_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stock alert.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/appointments/:
+    get:
+      operationId: staff_api_appointments_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StaffAppointment'
+          description: ''
+    post:
+      operationId: staff_api_appointments_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffAppointment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StaffAppointment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StaffAppointment'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffAppointment'
+          description: ''
+  /staff/api/appointments/{id}/:
+    get:
+      operationId: staff_api_appointments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this appointment.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffAppointment'
+          description: ''
+    put:
+      operationId: staff_api_appointments_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this appointment.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffAppointment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StaffAppointment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StaffAppointment'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffAppointment'
+          description: ''
+    patch:
+      operationId: staff_api_appointments_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this appointment.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffAppointment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffAppointment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffAppointment'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffAppointment'
+          description: ''
+    delete:
+      operationId: staff_api_appointments_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this appointment.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/audit-logs/:
+    get:
+      operationId: staff_api_audit_logs_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLog'
+          description: ''
+  /staff/api/audit-logs/{id}/:
+    get:
+      operationId: staff_api_audit_logs_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this audit log.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLog'
+          description: ''
+  /staff/api/auth/api_staff_dashboard/:
+    get:
+      operationId: staff_api_auth_api_staff_dashboard_retrieve
+      description: Retrieves a personalized welcome message for the authenticated
+        staff member based on their RBAC role.
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffDashboardResponse'
+          description: ''
+  /staff/api/auth/login/:
+    post:
+      operationId: staff_api_auth_login_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+  /staff/api/auth/logout/:
+    post:
+      operationId: staff_api_auth_logout_create
+      description: Logs out the authenticated staff member and invalidates their current
+        session.
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffLogoutResponse'
+          description: ''
+  /staff/api/auth/register/:
+    get:
+      operationId: staff_api_auth_register_retrieve
+      description: Provides instructions for registering a new staff account.
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffRegisterInstruction'
+          description: ''
+    post:
+      operationId: staff_api_auth_register_create
+      description: Registers a new staff member (Admin or Doctor) into the hospital
+        system.
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffRegister'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StaffRegister'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StaffRegister'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffRegisterSuccess'
+          description: ''
+  /staff/api/auth/test/:
+    get:
+      operationId: staff_api_auth_test_retrieve
+      description: A simple test endpoint to verify API routing and functionality.
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestViewResponse'
+          description: ''
+  /staff/api/bills/:
+    get:
+      operationId: staff_api_bills_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bill'
+          description: ''
+    post:
+      operationId: staff_api_bills_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bill'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Bill'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Bill'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+          description: ''
+  /staff/api/bills/{id}/:
+    get:
+      operationId: staff_api_bills_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this bill.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+          description: ''
+    put:
+      operationId: staff_api_bills_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this bill.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bill'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Bill'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Bill'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+          description: ''
+    patch:
+      operationId: staff_api_bills_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this bill.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBill'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBill'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBill'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+          description: ''
+    delete:
+      operationId: staff_api_bills_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this bill.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/care-plans/:
+    get:
+      operationId: staff_api_care_plans_list
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarePlan'
+          description: ''
+    post:
+      operationId: staff_api_care_plans_create
+      description: Override create method to handle data from request body.
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarePlan'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CarePlan'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CarePlan'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarePlan'
+          description: ''
+  /staff/api/care-plans/{id}/:
+    get:
+      operationId: staff_api_care_plans_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this care plan.
+        required: true
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarePlan'
+          description: ''
+    put:
+      operationId: staff_api_care_plans_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this care plan.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarePlan'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CarePlan'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CarePlan'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarePlan'
+          description: ''
+    patch:
+      operationId: staff_api_care_plans_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this care plan.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCarePlan'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCarePlan'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCarePlan'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarePlan'
+          description: ''
+    delete:
+      operationId: staff_api_care_plans_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this care plan.
+        required: true
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/certifications/:
+    get:
+      operationId: staff_api_certifications_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certification'
+          description: ''
+    post:
+      operationId: staff_api_certifications_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Certification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Certification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Certification'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certification'
+          description: ''
+  /staff/api/certifications/{id}/:
+    get:
+      operationId: staff_api_certifications_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this certification.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certification'
+          description: ''
+    put:
+      operationId: staff_api_certifications_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this certification.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Certification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Certification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Certification'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certification'
+          description: ''
+    patch:
+      operationId: staff_api_certifications_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this certification.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCertification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCertification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCertification'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certification'
+          description: ''
+    delete:
+      operationId: staff_api_certifications_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this certification.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/doctor-patient-messages/{patient_id}//:
+    get:
+      operationId: staff_api_doctor_patient_messages_list
+      parameters:
+      - in: path
+        name: patient_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoctorPatientMessage'
+          description: ''
+    post:
+      operationId: staff_api_doctor_patient_messages_create
+      parameters:
+      - in: path
+        name: patient_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorPatientMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DoctorPatientMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DoctorPatientMessage'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorPatientMessage'
+          description: ''
+  /staff/api/doctor-schedules/:
+    get:
+      operationId: staff_api_doctor_schedules_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoctorSchedule'
+          description: ''
+    post:
+      operationId: staff_api_doctor_schedules_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorSchedule'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DoctorSchedule'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DoctorSchedule'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorSchedule'
+          description: ''
+  /staff/api/doctor-schedules/{id}/:
+    get:
+      operationId: staff_api_doctor_schedules_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this doctor schedule.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorSchedule'
+          description: ''
+    put:
+      operationId: staff_api_doctor_schedules_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this doctor schedule.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorSchedule'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DoctorSchedule'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DoctorSchedule'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorSchedule'
+          description: ''
+    patch:
+      operationId: staff_api_doctor_schedules_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this doctor schedule.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDoctorSchedule'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDoctorSchedule'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDoctorSchedule'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorSchedule'
+          description: ''
+    delete:
+      operationId: staff_api_doctor_schedules_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this doctor schedule.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/doctors/:
+    get:
+      operationId: staff_api_doctors_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Staff'
+          description: ''
+    post:
+      operationId: staff_api_doctors_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Staff'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Staff'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Staff'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+          description: ''
+  /staff/api/doctors/{id}/:
+    get:
+      operationId: staff_api_doctors_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this staff.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+          description: ''
+    put:
+      operationId: staff_api_doctors_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this staff.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Staff'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Staff'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Staff'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+          description: ''
+    patch:
+      operationId: staff_api_doctors_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this staff.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStaff'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStaff'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStaff'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+          description: ''
+    delete:
+      operationId: staff_api_doctors_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this staff.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/health-and-safety-protocols/:
+    get:
+      operationId: staff_api_health_and_safety_protocols_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HealthAndSafetyProtocol'
+          description: ''
+    post:
+      operationId: staff_api_health_and_safety_protocols_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealthAndSafetyProtocol'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HealthAndSafetyProtocol'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HealthAndSafetyProtocol'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthAndSafetyProtocol'
+          description: ''
+  /staff/api/health-and-safety-protocols/{id}/:
+    get:
+      operationId: staff_api_health_and_safety_protocols_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this health and safety protocol.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthAndSafetyProtocol'
+          description: ''
+    put:
+      operationId: staff_api_health_and_safety_protocols_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this health and safety protocol.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HealthAndSafetyProtocol'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HealthAndSafetyProtocol'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HealthAndSafetyProtocol'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthAndSafetyProtocol'
+          description: ''
+    patch:
+      operationId: staff_api_health_and_safety_protocols_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this health and safety protocol.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHealthAndSafetyProtocol'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHealthAndSafetyProtocol'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHealthAndSafetyProtocol'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthAndSafetyProtocol'
+          description: ''
+    delete:
+      operationId: staff_api_health_and_safety_protocols_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this health and safety protocol.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/infection-control-practices/:
+    get:
+      operationId: staff_api_infection_control_practices_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InfectionControlPractice'
+          description: ''
+    post:
+      operationId: staff_api_infection_control_practices_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InfectionControlPractice'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InfectionControlPractice'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InfectionControlPractice'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfectionControlPractice'
+          description: ''
+  /staff/api/infection-control-practices/{id}/:
+    get:
+      operationId: staff_api_infection_control_practices_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this infection control practice.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfectionControlPractice'
+          description: ''
+    put:
+      operationId: staff_api_infection_control_practices_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this infection control practice.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InfectionControlPractice'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InfectionControlPractice'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InfectionControlPractice'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfectionControlPractice'
+          description: ''
+    patch:
+      operationId: staff_api_infection_control_practices_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this infection control practice.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedInfectionControlPractice'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedInfectionControlPractice'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedInfectionControlPractice'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfectionControlPractice'
+          description: ''
+    delete:
+      operationId: staff_api_infection_control_practices_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this infection control practice.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/insurance-claims/:
+    get:
+      operationId: staff_api_insurance_claims_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InsuranceClaim'
+          description: ''
+    post:
+      operationId: staff_api_insurance_claims_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsuranceClaim'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InsuranceClaim'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InsuranceClaim'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceClaim'
+          description: ''
+  /staff/api/insurance-claims/{id}/:
+    get:
+      operationId: staff_api_insurance_claims_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this insurance claim.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceClaim'
+          description: ''
+    put:
+      operationId: staff_api_insurance_claims_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this insurance claim.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsuranceClaim'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InsuranceClaim'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InsuranceClaim'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceClaim'
+          description: ''
+    patch:
+      operationId: staff_api_insurance_claims_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this insurance claim.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedInsuranceClaim'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedInsuranceClaim'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedInsuranceClaim'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceClaim'
+          description: ''
+    delete:
+      operationId: staff_api_insurance_claims_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this insurance claim.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/insurances/:
+    get:
+      operationId: staff_api_insurances_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Insurance'
+          description: ''
+    post:
+      operationId: staff_api_insurances_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Insurance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Insurance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Insurance'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Insurance'
+          description: ''
+  /staff/api/insurances/{id}/:
+    get:
+      operationId: staff_api_insurances_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this insurance.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Insurance'
+          description: ''
+    put:
+      operationId: staff_api_insurances_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this insurance.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Insurance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Insurance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Insurance'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Insurance'
+          description: ''
+    patch:
+      operationId: staff_api_insurances_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this insurance.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedInsurance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedInsurance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedInsurance'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Insurance'
+          description: ''
+    delete:
+      operationId: staff_api_insurances_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this insurance.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/lab-test-results/:
+    get:
+      operationId: staff_api_lab_test_results_list
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LabTest'
+          description: ''
+    post:
+      operationId: staff_api_lab_test_results_create
+      description: Override create method to handle data from request body.
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LabTest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LabTest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LabTest'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabTest'
+          description: ''
+  /staff/api/lab-test-results/{id}/:
+    get:
+      operationId: staff_api_lab_test_results_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this lab test.
+        required: true
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabTest'
+          description: ''
+    put:
+      operationId: staff_api_lab_test_results_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this lab test.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LabTest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LabTest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LabTest'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabTest'
+          description: ''
+    patch:
+      operationId: staff_api_lab_test_results_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this lab test.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLabTest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLabTest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLabTest'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabTest'
+          description: ''
+    delete:
+      operationId: staff_api_lab_test_results_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this lab test.
+        required: true
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/medical-records/:
+    get:
+      operationId: staff_api_medical_records_list
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StaffMedicalRecord'
+          description: ''
+    post:
+      operationId: staff_api_medical_records_create
+      description: Override create method to handle data from request body.
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffMedicalRecord'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StaffMedicalRecord'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StaffMedicalRecord'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffMedicalRecord'
+          description: ''
+  /staff/api/medical-records/{id}/:
+    get:
+      operationId: staff_api_medical_records_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical record.
+        required: true
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffMedicalRecord'
+          description: ''
+    put:
+      operationId: staff_api_medical_records_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical record.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffMedicalRecord'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StaffMedicalRecord'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StaffMedicalRecord'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffMedicalRecord'
+          description: ''
+    patch:
+      operationId: staff_api_medical_records_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical record.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffMedicalRecord'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffMedicalRecord'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffMedicalRecord'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffMedicalRecord'
+          description: ''
+    delete:
+      operationId: staff_api_medical_records_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical record.
+        required: true
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/notifications/:
+    get:
+      operationId: staff_api_notifications_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+          description: ''
+    post:
+      operationId: staff_api_notifications_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /staff/api/notifications/{id}/:
+    get:
+      operationId: staff_api_notifications_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    put:
+      operationId: staff_api_notifications_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    patch:
+      operationId: staff_api_notifications_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    delete:
+      operationId: staff_api_notifications_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/orders/:
+    get:
+      operationId: staff_api_orders_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+          description: ''
+    post:
+      operationId: staff_api_orders_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Order'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+  /staff/api/orders/{id}/:
+    get:
+      operationId: staff_api_orders_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this order.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+    put:
+      operationId: staff_api_orders_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this order.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Order'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+    patch:
+      operationId: staff_api_orders_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this order.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrder'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrder'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrder'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+    delete:
+      operationId: staff_api_orders_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this order.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/patient-vitals/:
+    get:
+      operationId: staff_api_patient_vitals_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VitalSign'
+          description: ''
+    post:
+      operationId: staff_api_patient_vitals_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VitalSign'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VitalSign'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VitalSign'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VitalSign'
+          description: ''
+  /staff/api/patient-vitals/{id}/:
+    get:
+      operationId: staff_api_patient_vitals_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vital sign.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VitalSign'
+          description: ''
+    put:
+      operationId: staff_api_patient_vitals_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vital sign.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VitalSign'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VitalSign'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VitalSign'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VitalSign'
+          description: ''
+    patch:
+      operationId: staff_api_patient_vitals_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vital sign.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedVitalSign'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedVitalSign'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedVitalSign'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VitalSign'
+          description: ''
+    delete:
+      operationId: staff_api_patient_vitals_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vital sign.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/patients/{id}/display_patient/:
+    get:
+      operationId: staff_api_patients_display_patient_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this patient profile.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+          description: ''
+  /staff/api/patients/search_patient/:
+    get:
+      operationId: staff_api_patients_search_patient_retrieve
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+          description: ''
+  /staff/api/performance-analytics/:
+    get:
+      operationId: staff_api_performance_analytics_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PerformanceAnalytics'
+          description: ''
+    post:
+      operationId: staff_api_performance_analytics_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformanceAnalytics'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PerformanceAnalytics'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PerformanceAnalytics'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceAnalytics'
+          description: ''
+  /staff/api/performance-analytics/{id}/:
+    get:
+      operationId: staff_api_performance_analytics_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this performance analytics.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceAnalytics'
+          description: ''
+    put:
+      operationId: staff_api_performance_analytics_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this performance analytics.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformanceAnalytics'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PerformanceAnalytics'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PerformanceAnalytics'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceAnalytics'
+          description: ''
+    patch:
+      operationId: staff_api_performance_analytics_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this performance analytics.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPerformanceAnalytics'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPerformanceAnalytics'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPerformanceAnalytics'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceAnalytics'
+          description: ''
+    delete:
+      operationId: staff_api_performance_analytics_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this performance analytics.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/performance-metrics/:
+    get:
+      operationId: staff_api_performance_metrics_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HospitalPerformanceMetrics'
+          description: ''
+    post:
+      operationId: staff_api_performance_metrics_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HospitalPerformanceMetrics'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HospitalPerformanceMetrics'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HospitalPerformanceMetrics'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HospitalPerformanceMetrics'
+          description: ''
+  /staff/api/performance-metrics/{id}/:
+    get:
+      operationId: staff_api_performance_metrics_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hospital performance
+          metrics.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HospitalPerformanceMetrics'
+          description: ''
+    put:
+      operationId: staff_api_performance_metrics_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hospital performance
+          metrics.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HospitalPerformanceMetrics'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HospitalPerformanceMetrics'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HospitalPerformanceMetrics'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HospitalPerformanceMetrics'
+          description: ''
+    patch:
+      operationId: staff_api_performance_metrics_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hospital performance
+          metrics.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHospitalPerformanceMetrics'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHospitalPerformanceMetrics'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHospitalPerformanceMetrics'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HospitalPerformanceMetrics'
+          description: ''
+    delete:
+      operationId: staff_api_performance_metrics_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hospital performance
+          metrics.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/prescriptions/:
+    get:
+      operationId: staff_api_prescriptions_list
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StaffPrescription'
+          description: ''
+    post:
+      operationId: staff_api_prescriptions_create
+      description: Override create method to handle data from request body.
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffPrescription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StaffPrescription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StaffPrescription'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffPrescription'
+          description: ''
+  /staff/api/prescriptions/{id}/:
+    get:
+      operationId: staff_api_prescriptions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prescription.
+        required: true
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffPrescription'
+          description: ''
+    put:
+      operationId: staff_api_prescriptions_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prescription.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffPrescription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StaffPrescription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StaffPrescription'
+        required: true
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffPrescription'
+          description: ''
+    patch:
+      operationId: staff_api_prescriptions_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prescription.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffPrescription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffPrescription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffPrescription'
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffPrescription'
+          description: ''
+    delete:
+      operationId: staff_api_prescriptions_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prescription.
+        required: true
+      tags:
+      - staff
+      security:
+      - cookieAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/reports/:
+    get:
+      operationId: staff_api_reports_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Report'
+          description: ''
+    post:
+      operationId: staff_api_reports_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Report'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Report'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Report'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+          description: ''
+  /staff/api/reports/{id}/:
+    get:
+      operationId: staff_api_reports_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this report.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+          description: ''
+    put:
+      operationId: staff_api_reports_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this report.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Report'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Report'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Report'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+          description: ''
+    patch:
+      operationId: staff_api_reports_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this report.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedReport'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedReport'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedReport'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+          description: ''
+    delete:
+      operationId: staff_api_reports_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this report.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/resource-allocations/:
+    get:
+      operationId: staff_api_resource_allocations_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResourceAllocation'
+          description: ''
+    post:
+      operationId: staff_api_resource_allocations_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceAllocation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceAllocation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceAllocation'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceAllocation'
+          description: ''
+  /staff/api/resource-allocations/{id}/:
+    get:
+      operationId: staff_api_resource_allocations_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource allocation.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceAllocation'
+          description: ''
+    put:
+      operationId: staff_api_resource_allocations_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource allocation.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceAllocation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceAllocation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceAllocation'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceAllocation'
+          description: ''
+    patch:
+      operationId: staff_api_resource_allocations_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource allocation.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceAllocation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceAllocation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceAllocation'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceAllocation'
+          description: ''
+    delete:
+      operationId: staff_api_resource_allocations_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource allocation.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/staffs/:
+    get:
+      operationId: staff_api_staffs_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Staff'
+          description: ''
+    post:
+      operationId: staff_api_staffs_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Staff'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Staff'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Staff'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+          description: ''
+  /staff/api/staffs/{id}/:
+    get:
+      operationId: staff_api_staffs_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this staff.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+          description: ''
+    put:
+      operationId: staff_api_staffs_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this staff.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Staff'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Staff'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Staff'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+          description: ''
+    patch:
+      operationId: staff_api_staffs_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this staff.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStaff'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStaff'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStaff'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+          description: ''
+    delete:
+      operationId: staff_api_staffs_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this staff.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/api/supplies/:
+    get:
+      operationId: staff_api_supplies_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicalSupply'
+          description: ''
+    post:
+      operationId: staff_api_supplies_create
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicalSupply'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MedicalSupply'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MedicalSupply'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalSupply'
+          description: ''
+  /staff/api/supplies/{id}/:
+    get:
+      operationId: staff_api_supplies_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical supply.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalSupply'
+          description: ''
+    put:
+      operationId: staff_api_supplies_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical supply.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicalSupply'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MedicalSupply'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MedicalSupply'
+        required: true
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalSupply'
+          description: ''
+    patch:
+      operationId: staff_api_supplies_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical supply.
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMedicalSupply'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMedicalSupply'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMedicalSupply'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalSupply'
+          description: ''
+    delete:
+      operationId: staff_api_supplies_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medical supply.
+        required: true
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /staff/emergency-alerts/:
+    get:
+      operationId: staff_emergency_alerts_list
+      tags:
+      - staff
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmergencyAlert'
+          description: ''
+  /staff/emergency-alerts/update/{id}/:
+    patch:
+      operationId: staff_emergency_alerts_update_partial_update
+      description: Partially updates an emergency alert (e.g., marking it as resolved
+        or adding notes).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - staff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEmergencyAlert'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEmergencyAlert'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEmergencyAlert'
+      security:
+      - tokenAuth: []
+      - basicAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmergencyAlert'
+          description: ''
+components:
+  schemas:
+    AlertStatusEnum:
+      enum:
+      - deterioration
+      - critical_lab
+      - other
+      type: string
+      description: |-
+        * `deterioration` - Patient Deterioration
+        * `critical_lab` - Critical Lab Result
+        * `other` - Other
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date
+          nullable: true
+        time:
+          type: string
+          format: time
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+        consultation_type:
+          $ref: '#/components/schemas/ConsultationTypeEnum'
+        status:
+          $ref: '#/components/schemas/AppointmentStatusEnum'
+        is_confirmed:
+          type: boolean
+        reschedule_request_date:
+          type: string
+          format: date
+          nullable: true
+        reschedule_request_time:
+          type: string
+          format: time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        patient:
+          type: integer
+        doctor:
+          type: integer
+        created_by:
+          type: integer
+          nullable: true
+      required:
+      - created_at
+      - date
+      - doctor
+      - id
+      - patient
+      - time
+      - updated_at
+    AppointmentStatusEnum:
+      enum:
+      - Scheduled
+      - Completed
+      - Cancelled
+      - Rescheduled
+      type: string
+      description: |-
+        * `Scheduled` - Scheduled
+        * `Completed` - Completed
+        * `Cancelled` - Cancelled
+        * `Rescheduled` - Rescheduled
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        action:
+          type: string
+          maxLength: 255
+        model_name:
+          type: string
+          maxLength: 100
+        model_instance_id:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          type: integer
+          nullable: true
+      required:
+      - action
+      - id
+      - model_instance_id
+      - model_name
+      - timestamp
+    AuthToken:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        token:
+          type: string
+          readOnly: true
+      required:
+      - password
+      - token
+      - username
+    Bill:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        bill_number:
+          type: string
+          maxLength: 255
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        total_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        amount_paid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        status:
+          $ref: '#/components/schemas/Status20cEnum'
+        item_description:
+          type: string
+          maxLength: 255
+        quantity:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        profile:
+          type: integer
+      required:
+      - bill_number
+      - date_created
+      - id
+      - item_description
+      - profile
+      - status
+      - total_amount
+      - unit_price
+    BlankEnum:
+      enum:
+      - ''
+    CarePlan:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        plan_description:
+          type: string
+      required:
+      - created_at
+      - id
+      - patient
+      - plan_description
+    Certification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        staff:
+          $ref: '#/components/schemas/Staff'
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        expiration_date:
+          type: string
+          format: date
+        is_valid:
+          type: boolean
+      required:
+      - description
+      - expiration_date
+      - id
+      - name
+      - staff
+    ClaimStatusEnum:
+      enum:
+      - submitted
+      - approved
+      - denied
+      type: string
+      description: |-
+        * `submitted` - Submitted
+        * `approved` - Approved
+        * `denied` - Denied
+    ConsultationNote:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        notes:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        appointment:
+          type: integer
+      required:
+      - appointment
+      - created_at
+      - id
+      - notes
+      - updated_at
+    ConsultationTypeEnum:
+      enum:
+      - Physical
+      - Virtual
+      type: string
+      description: |-
+        * `Physical` - Physical
+        * `Virtual` - Virtual
+    DoctorPatientMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        sender:
+          type: integer
+        recipient:
+          type: integer
+        message_content:
+          type: string
+        sent_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - message_content
+      - recipient
+      - sender
+      - sent_at
+    DoctorSchedule:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        doctor:
+          type: integer
+          nullable: true
+        monday_start:
+          type: string
+          format: time
+          nullable: true
+        monday_end:
+          type: string
+          format: time
+          nullable: true
+        tuesday_start:
+          type: string
+          format: time
+          nullable: true
+        tuesday_end:
+          type: string
+          format: time
+          nullable: true
+        wednesday_start:
+          type: string
+          format: time
+          nullable: true
+        wednesday_end:
+          type: string
+          format: time
+          nullable: true
+        thursday_start:
+          type: string
+          format: time
+          nullable: true
+        thursday_end:
+          type: string
+          format: time
+          nullable: true
+        friday_start:
+          type: string
+          format: time
+          nullable: true
+        friday_end:
+          type: string
+          format: time
+          nullable: true
+        saturday_start:
+          type: string
+          format: time
+          nullable: true
+        saturday_end:
+          type: string
+          format: time
+          nullable: true
+        sunday_start:
+          type: string
+          format: time
+          nullable: true
+        sunday_end:
+          type: string
+          format: time
+          nullable: true
+      required:
+      - id
+    EmergencyAlert:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        profile:
+          type: integer
+        alert_type:
+          $ref: '#/components/schemas/AlertStatusEnum'
+        message:
+          type: string
+        status:
+          type: string
+          maxLength: 20
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        resolved_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - alert_type
+      - created_at
+      - id
+      - message
+      - profile
+      - updated_at
+    EmergencyService:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        location:
+          type: string
+          maxLength: 255
+        emergency_type:
+          type: string
+          maxLength: 100
+        status:
+          $ref: '#/components/schemas/EmergencyServiceStatusEnum'
+        request_time:
+          type: string
+          format: date-time
+          readOnly: true
+        patient:
+          type: integer
+      required:
+      - emergency_type
+      - id
+      - location
+      - patient
+      - request_time
+    EmergencyServiceStatusEnum:
+      enum:
+      - Pending
+      - Dispatched
+      - Resolved
+      type: string
+      description: |-
+        * `Pending` - Pending
+        * `Dispatched` - Dispatched
+        * `Resolved` - Resolved
+    EmergencyServiceSuccess:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    Feedback:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+        comments:
+          type: string
+      required:
+      - comments
+      - id
+      - patient
+    FeedbackSuccess:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    HealthAndSafetyProtocol:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - description
+      - id
+      - name
+      - updated_at
+    HealthReport:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        report_name:
+          type: string
+          maxLength: 100
+        report_file:
+          type: string
+          format: uri
+        uploaded_at:
+          type: string
+          format: date-time
+          readOnly: true
+        patient:
+          type: integer
+        uploaded_by:
+          type: integer
+          nullable: true
+      required:
+      - id
+      - patient
+      - report_file
+      - report_name
+      - uploaded_at
+    HospitalPerformanceMetrics:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        bed_occupancy:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        staff_available:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        patient_flow:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - updated_at
+    InfectionControlPractice:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        protocol:
+          $ref: '#/components/schemas/HealthAndSafetyProtocol'
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        is_compliant:
+          type: boolean
+        last_audited:
+          type: string
+          format: date-time
+      required:
+      - description
+      - id
+      - last_audited
+      - name
+      - protocol
+    Insurance:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        insurance_provider:
+          type: string
+          maxLength: 255
+        policy_number:
+          type: string
+          maxLength: 255
+        coverage_start_date:
+          type: string
+          format: date
+        coverage_end_date:
+          type: string
+          format: date
+        coverage_details:
+          type: string
+        profile:
+          type: integer
+      required:
+      - coverage_details
+      - coverage_end_date
+      - coverage_start_date
+      - id
+      - insurance_provider
+      - policy_number
+      - profile
+    InsuranceClaim:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        claim_number:
+          type: string
+          maxLength: 255
+        claim_date:
+          type: string
+          format: date
+          readOnly: true
+        claim_status:
+          $ref: '#/components/schemas/ClaimStatusEnum'
+        claim_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        reimbursement_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        status:
+          $ref: '#/components/schemas/Status20cEnum'
+        date_submitted:
+          type: string
+          format: date
+          readOnly: true
+        bill:
+          type: integer
+        profile:
+          type: integer
+      required:
+      - bill
+      - claim_amount
+      - claim_date
+      - claim_number
+      - claim_status
+      - date_submitted
+      - id
+      - profile
+      - status
+    LabTest:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        test_name:
+          type: string
+          maxLength: 255
+        test_date:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - patient
+      - test_date
+      - test_name
+    LandingResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    LoginErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+      - error
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - username
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        token:
+          type: string
+        user_id:
+          type: integer
+      required:
+      - message
+      - token
+      - user_id
+    MedicalRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        diagnosis:
+          type: string
+        treatment:
+          type: string
+        date_recorded:
+          type: string
+          format: date
+          readOnly: true
+        patient:
+          type: integer
+        doctor:
+          type: integer
+          nullable: true
+      required:
+      - date_recorded
+      - diagnosis
+      - id
+      - patient
+      - treatment
+    MedicalSupply:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        supply_type:
+          $ref: '#/components/schemas/SupplyTypeEnum'
+        quantity_in_stock:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        reorder_level:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - supply_type
+      - unit_price
+      - updated_at
+    MedicationReminder:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        medication_name:
+          type: string
+          maxLength: 100
+        dosage:
+          type: string
+          maxLength: 50
+        time:
+          type: string
+          format: time
+        reminder_text:
+          type: string
+          nullable: true
+        is_taken:
+          type: boolean
+      required:
+      - dosage
+      - id
+      - medication_name
+      - patient
+      - time
+    NextOfKinRelationshipEnum:
+      enum:
+      - Parent
+      - Sibling
+      - Spouse
+      - Child
+      - Friend
+      - Other
+      type: string
+      description: |-
+        * `Parent` - Parent
+        * `Sibling` - Sibling
+        * `Spouse` - Spouse
+        * `Child` - Child
+        * `Friend` - Friend
+        * `Other` - Other
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        message:
+          type: string
+          maxLength: 255
+        recipient:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        read:
+          type: boolean
+        notification_type:
+          $ref: '#/components/schemas/NotificationTypeEnum'
+        is_urgent:
+          type: boolean
+      required:
+      - created_at
+      - id
+      - message
+      - notification_type
+      - recipient
+    NotificationTypeEnum:
+      enum:
+      - appointment
+      - bill_payment
+      - emergency
+      type: string
+      description: |-
+        * `appointment` - Appointment
+        * `bill_payment` - Bill Payment
+        * `emergency` - Emergency
+    NullEnum:
+      enum:
+      - null
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order_number:
+          type: string
+          maxLength: 50
+        quantity_ordered:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        order_status:
+          $ref: '#/components/schemas/OrderStatusEnum'
+        order_date:
+          type: string
+          format: date-time
+          readOnly: true
+        delivery_date:
+          type: string
+          format: date-time
+          nullable: true
+        supply:
+          type: integer
+        created_by:
+          type: integer
+      required:
+      - created_by
+      - id
+      - order_date
+      - order_number
+      - quantity_ordered
+      - supply
+    OrderStatusEnum:
+      enum:
+      - pending
+      - shipped
+      - delivered
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `shipped` - Shipped
+        * `delivered` - Delivered
+    PatchedAppointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date
+          nullable: true
+        time:
+          type: string
+          format: time
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+        consultation_type:
+          $ref: '#/components/schemas/ConsultationTypeEnum'
+        status:
+          $ref: '#/components/schemas/AppointmentStatusEnum'
+        is_confirmed:
+          type: boolean
+        reschedule_request_date:
+          type: string
+          format: date
+          nullable: true
+        reschedule_request_time:
+          type: string
+          format: time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        patient:
+          type: integer
+        doctor:
+          type: integer
+        created_by:
+          type: integer
+          nullable: true
+    PatchedBill:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        bill_number:
+          type: string
+          maxLength: 255
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        total_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        amount_paid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        status:
+          $ref: '#/components/schemas/Status20cEnum'
+        item_description:
+          type: string
+          maxLength: 255
+        quantity:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        profile:
+          type: integer
+    PatchedCarePlan:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        plan_description:
+          type: string
+    PatchedCertification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        staff:
+          $ref: '#/components/schemas/Staff'
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        expiration_date:
+          type: string
+          format: date
+        is_valid:
+          type: boolean
+    PatchedConsultationNote:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        notes:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        appointment:
+          type: integer
+    PatchedDoctorSchedule:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        doctor:
+          type: integer
+          nullable: true
+        monday_start:
+          type: string
+          format: time
+          nullable: true
+        monday_end:
+          type: string
+          format: time
+          nullable: true
+        tuesday_start:
+          type: string
+          format: time
+          nullable: true
+        tuesday_end:
+          type: string
+          format: time
+          nullable: true
+        wednesday_start:
+          type: string
+          format: time
+          nullable: true
+        wednesday_end:
+          type: string
+          format: time
+          nullable: true
+        thursday_start:
+          type: string
+          format: time
+          nullable: true
+        thursday_end:
+          type: string
+          format: time
+          nullable: true
+        friday_start:
+          type: string
+          format: time
+          nullable: true
+        friday_end:
+          type: string
+          format: time
+          nullable: true
+        saturday_start:
+          type: string
+          format: time
+          nullable: true
+        saturday_end:
+          type: string
+          format: time
+          nullable: true
+        sunday_start:
+          type: string
+          format: time
+          nullable: true
+        sunday_end:
+          type: string
+          format: time
+          nullable: true
+    PatchedEmergencyAlert:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        profile:
+          type: integer
+        alert_type:
+          $ref: '#/components/schemas/AlertStatusEnum'
+        message:
+          type: string
+        status:
+          type: string
+          maxLength: 20
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        resolved_at:
+          type: string
+          format: date-time
+          nullable: true
+    PatchedHealthAndSafetyProtocol:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedHealthReport:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        report_name:
+          type: string
+          maxLength: 100
+        report_file:
+          type: string
+          format: uri
+        uploaded_at:
+          type: string
+          format: date-time
+          readOnly: true
+        patient:
+          type: integer
+        uploaded_by:
+          type: integer
+          nullable: true
+    PatchedHospitalPerformanceMetrics:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        bed_occupancy:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        staff_available:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        patient_flow:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedInfectionControlPractice:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        protocol:
+          $ref: '#/components/schemas/HealthAndSafetyProtocol'
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        is_compliant:
+          type: boolean
+        last_audited:
+          type: string
+          format: date-time
+    PatchedInsurance:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        insurance_provider:
+          type: string
+          maxLength: 255
+        policy_number:
+          type: string
+          maxLength: 255
+        coverage_start_date:
+          type: string
+          format: date
+        coverage_end_date:
+          type: string
+          format: date
+        coverage_details:
+          type: string
+        profile:
+          type: integer
+    PatchedInsuranceClaim:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        claim_number:
+          type: string
+          maxLength: 255
+        claim_date:
+          type: string
+          format: date
+          readOnly: true
+        claim_status:
+          $ref: '#/components/schemas/ClaimStatusEnum'
+        claim_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        reimbursement_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        status:
+          $ref: '#/components/schemas/Status20cEnum'
+        date_submitted:
+          type: string
+          format: date
+          readOnly: true
+        bill:
+          type: integer
+        profile:
+          type: integer
+    PatchedLabTest:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        test_name:
+          type: string
+          maxLength: 255
+        test_date:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedMedicalRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        diagnosis:
+          type: string
+        treatment:
+          type: string
+        date_recorded:
+          type: string
+          format: date
+          readOnly: true
+        patient:
+          type: integer
+        doctor:
+          type: integer
+          nullable: true
+    PatchedMedicalSupply:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        supply_type:
+          $ref: '#/components/schemas/SupplyTypeEnum'
+        quantity_in_stock:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        reorder_level:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedNotification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        message:
+          type: string
+          maxLength: 255
+        recipient:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        read:
+          type: boolean
+        notification_type:
+          $ref: '#/components/schemas/NotificationTypeEnum'
+        is_urgent:
+          type: boolean
+    PatchedOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order_number:
+          type: string
+          maxLength: 50
+        quantity_ordered:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        order_status:
+          $ref: '#/components/schemas/OrderStatusEnum'
+        order_date:
+          type: string
+          format: date-time
+          readOnly: true
+        delivery_date:
+          type: string
+          format: date-time
+          nullable: true
+        supply:
+          type: integer
+        created_by:
+          type: integer
+    PatchedPerformanceAnalytics:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient_satisfaction_score:
+          type: number
+          format: double
+        treatment_outcomes_score:
+          type: number
+          format: double
+        staff_performance_score:
+          type: number
+          format: double
+        report_date:
+          type: string
+          format: date
+          readOnly: true
+    PatchedPrescription:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        prescription_details:
+          type: string
+        issued_at:
+          type: string
+          format: date
+          readOnly: true
+        expires_at:
+          type: string
+          format: date
+        patient:
+          type: integer
+        prescribing_doctor:
+          type: integer
+          nullable: true
+    PatchedReport:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        report_type:
+          $ref: '#/components/schemas/ReportTypeEnum'
+        generated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        file_path:
+          type: string
+          format: uri
+          nullable: true
+        generated_for:
+          type: integer
+        generated_by:
+          type: integer
+    PatchedResourceAllocation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        resource_type:
+          type: string
+          maxLength: 50
+        resource_name:
+          type: string
+          maxLength: 100
+        is_allocated:
+          type: boolean
+        allocated_to:
+          type: string
+          nullable: true
+          maxLength: 100
+        allocation_date:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedStaff:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/StaffUser'
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        phone_number:
+          type: string
+          maxLength: 15
+    PatchedStaffAppointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        doctor:
+          type: integer
+        time:
+          type: string
+          format: time
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/AppointmentStatusEnum'
+    PatchedStaffMedicalRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        diagnoses:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedStaffPrescription:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        medication_name:
+          type: string
+          maxLength: 255
+        dosage:
+          type: string
+          maxLength: 255
+        instructions:
+          type: string
+        end_date:
+          type: string
+          format: date-time
+    PatchedStockAlert:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        alert_message:
+          type: string
+        alert_status:
+          type: string
+          maxLength: 20
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        resolved_at:
+          type: string
+          format: date-time
+          nullable: true
+        supply:
+          type: integer
+    PatchedVitalSign:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        recorded_at:
+          type: string
+          format: date-time
+          readOnly: true
+        blood_pressure:
+          type: string
+          maxLength: 20
+        temperature:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        pulse:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+        oxygen_saturation:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+    Patient:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        profile_picture:
+          type: string
+          format: uri
+          nullable: true
+        phone_number:
+          type: string
+          maxLength: 15
+        medical_history:
+          type: string
+          nullable: true
+        allergies:
+          type: string
+          nullable: true
+        insurance_details:
+          type: string
+          nullable: true
+        emergency_contact:
+          type: string
+          nullable: true
+          maxLength: 15
+        next_of_kin_name:
+          type: string
+          nullable: true
+          maxLength: 100
+        next_of_kin_phone_number:
+          type: string
+          nullable: true
+          maxLength: 15
+        next_of_kin_email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        next_of_kin_address:
+          type: string
+          nullable: true
+        next_of_kin_relationship:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/NextOfKinRelationshipEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          type: integer
+      required:
+      - created_at
+      - id
+      - phone_number
+      - updated_at
+      - user
+    PatientLogoutResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    PerformanceAnalytics:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient_satisfaction_score:
+          type: number
+          format: double
+        treatment_outcomes_score:
+          type: number
+          format: double
+        staff_performance_score:
+          type: number
+          format: double
+        report_date:
+          type: string
+          format: date
+          readOnly: true
+      required:
+      - id
+      - patient_satisfaction_score
+      - report_date
+      - staff_performance_score
+      - treatment_outcomes_score
+    Prescription:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        prescription_details:
+          type: string
+        issued_at:
+          type: string
+          format: date
+          readOnly: true
+        expires_at:
+          type: string
+          format: date
+        patient:
+          type: integer
+        prescribing_doctor:
+          type: integer
+          nullable: true
+      required:
+      - expires_at
+      - id
+      - issued_at
+      - patient
+      - prescription_details
+    Profile:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        phone_number:
+          type: string
+          maxLength: 15
+        emergency_contact:
+          type: string
+          nullable: true
+          maxLength: 15
+        medical_history:
+          type: string
+          nullable: true
+        allergies:
+          type: string
+          nullable: true
+        insurance_details:
+          type: string
+          nullable: true
+        next_of_kin_name:
+          type: string
+          nullable: true
+          maxLength: 100
+        next_of_kin_phone_number:
+          type: string
+          nullable: true
+          maxLength: 15
+        next_of_kin_email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        next_of_kin_address:
+          type: string
+          nullable: true
+        next_of_kin_relationship:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/NextOfKinRelationshipEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+      required:
+      - phone_number
+      - user
+    ProfileNotFound:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    ProfileNotFoundError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+      - error
+    ProfileUpdateError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+      - error
+    Register:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        phone_number:
+          type: string
+      required:
+      - password
+      - phone_number
+      - username
+    RegisterSuccess:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    Report:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        report_type:
+          $ref: '#/components/schemas/ReportTypeEnum'
+        generated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        file_path:
+          type: string
+          format: uri
+          nullable: true
+        generated_for:
+          type: integer
+        generated_by:
+          type: integer
+      required:
+      - generated_at
+      - generated_by
+      - generated_for
+      - id
+      - report_type
+      - title
+    ReportTypeEnum:
+      enum:
+      - patient_care
+      - financial
+      - performance
+      type: string
+      description: |-
+        * `patient_care` - Patient Care
+        * `financial` - Financial
+        * `performance` - Performance
+    ResourceAllocation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        resource_type:
+          type: string
+          maxLength: 50
+        resource_name:
+          type: string
+          maxLength: 100
+        is_allocated:
+          type: boolean
+        allocated_to:
+          type: string
+          nullable: true
+          maxLength: 100
+        allocation_date:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - allocation_date
+      - id
+      - resource_name
+      - resource_type
+    RoleEnum:
+      enum:
+      - doctor
+      - nurse
+      - admin
+      type: string
+      description: |-
+        * `doctor` - Doctor
+        * `nurse` - Nurse
+        * `admin` - Administrator
+    Staff:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/StaffUser'
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        phone_number:
+          type: string
+          maxLength: 15
+      required:
+      - id
+      - phone_number
+      - role
+      - user
+    StaffAppointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        doctor:
+          type: integer
+        time:
+          type: string
+          format: time
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/AppointmentStatusEnum'
+      required:
+      - doctor
+      - id
+      - patient
+    StaffDashboardResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    StaffLogoutResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    StaffMedicalRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        diagnoses:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - diagnoses
+      - id
+      - patient
+    StaffPrescription:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        medication_name:
+          type: string
+          maxLength: 255
+        dosage:
+          type: string
+          maxLength: 255
+        instructions:
+          type: string
+        end_date:
+          type: string
+          format: date-time
+      required:
+      - dosage
+      - end_date
+      - id
+      - instructions
+      - medication_name
+      - patient
+    StaffRegister:
+      type: object
+      properties:
+        username:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        specialty:
+          type: string
+        phone_number:
+          type: string
+        profile_picture:
+          type: string
+          format: uri
+      required:
+      - email
+      - password
+      - username
+    StaffRegisterInstruction:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    StaffRegisterSuccess:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    StaffUser:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - username
+    Status20cEnum:
+      enum:
+      - pending
+      - paid
+      - partially_paid
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `paid` - Paid
+        * `partially_paid` - Partially Paid
+    StockAlert:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        alert_message:
+          type: string
+        alert_status:
+          type: string
+          maxLength: 20
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        resolved_at:
+          type: string
+          format: date-time
+          nullable: true
+        supply:
+          type: integer
+      required:
+      - alert_message
+      - created_at
+      - id
+      - supply
+    SupplyTypeEnum:
+      enum:
+      - medication
+      - equipment
+      - consumable
+      type: string
+      description: |-
+        * `medication` - Medication
+        * `equipment` - Equipment
+        * `consumable` - Consumable
+    TestViewResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    TreatmentPlan:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        treatment_description:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        progress_notes:
+          type: string
+          nullable: true
+      required:
+      - id
+      - patient
+      - start_date
+      - treatment_description
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - id
+      - username
+    VitalSign:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        patient:
+          type: integer
+        recorded_at:
+          type: string
+          format: date-time
+          readOnly: true
+        blood_pressure:
+          type: string
+          maxLength: 20
+        temperature:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        pulse:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        weight:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+        oxygen_saturation:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+      required:
+      - blood_pressure
+      - id
+      - patient
+      - pulse
+      - recorded_at
+      - temperature
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

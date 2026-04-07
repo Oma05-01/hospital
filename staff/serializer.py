@@ -5,14 +5,14 @@ from patients.models import PatientProfile
 from django.contrib.auth import authenticate
 
 
-class UserSerializer(serializers.ModelSerializer):
+class StaffUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
 
 
 class StaffSerializer(serializers.ModelSerializer):
-    user = UserSerializer()  # Use a nested serializer for the User model
+    user = StaffUserSerializer()  # Use a nested serializer for the User model
 
     class Meta:
         model = Staff
@@ -25,7 +25,7 @@ class StaffSerializer(serializers.ModelSerializer):
         return staff
 
 
-class RegisterSerializer(serializers.Serializer):
+class StaffRegisterSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
@@ -73,10 +73,10 @@ class DoctorScheduleSerializer(serializers.ModelSerializer):
         ]
 
 
-class AppointmentSerializer(serializers.ModelSerializer):
+class StaffAppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
-        fields = ['id', 'patient', 'doctor', 'scheduled_time', 'reason', 'status']
+        fields = ['id', 'patient', 'doctor', 'time', 'reason', 'status']
 
 
 # serializers.py
@@ -89,22 +89,22 @@ class VitalSignSerializer(serializers.ModelSerializer):
 class CarePlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarePlan
-        fields = ['id', 'patient', 'created_by', 'diagnosis', 'treatment_plan', 'follow_up_date']
+        fields = ['id', 'patient', 'created_at', 'plan_description']
 
 
-class MedicalRecordSerializer(serializers.ModelSerializer):
+class StaffMedicalRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = MedicalRecord
-        fields = ['id', 'patient', 'record_type', 'details', 'date_created']
+        fields = ['id', 'patient', 'diagnoses', 'created_at']
 
 
 class LabTestSerializer(serializers.ModelSerializer):
     class Meta:
         model = LabTest
-        fields = ['id', 'patient', 'test_name', 'result', 'date_conducted']
+        fields = ['id', 'patient', 'test_name', 'test_date']
 
 
-class PrescriptionSerializer(serializers.ModelSerializer):
+class StaffPrescriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prescription
         fields = ['id', 'patient', 'medication_name', 'dosage', 'instructions', 'end_date']

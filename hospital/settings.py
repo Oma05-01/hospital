@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ── Security ──────────────────────────────────────────────────────────────────
 # Read from environment — never hardcode in production
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'change-me-in-production')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '7k#Br9!mL2pQ*wZ ')
 JWT_ALGORITHM = 'HS256'
 
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_extensions',
     'rest_framework_simplejwt',
+    'drf_spectacular',
 ]
 
 # ── Middleware ────────────────────────────────────────────────────────────────
@@ -127,6 +128,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 EMAIL_BACKEND   = 'django.core.mail.backends.smtp.EmailBackend'
@@ -149,3 +151,14 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Hospital Management System API',
+    'DESCRIPTION': 'REST API for the Flutter Mobile Client, handling RBAC, appointments, and patient records.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'ENUM_NAME_OVERRIDES': {
+        'AppointmentStatusEnum': 'staff.models.Appointment.STATUS_CHOICES',
+        'AlertStatusEnum': 'staff.models.EmergencyAlert.ALERT_TYPES',
+    },
+}

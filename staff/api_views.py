@@ -1,4 +1,5 @@
 # views.py (API views)
+from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework.permissions import IsAuthenticated
 from .models import *
 from .serializer import *
@@ -45,6 +46,16 @@ class StaffViewSet(viewsets.ModelViewSet):
     permission_classes = [StaffPermission]  # Only staff can access this
 
 
+@extend_schema(
+    request=None,  # Tells Swagger UI not to draw a text box for JSON input
+    responses={
+        200: inline_serializer(
+            name='StaffLogoutResponse',
+            fields={'message': serializers.CharField()}
+        )
+    },
+    description="Logs out the authenticated staff member and invalidates their current session."
+)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def staff_logout(request):
@@ -55,12 +66,31 @@ def staff_logout(request):
 class RegisterView(APIView):
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        responses={
+            200: inline_serializer(
+                name='StaffRegisterInstruction',
+                fields={'message': serializers.CharField()}
+            )
+        },
+        description="Provides instructions for registering a new staff account."
+    )
     def get(self, request):
         return Response({"message": "Send a POST request with user registration details."}, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        request=StaffRegisterSerializer,
+        responses={
+            201: inline_serializer(
+                name='StaffRegisterSuccess',
+                fields={'message': serializers.CharField()}
+            )
+        },
+        description="Registers a new staff member (Admin or Doctor) into the hospital system."
+    )
     def post(self, request):
         print('data sent')
-        serializer = RegisterSerializer(data=request.data)
+        serializer = StaffRegisterSerializer(data=request.data)
         if serializer.is_valid():
             staff = serializer.save()
             return Response({'message': 'Registration successful!'}, status=status.HTTP_201_CREATED)
@@ -98,6 +128,15 @@ class LoginView(ObtainAuthToken):
 class StaffDashboardView(APIView):
     permission_classes = [IsAuthenticated, IsStaffMember]
 
+    @extend_schema(
+        responses={
+            200: inline_serializer(
+                name='StaffDashboardResponse',
+                fields={'message': serializers.CharField()}
+            )
+        },
+        description="Retrieves a personalized welcome message for the authenticated staff member based on their RBAC role."
+    )
     def get(self, request):
         print('gotten')  # This line will now be executed
         # No need to check role again, IsStaffMember already handles it
@@ -105,6 +144,15 @@ class StaffDashboardView(APIView):
 
 
 class TestView(APIView):
+    @extend_schema(
+        responses={
+            200: inline_serializer(
+                name='TestViewResponse',
+                fields={'message': serializers.CharField()}
+            )
+        },
+        description="A simple test endpoint to verify API routing and functionality."
+    )
     def get(self, request):
         print("TestView: get() method called")
         return Response({'message': 'Test View'})
@@ -136,7 +184,7 @@ class DoctorScheduleViewSet(viewsets.ModelViewSet):
 
 class AppointmentViewSet(viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
-    serializer_class = AppointmentSerializer
+    serializer_class = StaffAppointmentSerializer
 
     def create(self, request, *args, **kwargs):
         patient_id = request.data.get('patient')
@@ -248,7 +296,7 @@ class MedicalRecordPermission(permissions.BasePermission):
 
 class MedicalRecordViewSet(viewsets.ModelViewSet):
     queryset = MedicalRecord.objects.all()
-    serializer_class = MedicalRecordSerializer
+    serializer_class = StaffMedicalRecordSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [MedicalRecordPermission]
 
@@ -302,7 +350,7 @@ class PrescriptionPermission(permissions.BasePermission):
 
 class PrescriptionViewSet(viewsets.ModelViewSet):
     queryset = Prescription.objects.all()
-    serializer_class = PrescriptionSerializer
+    serializer_class = StaffPrescriptionSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [PrescriptionPermission]
 
@@ -397,6 +445,7 @@ class StaffMessageDetailView(generics.RetrieveAPIView):
 
 
 class DoctorPatientMessageList(ViewSet):
+    serializer_class = DoctorPatientMessageSerializer
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -481,6 +530,11 @@ class EmergencyAlertListView(ListAPIView):
 
 
 class EmergencyAlertUpdateView(APIView):
+    @extend_schema(
+        request=EmergencyAlertSerializer,
+        responses={200: EmergencyAlertSerializer},
+        description="Partially updates an emergency alert (e.g., marking it as resolved or adding notes)."
+    )
     def patch(self, request, pk, format=None):
         alert = EmergencyAlert.objects.get(pk=pk)
         serializer = EmergencyAlertSerializer(alert, data=request.data, partial=True)
@@ -570,6 +624,8 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
 # ViewSet for handling patients
 class PatientViewSet(viewsets.ViewSet):
+    serializer_class = PatientSerializer
+    queryset = PatientProfile.objects.all()
 
     # Search patients by username or email
     @action(detail=False, methods=['get'])

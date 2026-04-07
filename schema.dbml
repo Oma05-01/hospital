@@ -1,0 +1,834 @@
+Table "django_migrations" {
+  "id" integer [pk, not null]
+  "app" varchar(255) [not null]
+  "name" varchar(255) [not null]
+  "applied" datetime [not null]
+}
+
+Table "auth_group_permissions" {
+  "id" integer [pk, not null]
+  "group_id" integer [not null]
+  "permission_id" integer [not null]
+
+  Indexes {
+    (group_id, permission_id) [unique, name: "auth_group_permissions_group_id_permission_id_0cd325b0_uniq"]
+    group_id [name: "auth_group_permissions_group_id_b120cbf9"]
+    permission_id [name: "auth_group_permissions_permission_id_84c5c92e"]
+  }
+}
+
+Table "auth_user_groups" {
+  "id" integer [pk, not null]
+  "user_id" integer [not null]
+  "group_id" integer [not null]
+
+  Indexes {
+    (user_id, group_id) [unique, name: "auth_user_groups_user_id_group_id_94350c0c_uniq"]
+    user_id [name: "auth_user_groups_user_id_6a12ed8b"]
+    group_id [name: "auth_user_groups_group_id_97559544"]
+  }
+}
+
+Table "auth_user_user_permissions" {
+  "id" integer [pk, not null]
+  "user_id" integer [not null]
+  "permission_id" integer [not null]
+
+  Indexes {
+    (user_id, permission_id) [unique, name: "auth_user_user_permissions_user_id_permission_id_14a6b632_uniq"]
+    user_id [name: "auth_user_user_permissions_user_id_a95ead1b"]
+    permission_id [name: "auth_user_user_permissions_permission_id_1fbb5f2c"]
+  }
+}
+
+Table "django_admin_log" {
+  "id" integer [pk, not null]
+  "object_id" text
+  "object_repr" varchar(200) [not null]
+  "action_flag" smallint [not null, check: `"action_flag" >= 0`]
+  "change_message" text [not null]
+  "content_type_id" integer
+  "user_id" integer [not null]
+  "action_time" datetime [not null]
+
+  Indexes {
+    content_type_id [name: "django_admin_log_content_type_id_c4bce8eb"]
+    user_id [name: "django_admin_log_user_id_c564eba6"]
+  }
+}
+
+Table "staff_healthandsafetyprotocol" {
+  "id" integer [pk, not null]
+  "name" varchar(255) [not null]
+  "description" text [not null]
+  "is_active" bool [not null]
+  "created_at" datetime [not null]
+  "updated_at" datetime [not null]
+}
+
+Table "staff_hospitalperformancemetrics" {
+  "id" integer [pk, not null]
+  "bed_occupancy" integer [not null, check: `"bed_occupancy" >= 0`]
+  "staff_available" integer [not null, check: `"staff_available" >= 0`]
+  "patient_flow" integer [not null, check: `"patient_flow" >= 0`]
+  "updated_at" datetime [not null]
+}
+
+Table "staff_insuranceprovider" {
+  "id" integer [pk, not null]
+  "name" varchar(255) [not null]
+  "contact_number" varchar(20) [not null]
+  "email" varchar(254) [not null]
+}
+
+Table "staff_medicalsupply" {
+  "id" integer [pk, not null]
+  "name" varchar(255) [not null]
+  "description" text
+  "supply_type" varchar(50) [not null]
+  "quantity_in_stock" integer [not null, check: `"quantity_in_stock" >= 0`]
+  "reorder_level" integer [not null, check: `"reorder_level" >= 0`]
+  "unit_price" decimal [not null]
+  "created_at" datetime [not null]
+  "updated_at" datetime [not null]
+}
+
+Table "staff_performanceanalytics" {
+  "id" integer [pk, not null]
+  "patient_satisfaction_score" real [not null]
+  "treatment_outcomes_score" real [not null]
+  "staff_performance_score" real [not null]
+  "report_date" date [not null]
+}
+
+Table "staff_resourceallocation" {
+  "id" integer [pk, not null]
+  "resource_type" varchar(50) [not null]
+  "resource_name" varchar(100) [not null]
+  "is_allocated" bool [not null]
+  "allocated_to" varchar(100)
+  "allocation_date" datetime [not null]
+}
+
+Table "staff_infectioncontrolpractice" {
+  "id" integer [pk, not null]
+  "name" varchar(255) [not null]
+  "description" text [not null]
+  "is_compliant" bool [not null]
+  "last_audited" datetime [not null]
+  "protocol_id" bigint [not null]
+
+  Indexes {
+    protocol_id [name: "staff_infectioncontrolpractice_protocol_id_2beb084d"]
+  }
+}
+
+Table "staff_labresult" {
+  "id" integer [pk, not null]
+  "result_data" text [not null]
+  "result_date" datetime [not null]
+  "findings" text [not null]
+  "lab_test_id" bigint [unique, not null]
+}
+
+Table "staff_order" {
+  "id" integer [pk, not null]
+  "order_number" varchar(50) [unique, not null]
+  "quantity_ordered" integer [not null, check: `"quantity_ordered" >= 0`]
+  "order_status" varchar(20) [not null]
+  "order_date" datetime [not null]
+  "delivery_date" datetime
+  "created_by_id" integer [not null]
+  "supply_id" bigint [not null]
+
+  Indexes {
+    created_by_id [name: "staff_order_created_by_id_2aab7332"]
+    supply_id [name: "staff_order_supply_id_1ebad149"]
+  }
+}
+
+Table "staff_staff" {
+  "id" integer [pk, not null]
+  "role" varchar(20) [not null]
+  "specialty" varchar(100)
+  "phone_number" varchar(15) [not null]
+  "profile_picture" varchar(100)
+  "user_id" integer [unique, not null]
+}
+
+Table "staff_consultationnote" {
+  "id" integer [pk, not null]
+  "note" text [not null]
+  "prescription" text
+  "treatment_plan" text
+  "appointment_id" bigint [unique, not null]
+  "doctor_id" bigint [not null]
+
+  Indexes {
+    doctor_id [name: "staff_consultationnote_doctor_id_54fd0721"]
+  }
+}
+
+Table "staff_certification" {
+  "id" integer [pk, not null]
+  "name" varchar(255) [not null]
+  "description" text [not null]
+  "expiration_date" date [not null]
+  "is_valid" bool [not null]
+  "staff_id" bigint [not null]
+
+  Indexes {
+    staff_id [name: "staff_certification_staff_id_d2931702"]
+  }
+}
+
+Table "staff_stockalert" {
+  "id" integer [pk, not null]
+  "alert_message" text [not null]
+  "alert_status" varchar(20) [not null]
+  "created_at" datetime [not null]
+  "resolved_at" datetime
+  "supply_id" bigint [not null]
+
+  Indexes {
+    supply_id [name: "staff_stockalert_supply_id_0ad88e99"]
+  }
+}
+
+Table "staff_teammessage" {
+  "id" integer [pk, not null]
+  "message_content" text [not null]
+  "sent_at" datetime [not null]
+  "sender_id" bigint [not null]
+  "recipient_id" bigint [not null]
+
+  Indexes {
+    sender_id [name: "staff_teammessage_sender_id_2ebae28a"]
+    recipient_id [name: "staff_teammessage_recipient_id_635fcffa"]
+  }
+}
+
+Table "staff_staffmessage" {
+  "id" integer [pk, not null]
+  "message_content" text [not null]
+  "sent_at" datetime [not null]
+  "recipient_id" bigint [not null]
+  "sender_id" bigint [not null]
+  "is_read" bool [not null]
+  "read_at" datetime
+
+  Indexes {
+    recipient_id [name: "staff_staffmessage_recipient_id_c02bd5c9"]
+    sender_id [name: "staff_staffmessage_sender_id_d3824702"]
+  }
+}
+
+Table "staff_doctorschedule" {
+  "id" integer [pk, not null]
+  "friday_end" time
+  "friday_start" time
+  "monday_end" time
+  "monday_start" time
+  "saturday_end" time
+  "saturday_start" time
+  "sunday_end" time
+  "sunday_start" time
+  "thursday_end" time
+  "thursday_start" time
+  "tuesday_end" time
+  "tuesday_start" time
+  "wednesday_end" time
+  "wednesday_start" time
+  "doctor_id" bigint [unique]
+}
+
+Table "staff_auditlog" {
+  "id" integer [pk, not null]
+  "action" varchar(255) [not null]
+  "model_name" varchar(100) [not null]
+  "model_instance_id" integer [not null]
+  "timestamp" datetime [not null]
+  "user_id" bigint
+
+  Indexes {
+    user_id [name: "staff_auditlog_user_id_f8d62dc2"]
+  }
+}
+
+Table "staff_tokenlog" {
+  "id" integer [pk, not null]
+  "token" text [not null]
+  "created_at" datetime [not null]
+  "user_id" bigint [not null]
+
+  Indexes {
+    user_id [name: "staff_tokenlog_user_id_fb1314b4"]
+  }
+}
+
+Table "patients_tokenlog" {
+  "id" integer [pk, not null]
+  "token" text [not null]
+  "created_at" datetime [not null]
+  "patient_id" bigint
+
+  Indexes {
+    patient_id [name: "patients_tokenlog_patient_id_9e5bd3ce"]
+  }
+}
+
+Table "patients_patientprofile" {
+  "id" integer [pk, not null]
+  "profile_picture" varchar(100)
+  "phone_number" varchar(15) [not null]
+  "medical_history" text
+  "allergies" text
+  "insurance_details" text
+  "emergency_contact" varchar(15)
+  "next_of_kin_name" varchar(100)
+  "next_of_kin_phone_number" varchar(15)
+  "next_of_kin_email" varchar(254)
+  "next_of_kin_address" text
+  "next_of_kin_relationship" varchar(50)
+  "created_at" datetime [not null]
+  "updated_at" datetime [not null]
+  "user_id" integer [unique, not null]
+}
+
+Table "patients_bill" {
+  "id" integer [pk, not null]
+  "total_amount" decimal [not null]
+  "paid_amount" decimal [not null]
+  "due_date" date [not null]
+  "is_paid" bool [not null]
+  "created_at" datetime
+  "patient_id" bigint
+
+  Indexes {
+    patient_id [name: "patients_bill_patient_id_390244c3"]
+  }
+}
+
+Table "patients_emergencyservice" {
+  "id" integer [pk, not null]
+  "location" varchar(255) [not null]
+  "emergency_type" varchar(100) [not null]
+  "request_time" datetime [not null]
+  "status" varchar(20) [not null]
+  "patient_id" bigint [not null]
+
+  Indexes {
+    patient_id [name: "patients_emergencyservice_patient_id_1292231f"]
+  }
+}
+
+Table "patients_feedback" {
+  "id" integer [pk, not null]
+  "rating" integer [not null, check: `"rating" >= 0`]
+  "comments" text [not null]
+  "created_at" datetime
+  "patient_id" bigint [not null]
+
+  Indexes {
+    patient_id [name: "patients_feedback_patient_id_7286df88"]
+  }
+}
+
+Table "patients_medicationreminder" {
+  "id" integer [pk, not null]
+  "medication_name" varchar(100) [not null]
+  "dosage" varchar(50) [not null]
+  "time" time [not null]
+  "reminder_text" text
+  "is_taken" bool [not null]
+  "patient_id" bigint [not null]
+
+  Indexes {
+    patient_id [name: "patients_medicationreminder_patient_id_34aecad5"]
+  }
+}
+
+Table "patients_treatmentplan" {
+  "id" integer [pk, not null]
+  "treatment_description" text [not null]
+  "start_date" date [not null]
+  "progress_notes" text
+  "end_date" date
+  "status" varchar(20) [not null]
+  "patient_id" bigint [not null]
+
+  Indexes {
+    patient_id [name: "patients_treatmentplan_patient_id_3c3ab7c9"]
+  }
+}
+
+Table "staff_assignment" {
+  "id" integer [pk, not null]
+  "assigned_at" datetime [not null]
+  "notes" text
+  "doctor_id" bigint [not null]
+  "patient_id" bigint [not null]
+
+  Indexes {
+    doctor_id [name: "staff_assignment_doctor_id_4a972bc7"]
+    patient_id [name: "staff_assignment_patient_id_8dc26dee"]
+  }
+}
+
+Table "staff_bill" {
+  "id" integer [pk, not null]
+  "bill_number" varchar(255) [unique, not null]
+  "date_created" date [not null]
+  "total_amount" decimal [not null]
+  "amount_paid" decimal [not null]
+  "status" varchar(50) [not null]
+  "item_description" varchar(255) [unique, not null]
+  "quantity" decimal [not null]
+  "unit_price" decimal [not null]
+  "profile_id" bigint [not null]
+
+  Indexes {
+    profile_id [name: "staff_bill_profile_id_635ce8ba"]
+  }
+}
+
+Table "staff_careplan" {
+  "id" integer [pk, not null]
+  "plan_description" text [not null]
+  "created_at" datetime [not null]
+  "doctor_id" bigint [not null]
+  "patient_id" bigint [not null]
+
+  Indexes {
+    doctor_id [name: "staff_careplan_doctor_id_c20e356a"]
+    patient_id [name: "staff_careplan_patient_id_e4b25f8b"]
+  }
+}
+
+Table "staff_doctorpatientmessage" {
+  "id" integer [pk, not null]
+  "message_content" text [not null]
+  "sent_at" datetime [not null]
+  "sender_id" bigint [not null]
+  "patient_reply" varchar(500) [not null]
+  "recipient_id" bigint [not null]
+
+  Indexes {
+    sender_id [name: "staff_doctorpatientmessage_sender_id_7a6d902d"]
+    recipient_id [name: "staff_doctorpatientmessage_recipient_id_9fea709d"]
+  }
+}
+
+Table "staff_emergencyalert" {
+  "id" integer [pk, not null]
+  "alert_type" varchar(20) [not null]
+  "message" text [not null]
+  "status" varchar(20) [not null]
+  "created_at" datetime [not null]
+  "updated_at" datetime [not null]
+  "resolved_at" datetime
+  "profile_id" bigint [not null]
+
+  Indexes {
+    profile_id [name: "staff_emergencyalert_profile_id_4f3aa125"]
+  }
+}
+
+Table "staff_insurance" {
+  "id" integer [pk, not null]
+  "insurance_provider" varchar(255) [not null]
+  "policy_number" varchar(255) [not null]
+  "coverage_start_date" date [not null]
+  "coverage_end_date" date [not null]
+  "coverage_details" text [not null]
+  "profile_id" bigint [unique, not null]
+}
+
+Table "staff_insuranceclaim" {
+  "id" integer [pk, not null]
+  "claim_number" varchar(255) [unique, not null]
+  "claim_date" date [not null]
+  "claim_status" varchar(50) [not null]
+  "claim_amount" decimal [not null]
+  "reimbursement_amount" decimal [not null]
+  "status" varchar(50) [not null]
+  "date_submitted" date [not null]
+  "bill_id" bigint [not null]
+  "profile_id" bigint [not null]
+
+  Indexes {
+    bill_id [name: "staff_insuranceclaim_bill_id_8a2a4b27"]
+    profile_id [name: "staff_insuranceclaim_profile_id_9ce6fcb1"]
+  }
+}
+
+Table "staff_labtest" {
+  "id" integer [pk, not null]
+  "test_name" varchar(255) [not null]
+  "test_date" datetime [not null]
+  "status" varchar(50) [not null]
+  "ordered_by_id" bigint [not null]
+  "patient_id" bigint [not null]
+
+  Indexes {
+    ordered_by_id [name: "staff_labtest_ordered_by_id_4fdd3d08"]
+    patient_id [name: "staff_labtest_patient_id_445aaf6b"]
+  }
+}
+
+Table "staff_medicalrecord" {
+  "id" integer [pk, not null]
+  "created_at" datetime [not null]
+  "updated_at" datetime [not null]
+  "diagnoses" text [not null]
+  "treatment_history" text [not null]
+  "allergies" text [not null]
+  "family_history" text [not null]
+  "medications" text [not null]
+  "patient_id" bigint [not null]
+
+  Indexes {
+    patient_id [name: "staff_medicalrecord_patient_id_6ab71ac0"]
+  }
+}
+
+Table "staff_notification" {
+  "id" integer [pk, not null]
+  "message" varchar(255) [not null]
+  "created_at" datetime [not null]
+  "read" bool [not null]
+  "notification_type" varchar(50) [not null]
+  "is_urgent" bool [not null]
+  "recipient_id" integer [not null]
+
+  Indexes {
+    recipient_id [name: "staff_notification_recipient_id_dfaddd32"]
+  }
+}
+
+Table "staff_prescription" {
+  "id" integer [pk, not null]
+  "medication_name" varchar(255) [not null]
+  "dosage" varchar(255) [not null]
+  "start_date" datetime [not null]
+  "end_date" datetime [not null]
+  "instructions" text [not null]
+  "doctor_id" bigint [not null]
+  "patient_id" bigint [not null]
+
+  Indexes {
+    doctor_id [name: "staff_prescription_doctor_id_821c76f8"]
+    patient_id [name: "staff_prescription_patient_id_ae204446"]
+  }
+}
+
+Table "staff_progresstracking" {
+  "id" integer [pk, not null]
+  "recorded_at" datetime [not null]
+  "progress_notes" text [not null]
+  "doctor_id" bigint [not null]
+  "patient_id" bigint [not null]
+
+  Indexes {
+    doctor_id [name: "staff_progresstracking_doctor_id_593f36e7"]
+    patient_id [name: "staff_progresstracking_patient_id_943b67fe"]
+  }
+}
+
+Table "staff_report" {
+  "id" integer [pk, not null]
+  "title" varchar(255) [not null]
+  "report_type" varchar(50) [not null]
+  "generated_at" datetime [not null]
+  "file_path" varchar(100)
+  "generated_by_id" bigint [not null]
+  "generated_for_id" bigint [not null]
+
+  Indexes {
+    generated_by_id [name: "staff_report_generated_by_id_65fa16f7"]
+    generated_for_id [name: "staff_report_generated_for_id_efb134bc"]
+  }
+}
+
+Table "staff_vitalsign" {
+  "id" integer [pk, not null]
+  "recorded_at" datetime [not null]
+  "blood_pressure" varchar(20) [not null]
+  "temperature" decimal [not null]
+  "pulse" integer [not null]
+  "weight" decimal
+  "oxygen_saturation" decimal
+  "patient_id" bigint [not null]
+
+  Indexes {
+    patient_id [name: "staff_vitalsign_patient_id_0a65cc72"]
+  }
+}
+
+Table "staff_appointment" {
+  "id" integer [pk, not null]
+  "patient_id" bigint [not null]
+  "reason" text
+  "status" varchar(20) [not null]
+  "doctor_id" bigint [not null]
+  "created_by_id" bigint
+  "consultation_type" varchar(50) [not null]
+  "created_at" datetime
+  "date" date
+  "is_confirmed" bool [not null]
+  "reschedule_request_date" date
+  "reschedule_request_time" time
+  "time" time
+  "updated_at" datetime
+
+  Indexes {
+    (doctor_id, date, time) [unique, name: "unique_doctor_appointment"]
+    (patient_id, date, time) [unique, name: "unique_patient_appointment"]
+    patient_id [name: "staff_appointment_patient_id_cf7fed04"]
+    doctor_id [name: "staff_appointment_doctor_id_0e3373ac"]
+    created_by_id [name: "staff_appointment_created_by_id_93308e2b"]
+  }
+}
+
+Table "appointments_consultationnote" {
+  "id" integer [pk, not null]
+  "notes" text [not null]
+  "created_at" datetime [not null]
+  "appointment_id" bigint [unique, not null]
+  "updated_at" datetime [not null]
+}
+
+Table "django_content_type" {
+  "id" integer [pk, not null]
+  "app_label" varchar(100) [not null]
+  "model" varchar(100) [not null]
+
+  Indexes {
+    (app_label, model) [unique, name: "django_content_type_app_label_model_76bd3d3b_uniq"]
+  }
+}
+
+Table "auth_permission" {
+  "id" integer [pk, not null]
+  "content_type_id" integer [not null]
+  "codename" varchar(100) [not null]
+  "name" varchar(255) [not null]
+
+  Indexes {
+    (content_type_id, codename) [unique, name: "auth_permission_content_type_id_codename_01ab375a_uniq"]
+    content_type_id [name: "auth_permission_content_type_id_2f476e4b"]
+  }
+}
+
+Table "auth_group" {
+  "id" integer [pk, not null]
+  "name" varchar(150) [unique, not null]
+}
+
+Table "auth_user" {
+  "id" integer [pk, not null]
+  "password" varchar(128) [not null]
+  "last_login" datetime
+  "is_superuser" bool [not null]
+  "username" varchar(150) [unique, not null]
+  "last_name" varchar(150) [not null]
+  "email" varchar(254) [not null]
+  "is_staff" bool [not null]
+  "is_active" bool [not null]
+  "date_joined" datetime [not null]
+  "first_name" varchar(150) [not null]
+}
+
+Table "authtoken_token" {
+  "key" varchar(40) [pk, not null]
+  "created" datetime [not null]
+  "user_id" integer [unique, not null]
+}
+
+Table "debug_toolbar_historyentry" {
+  "request_id" char(32) [pk, not null]
+  "data" text [not null, check: `(JSON_VALID("data") OR "data" IS NULL)`]
+  "created_at" datetime [not null]
+}
+
+Table "records_healthreport" {
+  "id" integer [pk, not null]
+  "report_name" varchar(100) [not null]
+  "report_file" varchar(100) [not null]
+  "uploaded_at" datetime [not null]
+  "uploaded_by_id" bigint
+  "patient_id" bigint [not null]
+
+  Indexes {
+    uploaded_by_id [name: "records_healthreport_uploaded_by_id_cd7f80ee"]
+    patient_id [name: "records_healthreport_patient_id_2cff7c00"]
+  }
+}
+
+Table "records_medicalrecord" {
+  "id" integer [pk, not null]
+  "diagnosis" text [not null]
+  "treatment" text [not null]
+  "date_recorded" date [not null]
+  "doctor_id" bigint
+  "patient_id" bigint [not null]
+
+  Indexes {
+    doctor_id [name: "records_medicalrecord_doctor_id_ce731b5b"]
+    patient_id [name: "records_medicalrecord_patient_id_05e97881"]
+  }
+}
+
+Table "records_prescription" {
+  "id" integer [pk, not null]
+  "prescription_details" text [not null]
+  "issued_at" date [not null]
+  "expires_at" date [not null]
+  "prescribing_doctor_id" bigint
+  "patient_id" bigint [not null]
+
+  Indexes {
+    prescribing_doctor_id [name: "records_prescription_prescribing_doctor_id_26cf157d"]
+    patient_id [name: "records_prescription_patient_id_d2afb9f1"]
+  }
+}
+
+Table "django_session" {
+  "session_key" varchar(40) [pk, not null]
+  "session_data" text [not null]
+  "expire_date" datetime [not null]
+
+  Indexes {
+    expire_date [name: "django_session_expire_date_a5c62663"]
+  }
+}
+
+Ref:"auth_group"."id" < "auth_group_permissions"."group_id"
+
+Ref:"auth_permission"."id" < "auth_group_permissions"."permission_id"
+
+Ref:"auth_user"."id" < "auth_user_groups"."user_id"
+
+Ref:"auth_group"."id" < "auth_user_groups"."group_id"
+
+Ref:"auth_user"."id" < "auth_user_user_permissions"."user_id"
+
+Ref:"auth_permission"."id" < "auth_user_user_permissions"."permission_id"
+
+Ref:"django_content_type"."id" < "django_admin_log"."content_type_id"
+
+Ref:"auth_user"."id" < "django_admin_log"."user_id"
+
+Ref:"staff_healthandsafetyprotocol"."id" < "staff_infectioncontrolpractice"."protocol_id"
+
+Ref:"staff_labtest"."id" < "staff_labresult"."lab_test_id"
+
+Ref:"auth_user"."id" < "staff_order"."created_by_id"
+
+Ref:"staff_medicalsupply"."id" < "staff_order"."supply_id"
+
+Ref:"auth_user"."id" < "staff_staff"."user_id"
+
+Ref:"staff_appointment"."id" < "staff_consultationnote"."appointment_id"
+
+Ref:"staff_staff"."id" < "staff_consultationnote"."doctor_id"
+
+Ref:"staff_staff"."id" < "staff_certification"."staff_id"
+
+Ref:"staff_medicalsupply"."id" < "staff_stockalert"."supply_id"
+
+Ref:"staff_staff"."id" < "staff_teammessage"."sender_id"
+
+Ref:"staff_staff"."id" < "staff_teammessage"."recipient_id"
+
+Ref:"staff_staff"."id" < "staff_staffmessage"."recipient_id"
+
+Ref:"staff_staff"."id" < "staff_staffmessage"."sender_id"
+
+Ref:"staff_staff"."id" < "staff_doctorschedule"."doctor_id"
+
+Ref:"staff_staff"."id" < "staff_auditlog"."user_id"
+
+Ref:"staff_staff"."id" < "staff_tokenlog"."user_id"
+
+Ref:"patients_patientprofile"."id" < "patients_tokenlog"."patient_id"
+
+Ref:"auth_user"."id" < "patients_patientprofile"."user_id"
+
+Ref:"patients_patientprofile"."id" < "patients_bill"."patient_id"
+
+Ref:"patients_patientprofile"."id" < "patients_emergencyservice"."patient_id"
+
+Ref:"patients_patientprofile"."id" < "patients_feedback"."patient_id"
+
+Ref:"patients_patientprofile"."id" < "patients_medicationreminder"."patient_id"
+
+Ref:"patients_patientprofile"."id" < "patients_treatmentplan"."patient_id"
+
+Ref:"staff_staff"."id" < "staff_assignment"."doctor_id"
+
+Ref:"patients_patientprofile"."id" < "staff_assignment"."patient_id"
+
+Ref:"patients_patientprofile"."id" < "staff_bill"."profile_id"
+
+Ref:"staff_staff"."id" < "staff_careplan"."doctor_id"
+
+Ref:"patients_patientprofile"."id" < "staff_careplan"."patient_id"
+
+Ref:"staff_staff"."id" < "staff_doctorpatientmessage"."sender_id"
+
+Ref:"patients_patientprofile"."id" < "staff_doctorpatientmessage"."recipient_id"
+
+Ref:"patients_patientprofile"."id" < "staff_emergencyalert"."profile_id"
+
+Ref:"patients_patientprofile"."id" < "staff_insurance"."profile_id"
+
+Ref:"staff_bill"."id" < "staff_insuranceclaim"."bill_id"
+
+Ref:"patients_patientprofile"."id" < "staff_insuranceclaim"."profile_id"
+
+Ref:"staff_staff"."id" < "staff_labtest"."ordered_by_id"
+
+Ref:"patients_patientprofile"."id" < "staff_labtest"."patient_id"
+
+Ref:"patients_patientprofile"."id" < "staff_medicalrecord"."patient_id"
+
+Ref:"auth_user"."id" < "staff_notification"."recipient_id"
+
+Ref:"staff_staff"."id" < "staff_prescription"."doctor_id"
+
+Ref:"patients_patientprofile"."id" < "staff_prescription"."patient_id"
+
+Ref:"staff_staff"."id" < "staff_progresstracking"."doctor_id"
+
+Ref:"patients_patientprofile"."id" < "staff_progresstracking"."patient_id"
+
+Ref:"staff_staff"."id" < "staff_report"."generated_by_id"
+
+Ref:"patients_patientprofile"."id" < "staff_report"."generated_for_id"
+
+Ref:"patients_patientprofile"."id" < "staff_vitalsign"."patient_id"
+
+Ref:"patients_patientprofile"."id" < "staff_appointment"."patient_id"
+
+Ref:"staff_staff"."id" < "staff_appointment"."doctor_id"
+
+Ref:"staff_staff"."id" < "staff_appointment"."created_by_id"
+
+Ref:"staff_appointment"."id" < "appointments_consultationnote"."appointment_id"
+
+Ref:"django_content_type"."id" < "auth_permission"."content_type_id"
+
+Ref:"auth_user"."id" < "authtoken_token"."user_id"
+
+Ref:"staff_staff"."id" < "records_healthreport"."uploaded_by_id"
+
+Ref:"patients_patientprofile"."id" < "records_healthreport"."patient_id"
+
+Ref:"staff_staff"."id" < "records_medicalrecord"."doctor_id"
+
+Ref:"patients_patientprofile"."id" < "records_medicalrecord"."patient_id"
+
+Ref:"staff_staff"."id" < "records_prescription"."prescribing_doctor_id"
+
+Ref:"patients_patientprofile"."id" < "records_prescription"."patient_id"
