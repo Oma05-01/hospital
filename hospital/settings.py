@@ -3,6 +3,7 @@ Django settings for hospital project — Docker/production ready.
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,7 +15,20 @@ JWT_ALGORITHM = 'HS256'
 
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost 127.0.0.1').split()
+raw_allowed_hosts = os.environ.get('ALLOWED_HOSTS', '')
+
+# 1. Start with our guaranteed local development defaults
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'localhost:8000 ', '127.0.0.1:8000']
+
+# 2. Safely add any external hosts from your environment if they exist
+if raw_allowed_hosts:
+    # Split by spaces or commas just in case
+    for host in raw_allowed_hosts.replace(',', ' ').split():
+        cleaned_host = host.strip("'\" ")
+        if cleaned_host and cleaned_host not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(cleaned_host)
+
+print("--- CURRENT ALLOWED_HOSTS LIST:", ALLOWED_HOSTS)
 
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     'CSRF_TRUSTED_ORIGINS',
@@ -25,6 +39,7 @@ CSRF_TRUSTED_ORIGINS = os.environ.get(
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'corsheaders',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -43,6 +58,7 @@ INSTALLED_APPS = [
 # ── Middleware ────────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',        # serve static files in Docker
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -162,3 +178,17 @@ SPECTACULAR_SETTINGS = {
         'AlertStatusEnum': 'staff.models.EmergencyAlert.ALERT_TYPES',
     },
 }
+
+SIMPLE_JWT = {
+    # Extends the access token life from 5 minutes to 1 full day
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]

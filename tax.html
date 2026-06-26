@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Estimator Promo Graphic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0b1120] flex items-center justify-center min-h-screen overflow-hidden">
+
+    <!-- THE 1200x630 GRAPHIC -->
+    <div id="promo-graphic" class="w-[1200px] h-[630px] bg-[#0b1120] flex relative font-sans shadow-2xl shrink-0 border border-slate-800/50 rounded-lg overflow-hidden transition-transform origin-center">
+
+        <!-- Subtle Premium Grid Background -->
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px] opacity-30"></div>
+
+        <!-- Background Abstract Glow -->
+        <div class="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-blue-600/20 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-emerald-600/10 rounded-full blur-[100px]"></div>
+
+        <!-- Left Column: Copywriting -->
+        <div class="w-1/2 h-full flex flex-col justify-center px-16 z-10">
+
+          <!-- Top Badge -->
+          <div class="inline-flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2 rounded-full mb-8 w-max shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+            <span class="text-slate-300 text-xs font-bold tracking-widest uppercase">100% Private • WASM Powered</span>
+          </div>
+
+          <h1 class="text-[3.5rem] font-extrabold text-white leading-[1.1] tracking-tight mb-6 drop-shadow-lg">
+            The Nigerian <br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-teal-300 to-emerald-400">
+              Tax Engine
+            </span> <br/>
+            for the Modern Worker.
+          </h1>
+
+          <p class="text-xl text-slate-400 leading-relaxed mb-8 max-w-[95%]">
+            Calculate complex PAYE, freelance, and hybrid taxes instantly.
+            Your financial data <strong class="text-slate-200">never</strong> leaves your browser.
+          </p>
+
+          <!-- Feature Pills -->
+          <div class="flex gap-3 mb-10">
+            <div class="bg-slate-800/50 border border-slate-700 px-5 py-2.5 rounded-lg text-slate-200 font-semibold text-base flex items-center gap-2 backdrop-blur-sm">
+              💼 Salaried
+            </div>
+            <div class="bg-slate-800/50 border border-slate-700 px-5 py-2.5 rounded-lg text-slate-200 font-semibold text-base flex items-center gap-2 backdrop-blur-sm">
+              💻 Freelance
+            </div>
+            <div class="bg-blue-900/40 border border-blue-500/50 px-5 py-2.5 rounded-lg text-blue-100 font-semibold text-base flex items-center gap-2 backdrop-blur-sm shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+              🔄 Hybrid
+            </div>
+          </div>
+
+          <!-- THE LINK URL BAR -->
+          <div class="flex items-center gap-3 bg-slate-950/80 border border-slate-700 w-max px-5 py-3 rounded-xl backdrop-blur-md shadow-xl">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+            <span class="text-blue-100 font-mono text-lg tracking-wide">tax-esteem.vercel.app</span>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Abstract UI Window -->
+        <div class="w-1/2 h-full flex items-center justify-center z-10 relative">
+          <div class="w-[500px] bg-slate-900/90 backdrop-blur-2xl border border-slate-700/60 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden -rotate-2">
+
+            <!-- Mac-style Window Header -->
+            <div class="bg-slate-950/80 px-4 py-3 border-b border-slate-800 flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full bg-rose-500"></div>
+              <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+              <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+              <div class="flex-1 flex justify-center">
+                  <div class="bg-slate-800 px-3 py-1 rounded-md text-xs font-mono text-slate-400 flex items-center gap-2">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                      tax_computation_engine.py
+                  </div>
+              </div>
+            </div>
+
+            <!-- Card Content -->
+            <div class="p-8 space-y-6">
+              <div>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Engine Output</p>
+                <h2 class="text-4xl font-extrabold text-white tracking-tight">₦1,056,480<span class="text-xl text-slate-500 font-normal">.43</span></h2>
+                <p class="text-emerald-400 text-sm font-medium mt-2 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                    Hybrid Computation Complete
+                </p>
+              </div>
+
+              <div class="space-y-3 pt-2">
+                <div class="flex justify-between items-center bg-slate-800/40 p-3 rounded-lg border border-slate-700/50">
+                  <span class="text-slate-300 font-medium text-sm">0% Tax Band</span>
+                  <span class="text-white font-mono text-sm">₦800,000</span>
+                </div>
+                <div class="flex justify-between items-center bg-slate-800/40 p-3 rounded-lg border border-slate-700/50">
+                  <span class="text-slate-300 font-medium text-sm">Pension Relief</span>
+                  <span class="text-white font-mono text-sm">₦672,000</span>
+                </div>
+                <div class="flex justify-between items-center bg-blue-900/20 p-3 rounded-lg border border-blue-500/30 relative overflow-hidden">
+                  <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
+                  <span class="text-blue-300 font-medium text-sm pl-2">Chargeable Income</span>
+                  <span class="text-blue-100 font-mono text-sm">₦7,036,002</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUTO-SCALING SCRIPT -->
+      <script>
+          function scaleGraphic() {
+              const graphic = document.getElementById('promo-graphic');
+              // Calculate scale to fit window with a 40px padding
+              const scaleX = (window.innerWidth - 40) / 1200;
+              const scaleY = (window.innerHeight - 40) / 630;
+              const scale = Math.min(scaleX, scaleY);
+
+              // Only scale down if the window is too small
+              if (scale < 1) {
+                  graphic.style.transform = `scale(${scale})`;
+              } else {
+                  graphic.style.transform = `scale(1)`;
+              }
+          }
+
+          window.addEventListener('resize', scaleGraphic);
+          scaleGraphic(); // Run on load
+      </script>
+</body>
+</html>

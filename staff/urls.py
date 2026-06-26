@@ -132,6 +132,7 @@ path('patient/<int:patient_id>/records/', views.staff_patient_records, name='sta
     path('report/<int:report_id>/', views.report_detail, name='report_detail'),
     path('report/create/<int:patient_id>/', views.create_report, name='create_report'),
     path('report/download/<int:report_id>/', views.download_report, name='download_report'),
+    path('api/appointments/<int:appointment_id>/respond/', respond_to_appointment, name='respond_to_appointment'),
 
 
     path('audit-logs/', audit_log_list, name='audit_log_list'),
@@ -144,8 +145,6 @@ path('patient/<int:patient_id>/records/', views.staff_patient_records, name='sta
     path('staff/<int:staff_id>/certifications/', views.staff_certifications, name='staff_certifications'),
     # URL for showing certifications for a specific staff member
 
-
-    path('emergency-alerts/', EmergencyAlertCreateView.as_view, name='emergency-alert-create'),
     path('emergency-alerts/', EmergencyAlertListView.as_view(), name='emergency_alert_list'),
     path('emergency-alerts/update/<int:pk>/', EmergencyAlertUpdateView.as_view(), name='emergency_alert_update'),
 
@@ -155,4 +154,14 @@ path('patient/<int:patient_id>/records/', views.staff_patient_records, name='sta
     # API Routes for Doctor, Appointment, etc.
     path('api/', include(router.urls)),
     path('api/auth/', include(custom_auth_urls)),
+
+    # API Routes for bot
+    path('api/bot/schedule/', get_bot_schedule, name='bot-schedule'),
+    path('api/bot/lab-results/', get_bot_lab_results, name='bot-lab-results'),
+    path('api/bot/inventory/', get_bot_inventory, name='bot-inventory'),
+    path('api/bot/notification/', create_bot_notification, name='bot-notification'),
+    path('api/bot/metrics/', get_bot_metrics, name="bot-get-metrics"),
+    path('api/bot/expiring-certs/', get_bot_expiring_certs, name="bot-expiring-certs"),
+
+
 ]

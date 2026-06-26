@@ -41,8 +41,12 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password']
         )
-        # Create a Patient instance linked to this user
-        patient = PatientProfile.objects.create(user=user, phone_number=validated_data['phone_number'])
+        # 2. Safely get or create the PatientProfile to avoid UNIQUE constraint crashes
+        patient, created = PatientProfile.objects.get_or_create(user=user)
+
+        # 3. Add the phone number and save
+        patient.phone_number = validated_data['phone_number']
+        patient.save()
 
         return patient
 

@@ -138,72 +138,72 @@ testuser345
 securepassword
 b1009983d9935cc826fc35166bc8a196de6740af
 
-class DebugToolbarExcludeAPIMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        response = self.get_response(request)
-
-        # Exclude JSON/DRF API responses from Debug Toolbar
-        if request.path.startswith('staff/api/') or response.get('Content-Type', '').startswith('application/json'):
-            return response
-
-        return response
-
-                # if not user or not hasattr(user, 'staff_profile') or not hasattr(user.staff_profile, 'role'):
-        #     logger.info(f"User: {request.user}")
-        #     logger.info(f"Authenticated: {request.user.is_authenticated}")
-        #     return HttpResponseForbidden("You must be a staff member to access this resource.")
-        #
-        # if not request.user.is_authenticated:
-        #     return HttpResponseForbidden("You must be authenticated to access this resource.")
-        #
-        # if not hasattr(request.user, 'staff_profile') or not hasattr(request.user.staff_profile, 'role'):
-        #     return HttpResponseForbidden("You must be a staff member to access this resource.")
-        #
-        # return self.get_response(request)
-    # def __call__(self, request):
-    #     print(f"Processing request in StaffOnlyMiddleware: {request.path}")  # Log request path
-    #
-    #     # Resolve the URL and log details
-    #     resolver_match = resolve(request.path)
-    #     print(f"Resolved URL: {resolver_match}")
-    #
-    #     url_name = resolver_match.url_name
-    #     app_name = resolver_match.app_name
-    #     print(f"URL Namespace: {app_name}, URL Name: {url_name}")
-    #
-    #     # Log token if present
-    #     token = request.headers.get('Authorization', None)
-    #     if token:
-    #         print(f"Token from headers: {token}")
-    #
-    #     # Authentication attempt
-    #     try:
-    #         auth = CustomTokenAuthentication()
-    #         authenticated_user = auth.authenticate(request)
-    #         if authenticated_user:
-    #             print(f"Authenticated user: {authenticated_user[0]} with token: {authenticated_user[1]}")
-    #             request.user = authenticated_user[0]
-    #             request.auth = authenticated_user[1]
-    #         else:
-    #             print("Authentication failed: No valid token or user.")
-    #     except Exception as e:
-    #         print(f"Authentication exception: {e}")
-    #
-    #     # Permission check
-    #     if hasattr(request, 'user') and request.user.is_authenticated:
-    #         print(f"User {request.user} is authenticated.")
-    #         permission = IsStaffMember()
-    #         if not permission.has_permission(request, None):
-    #             print(f"Permission denied: User {request.user} is not a staff member.")
-    #             return Response("Access denied. Staff members only.", status=403)
-    #
-    #     else:
-    #         print("User is not authenticated. Denying access.")
-    #         return Response("Access denied. Please log in.", status=401)
-    #
-    #     response = self.get_response(request)
-    #     print(f"Response status code: {response.status_code} for {request.path}")  # Log response status
-    #     return response
+[24/Mar/2026 09:34:31] "GET /api/docs/ HTTP/1.1" 200 4663
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [api_emergency_contact]: unable to guess serializer. This is
+ graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [api_feedback]: unable to guess serializer. This is graceful
+ fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [api_landing]: unable to guess serializer. This is graceful 
+fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [api_login]: unable to guess serializer. This is graceful fa
+llback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [api_logout]: unable to guess serializer. This is graceful f
+allback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [api_medication_reminders]: unable to guess serializer. This
+ is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [api_profile]: unable to guess serializer. This is graceful 
+fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [api_update_profile]: unable to guess serializer. This is gr
+aceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [api_register]: unable to guess serializer. This is graceful
+ fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [api_treatment_plans]: unable to guess serializer. This is g
+raceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\staff\serializer.py: Warning [AppointmentViewSet > AppointmentSerializer]: Encountered 2 
+components with identical names "Appointment" and different identities <class 'staff.serializer.AppointmentSerializer'> and <class 'appointments.serializers.AppointmentSerializer'>. This will very likely result in an incorrect schema. Try renaming one.
+C:\Users\user\PycharmProjects\hospital_app\staff\serializer.py: Warning [AppointmentViewSet > AppointmentSerializer]: Encountered 2 
+components with identical names "PatchedAppointment" and different identities <class 'staff.serializer.AppointmentSerializer'> and <class 'appointments.serializers.AppointmentSerializer'>. This will very likely result in an incorrect schema. Try renaming one.     
+C:\Users\user\PycharmProjects\hospital_app\staff\api_views.py: Error [StaffDashboardView]: unable to guess serializer. This is grace
+ful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\staff\api_views.py: Error [staff_logout]: unable to guess serializer. This is graceful fa
+llback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\staff\api_views.py: Error [RegisterView]: unable to guess serializer. This is graceful fa
+llback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\staff\api_views.py: Error [TestView]: unable to guess serializer. This is graceful fallba
+ck handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+[24/Mar/2026 09:34:33] "GET /api/schema/ HTTP/1.1" 500 145
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > api_emergency_contac
+t]: unable to guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > api_feedback]: unabl
+e to guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > api_landing]: unable
+ to guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > api_login]: unable t
+o guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > api_logout]: unable 
+to guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > api_medication_remin
+ders]: unable to guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > api_profile]: unable
+ to guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > api_update_profile]:
+ unable to guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > api_register]: unabl
+e to guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\patients\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > api_treatment_plans]
+: unable to guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\staff\serializer.py: Warning [CarePlanViewSet > CarePlanSerializer > AppointmentViewSet >
+ AppointmentSerializer]: Encountered 2 components with identical names "Appointment" and different identities <class 'staff.serializ
+er.AppointmentSerializer'> and <class 'appointments.serializers.AppointmentSerializer'>. This will very likely result in an incorrect schema. Try renaming one.
+C:\Users\user\PycharmProjects\hospital_app\staff\serializer.py: Warning [CarePlanViewSet > CarePlanSerializer > AppointmentViewSet >
+ AppointmentSerializer]: Encountered 2 components with identical names "PatchedAppointment" and different identities <class 'staff.s
+erializer.AppointmentSerializer'> and <class 'appointments.serializers.AppointmentSerializer'>. This will very likely result in an incorrect schema. Try renaming one.
+C:\Users\user\PycharmProjects\hospital_app\staff\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > StaffDashboardView]: un
+able to guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\staff\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > staff_logout]: unable t
+o guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\staff\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > RegisterView]: unable t
+o guess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+C:\Users\user\PycharmProjects\hospital_app\staff\api_views.py: Error [CarePlanViewSet > CarePlanSerializer > TestView]: unable to gu
+ess serializer. This is graceful fallback handling for APIViews. Consider using GenericAPIView as view base class, if view is under your control. Either way you may want to add a serializer_class (or method). Ignoring view for now.
+[24/Mar/2026 09:34:34] "GET /api/schema/ HTTP/1.1" 500 145

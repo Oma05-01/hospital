@@ -54,7 +54,7 @@ class PatientProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.user.get_full_name() or self.user.username}'s Profile"
+        return f"{self.user.get_full_name() or self.user.username}'s Profile and ID {self.pk}"
 
 
 class MedicationReminder(models.Model):

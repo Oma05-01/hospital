@@ -1,12 +1,24 @@
 from django.contrib import admin
 from .models import *
 from django.contrib.auth.admin import UserAdmin
-# Register your models here
 
-# Register the custom admin for Staff
+# --- NEW INLINE CONFIGURATION FOR SCHEDULING ---
 
-admin.site.register(Staff)  # Register the Staff model
-admin.site.register(DoctorSchedule)
+class TimeBlockInline(admin.TabularInline):
+    model = TimeBlock
+    extra = 1  # Provides one blank row by default for easy data entry
+    # Optional: order by day so the UI looks clean
+    ordering = ['day_of_week', 'start_time']
+
+@admin.register(DoctorSchedule)
+class DoctorScheduleAdmin(admin.ModelAdmin):
+    list_display = ['doctor', 'appointment_duration', 'buffer_time']
+    inlines = [TimeBlockInline] # This is the magic that puts them on the same page
+
+# --- STANDARD REGISTRATIONS ---
+
+admin.site.register(Staff)
+# admin.site.register(DoctorSchedule) <-- DELETE THIS OLD LINE!
 admin.site.register(Appointment)
 admin.site.register(ConsultationNote)
 admin.site.register(Assignment)

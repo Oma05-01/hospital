@@ -2,6 +2,8 @@
 .env
 .envs
 *.env
+gcp_credentials.json
+hospital_bot/token
 
 # Databases
 db.sqlite3
@@ -21,3 +23,4 @@ env/
 # Project Specific
 hos/
 media/
+hospital_bot/checkpoints/

@@ -1,4 +1,7 @@
 # models.py
+import secrets
+import string
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -27,36 +30,60 @@ class Staff(models.Model):
 
 
 class DoctorSchedule(models.Model):
-    doctor = models.OneToOneField(Staff, on_delete=models.CASCADE, related_name='doctor_schedule', null=True)
-    monday_start = models.TimeField(null=True, blank=True)
-    monday_end = models.TimeField(null=True, blank=True)
-    tuesday_start = models.TimeField(null=True, blank=True)
-    tuesday_end = models.TimeField(null=True, blank=True)
-    wednesday_start = models.TimeField(null=True, blank=True)
-    wednesday_end = models.TimeField(null=True, blank=True)
-    thursday_start = models.TimeField(null=True, blank=True)
-    thursday_end = models.TimeField(null=True, blank=True)
-    friday_start = models.TimeField(null=True, blank=True)
-    friday_end = models.TimeField(null=True, blank=True)
-    saturday_start = models.TimeField(null=True, blank=True)
-    saturday_end = models.TimeField(null=True, blank=True)
-    sunday_start = models.TimeField(null=True, blank=True)
-    sunday_end = models.TimeField(null=True, blank=True)
+    """
+    The master settings for a doctor's appointments.
+    It no longer holds the days, just the math.
+    """
+    doctor = models.OneToOneField(Staff, on_delete=models.CASCADE, related_name='doctor_schedule', null=True,
+        blank=True)
+
+    appointment_duration = models.PositiveIntegerField(
+        default=30,
+        help_text="Standard duration of an appointment in minutes."
+    )
+    buffer_time = models.PositiveIntegerField(
+        default=10,
+        help_text="Rest/buffer time between appointments in minutes."
+    )
 
     def clean(self):
-        # Ensure only doctors can have a schedule
-        if self.doctor.role != 'doctor':
+        if self.doctor and self.doctor.role.lower() != 'doctor':
             raise ValidationError("Only staff members with the role 'doctor' can have a schedule.")
 
-        # Validate start and end times for each day
-        for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']:
-            start_time = getattr(self, f"{day}_start")
-            end_time = getattr(self, f"{day}_end")
-            if start_time and end_time and start_time >= end_time:
-                raise ValidationError(f"Invalid schedule: {day.capitalize()} start time must be earlier than end time.")
+    def __str__(self):
+        return f"Schedule Settings for {self.doctor.user.username}"
+
+
+class TimeBlock(models.Model):
+    """
+    The actual shifts a doctor works.
+    A doctor can have multiple blocks on the same day (e.g., Morning Shift, Afternoon Shift).
+    """
+    DAY_CHOICES = [
+        ('monday', 'Monday'),
+        ('tuesday', 'Tuesday'),
+        ('wednesday', 'Wednesday'),
+        ('thursday', 'Thursday'),
+        ('friday', 'Friday'),
+        ('saturday', 'Saturday'),
+        ('sunday', 'Sunday'),
+    ]
+
+    schedule = models.ForeignKey(DoctorSchedule, on_delete=models.CASCADE, related_name='blocks')
+    day_of_week = models.CharField(max_length=10, choices=DAY_CHOICES)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def clean(self):
+        if self.start_time and self.end_time and self.start_time >= self.end_time:
+            raise ValidationError("Start time must be strictly before end time.")
+
+    class Meta:
+        # Orders the blocks nicely in the database and admin panel
+        ordering = ['day_of_week', 'start_time']
 
     def __str__(self):
-        return f"Schedule for {self.doctor.user.username}"
+        return f"{self.get_day_of_week_display()}: {self.start_time.strftime('%I:%M %p')} - {self.end_time.strftime('%I:%M %p')}"
 
 
 class Appointment(models.Model):
@@ -146,20 +173,34 @@ class Assignment(models.Model):
     assigned_at = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True)
 
+    secret_key = models.CharField(max_length=64, blank=True, unique=True)
+    is_key_verified = models.BooleanField(default=False)
+
     def clean(self):
         if self.doctor.role != 'doctor':
             raise ValidationError("Only doctors can be assigned to patients.")
 
-        current_patient_count = Assignment.objects.filter(doctor=self.doctor).distinct('patient').count()
+        current_patient_count = Assignment.objects.filter(doctor=self.doctor).values('patient').distinct().count()
         if current_patient_count >= 5:
             raise ValidationError(f"Dr. {self.doctor.user.username} is already assigned to 5 patients.")
 
     def save(self, *args, **kwargs):
+        # Automatically generate a secure 6-digit key if it doesn't exist yet
+        if not self.secret_key:
+            # Generates something like '7X9K2W'
+            alphabet = string.ascii_uppercase + string.digits
+            while True:
+                potential_key = ''.join(secrets.choice(alphabet) for _ in range(6))
+                # Ensure global uniqueness across assignments
+                if not Assignment.objects.filter(secret_key=potential_key).exists():
+                    self.secret_key = potential_key
+                    break
+
         self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Assignment of {self.patient.user.username} to Dr. {self.doctor.user.username}"
+        return f"Assignment: {self.patient.user.username} -> Dr. {self.doctor.user.username} (Key: {self.secret_key})"
 
 
 class VitalSign(models.Model):

@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from .api_views import *
 from .views import *
-
+from staff.api_views import create_bot_notification
 app_name = 'patients'
 
 urlpatterns = [
@@ -43,4 +43,12 @@ urlpatterns = [
     path('api/feedback/', api_feedback, name='api_feedback'),
     path('api/treatment-plans/', api_treatment_plans, name='api_treatment_plans'),
     path('api/emergency-contact/', api_emergency_contact, name='api_emergency_contact'),
+
+    path('api/bot/emergency/', create_bot_emergency, name='bot-emergency'),
+    path('api/bot/my-doctors/', chatbot_my_doctors, name='chatbot-my-doctors'),
+    path('api/bot/verify-book/', verify_and_book, name='verify-book'),
+    path('api/bot/my-appointments/', chatbot_my_appointments, name='chatbot_my_appointments'),
+
+    # New route to handle the custom bot notification payload
+    path('api/bot/notification/', create_bot_notification, name='bot-notification'),
 ]
